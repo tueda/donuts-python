@@ -1,0 +1,3 @@
+[submodule "donuts-java"]
+	path = donuts/java
+	url = https://github.com/tueda/donuts.git

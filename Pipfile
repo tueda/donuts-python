@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+donuts-python = {editable = true,path = "."}
+py4j = "*"
+
+[dev-packages]
+black = "==19.3b0"
+flake8 = "*"
+flake8-bugbear = "*"
+flake8-docstrings = "*"
+invoke = "*"
+isort = "*"
+mypy = ">=0.720"
+pep8-naming = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-xdist = "*"
+
+[scripts]
+test = "pytest --cov=donuts"
+fmt = "invoke fmt"
+lint = "invoke lint"

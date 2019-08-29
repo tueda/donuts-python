@@ -1,0 +1,27 @@
+.test:
+  before_script:
+  - git config submodule.donuts-java.url https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/tueda/donuts.git
+  - git submodule update --init --recursive
+  - apt-get update
+  - apt-get install -qy default-jdk
+  - pip install tox
+  artifacts:
+    paths:
+      - htmlcov
+    expire_in: 1 week
+
+lint:
+  image: python:3.7
+  before_script:
+    - pip install tox
+  script: tox -e lint
+
+py37:
+  extends: .test
+  image: python:3.7
+  script: tox -e py37
+
+py38:
+  extends: .test
+  image: python:3.8-rc
+  script: tox -e py38

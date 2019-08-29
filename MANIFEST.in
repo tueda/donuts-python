@@ -1,0 +1,5 @@
+recursive-include donuts/java *
+prune donuts/java/.gradle
+prune donuts/java/build
+prune donuts/java/src/test
+exclude donuts/java/.git*
