@@ -18,7 +18,7 @@ class Polynomial:
         if value is None:
             self._raw = _RawPolynomial()
         elif isinstance(value, int):
-            if -9223372036854775808 <= value <= 9223372036854775807:
+            if Polynomial._is_short_int(value):
                 self._raw = _RawPolynomial(value)
             else:
                 self._raw = _RawPolynomial(str(value))
@@ -27,9 +27,15 @@ class Polynomial:
 
     @staticmethod
     def _new(raw: Any) -> Polynomial:
+        """Construct a polynomial from a raw object."""
         obj = Polynomial()
         obj._raw = raw
         return obj
+
+    @staticmethod
+    def _is_short_int(n: int) -> bool:
+        """Return ``True`` if the given integer is *short* enough (64 bits)."""
+        return -9223372036854775808 <= n <= 9223372036854775807
 
     def __str__(self) -> str:
         """Return the string representation."""
@@ -37,6 +43,8 @@ class Polynomial:
 
     def __hash__(self) -> int:
         """Return the hash code."""
+        if self.is_integer:
+            return hash(self.as_integer)
         return hash(self._raw)
 
     def __add__(self, other: Union[Polynomial, int]) -> Polynomial:
@@ -94,3 +102,18 @@ class Polynomial:
         elif isinstance(other, int):
             return self == Polynomial(other)
         return NotImplemented
+
+    @property
+    def is_integer(self) -> bool:
+        """Return ``True`` if the polynomial is an integer."""
+        return self._raw.isConstant()  # type: ignore
+
+    @property
+    def as_integer(self) -> int:
+        """Cast the polynomial to an integer."""
+        if self.is_integer:
+            if self._raw.isLongValue():
+                return self._raw.asLongValue()  # type: ignore
+            else:
+                return int(str(self))
+        raise ValueError("not an integer")

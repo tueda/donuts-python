@@ -19,6 +19,20 @@ def test_init():
 
 
 def test_hash():
+    a = Polynomial(42)
+    b = 42
+
+    assert a == b
+    assert hash(a) == hash(b)
+
+    a = Polynomial("(a+b)*(c+d)-a*c-b*c-b*d")
+    b = Polynomial("a*d")
+
+    assert a == b
+    assert hash(a) == hash(b)
+
+
+def test_hash_as_key():
     d = {}
 
     a = Polynomial("1+x")
