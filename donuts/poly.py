@@ -104,9 +104,39 @@ class Polynomial:
         return NotImplemented
 
     @property
+    def is_zero(self) -> bool:
+        """Return ``True`` if the polynomial is zero."""
+        return self._raw.isZero()  # type: ignore
+
+    @property
+    def is_one(self) -> bool:
+        """Return ``True`` if the polynomial is one."""
+        return self._raw.isOne()  # type: ignore
+
+    @property
+    def is_minus_one(self) -> bool:
+        """Return ``True`` if the polynomial is minus one."""
+        return self._raw.isMinusOne()  # type: ignore
+
+    @property
     def is_integer(self) -> bool:
         """Return ``True`` if the polynomial is an integer."""
         return self._raw.isConstant()  # type: ignore
+
+    @property
+    def is_monomial(self) -> bool:
+        """Return ``True`` if the polynomial is monomial."""
+        return self._raw.isMonomial()  # type: ignore
+
+    @property
+    def is_monic(self) -> bool:
+        """Return ``True`` if the polynomial is monic."""
+        return self._raw.isMonic()  # type: ignore
+
+    @property
+    def is_variable(self) -> bool:
+        """Return ``True`` if the polynomial is a variable."""
+        return self._raw.isVariable()  # type: ignore
 
     @property
     def as_integer(self) -> int:

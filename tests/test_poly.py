@@ -1,4 +1,17 @@
+import pytest
+
 from donuts import Polynomial
+
+
+@pytest.fixture
+def bigints():
+    """Give a list of integers containing big values."""
+    test_int_set = set()
+    for i in (-2 ** 127, -2 ** 63, -2 ** 31, 0, 2 ** 31, 2 ** 63, 2 ** 127):
+        for j in range(-5, 6):
+            n = i + j
+            test_int_set.add(n)
+    return sorted(test_int_set)
 
 
 def test_init():
@@ -9,13 +22,12 @@ def test_init():
     a = Polynomial("a")
     assert str(a) == "a"
 
-    # for integers (which may be big)
-    for i in (-2 ** 127, -2 ** 63, -2 ** 31, 0, 2 ** 31, 2 ** 63, 2 ** 127):
-        for j in range(-5, 6):
-            n = i + j
-            a = Polynomial(n)
-            b = Polynomial(str(n))
-            assert a == b
+
+def test_init_with_bigints(bigints):
+    for n in bigints:
+        a = Polynomial(n)
+        b = Polynomial(str(n))
+        assert a == b
 
 
 def test_hash():
@@ -138,3 +150,83 @@ def test_cmp():
     a = []
     b = Polynomial("x")
     assert a != b
+
+
+def test_is():
+    a = Polynomial("0")
+    assert a.is_zero
+    assert not a.is_one
+    assert not a.is_minus_one
+    assert a.is_integer
+    assert a.is_monomial
+    assert not a.is_monic
+    assert not a.is_variable
+
+    a = Polynomial("1")
+    assert not a.is_zero
+    assert a.is_one
+    assert not a.is_minus_one
+    assert a.is_integer
+    assert a.is_monomial
+    assert a.is_monic
+    assert not a.is_variable
+
+    a = Polynomial("-1")
+    assert not a.is_zero
+    assert not a.is_one
+    assert a.is_minus_one
+    assert a.is_integer
+    assert a.is_monomial
+    assert not a.is_monic
+    assert not a.is_variable
+
+    a = Polynomial("42")
+    assert not a.is_zero
+    assert not a.is_one
+    assert not a.is_minus_one
+    assert a.is_integer
+    assert a.is_monomial
+    assert not a.is_monic
+    assert not a.is_variable
+
+    a = Polynomial("x")
+    assert not a.is_zero
+    assert not a.is_one
+    assert not a.is_minus_one
+    assert not a.is_integer
+    assert a.is_monomial
+    assert a.is_monic
+    assert a.is_variable
+
+    a = Polynomial("2*x")
+    assert not a.is_zero
+    assert not a.is_one
+    assert not a.is_minus_one
+    assert not a.is_integer
+    assert a.is_monomial
+    assert not a.is_monic
+    assert not a.is_variable
+
+    a = Polynomial("1+x")
+    assert not a.is_zero
+    assert not a.is_one
+    assert not a.is_minus_one
+    assert not a.is_integer
+    assert not a.is_monomial
+    assert a.is_monic
+    assert not a.is_variable
+
+
+def test_as():
+    a = Polynomial("42")
+    assert a.as_integer == 42
+
+    a = Polynomial("x")
+    with pytest.raises(ValueError):
+        a.as_integer
+
+
+def test_as_with_bigints(bigints):
+    for n in bigints:
+        a = Polynomial(n)
+        assert a.as_integer == n
