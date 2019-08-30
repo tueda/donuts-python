@@ -25,3 +25,12 @@ py38:
   extends: .test
   image: python:3.8-rc
   script: tox -e py38
+
+doc:
+  extends: .test
+  image: python:3.7
+  script: tox -e doc
+  artifacts:
+    paths:
+      - docs/_build/html
+    expire_in: 1 week

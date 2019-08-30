@@ -36,6 +36,7 @@ For developers
     pipenv run fmt
     pipenv run lint
     pipenv run test
+    pipenv run doc
 
     # Or run indivisual commands in a virtualenv.
     pipenv shell
@@ -44,3 +45,4 @@ For developers
     flake8
     mypy .
     pytest --cov=donuts
+    make -C docs html

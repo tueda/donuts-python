@@ -1,5 +1,7 @@
 """Tasks for Pipenv."""
 
+import os
+
 from invoke import task
 
 
@@ -23,6 +25,13 @@ def lint(c):  # type: ignore
 def test(c):  # type: ignore
     """Run tests."""
     c.run("pytest --cov=donuts", pty=True)
+
+
+@task
+def doc(c):  # type: ignore
+    """Generate documents."""
+    with c.cd("docs"):
+        c.run("make html" if os.name != "nt" else "make.bat html", pty=True)
 
 
 @task

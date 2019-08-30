@@ -19,8 +19,11 @@ pep8-naming = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-xdist = "*"
+sphinx = "*"
+sphinx-autodoc-typehints = "*"
 
 [scripts]
+doc = "invoke doc"
 fmt = "invoke fmt"
 lint = "invoke lint"
 test = "invoke test"
