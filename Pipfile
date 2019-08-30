@@ -21,6 +21,6 @@ pytest-cov = "*"
 pytest-xdist = "*"
 
 [scripts]
-test = "pytest --cov=donuts"
 fmt = "invoke fmt"
 lint = "invoke lint"
+test = "invoke test"

@@ -20,6 +20,12 @@ def lint(c):  # type: ignore
 
 
 @task
+def test(c):  # type: ignore
+    """Run tests."""
+    c.run("pytest --cov=donuts")
+
+
+@task
 def output_dev_only_requirements(c):  # type: ignore
     """Write dev-only-requirements.txt."""
     with open("dev-only-requirements.txt", "w") as f:
