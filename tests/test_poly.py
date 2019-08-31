@@ -60,6 +60,24 @@ def test_hash_as_key():
     assert d[b] == "b"
 
 
+def test_pos():
+    a = Polynomial("0")
+    assert (+a) == a
+
+    a = Polynomial("1+x")
+    assert (+a) == a
+
+
+def test_neg():
+    a = Polynomial("0")
+    assert (-a) == a
+
+    a = Polynomial("1+x")
+    b = 0 - a
+    assert (-a) == b
+    assert (-b) == a
+
+
 def test_add():
     a = Polynomial("2+x")
     b = Polynomial("3+y")

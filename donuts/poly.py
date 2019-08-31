@@ -47,6 +47,14 @@ class Polynomial:
             return hash(self.as_integer)
         return hash(self._raw)
 
+    def __pos__(self) -> Polynomial:
+        """Return ``+ self``."""
+        return self
+
+    def __neg__(self) -> Polynomial:
+        """Return ``- self``."""
+        return Polynomial._new(self._raw.negate())
+
     def __add__(self, other: Union[Polynomial, int]) -> Polynomial:
         """Return ``self + other``."""
         if isinstance(other, Polynomial):
