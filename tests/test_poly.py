@@ -1,17 +1,7 @@
-import pytest
+from pytest import raises
 
 from donuts import Polynomial
-
-
-@pytest.fixture
-def bigints():
-    """Give a list of integers containing big values."""
-    test_int_set = set()
-    for i in (-2 ** 127, -2 ** 63, -2 ** 31, 0, 2 ** 31, 2 ** 63, 2 ** 127):
-        for j in range(-5, 6):
-            n = i + j
-            test_int_set.add(n)
-    return sorted(test_int_set)
+from fixtures.bigints import bigints
 
 
 def test_init():
@@ -19,8 +9,18 @@ def test_init():
     assert a == 0
     assert str(a) == "0"
 
+    a = Polynomial(42)
+    assert a == 42
+    assert str(a) == "42"
+
     a = Polynomial("a")
     assert str(a) == "a"
+
+    a = Polynomial(a)
+    assert str(a) == "a"
+
+    with raises(TypeError):
+        Polynomial([1])
 
 
 def test_init_with_bigints(bigints):
@@ -240,7 +240,7 @@ def test_as():
     assert a.as_integer == 42
 
     a = Polynomial("x")
-    with pytest.raises(ValueError):
+    with raises(ValueError):
         a.as_integer
 
 

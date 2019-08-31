@@ -13,7 +13,7 @@ class Polynomial:
 
     __slots__ = ("_raw",)
 
-    def __init__(self, value: Union[int, str, None] = None) -> None:
+    def __init__(self, value: Union[int, str, Polynomial, None] = None) -> None:
         """Construct a polynomial."""
         if value is None:
             self._raw = _RawPolynomial()
@@ -22,8 +22,12 @@ class Polynomial:
                 self._raw = _RawPolynomial(value)
             else:
                 self._raw = _RawPolynomial(str(value))
-        else:
+        elif isinstance(value, str):
             self._raw = _RawPolynomial(value)
+        elif isinstance(value, Polynomial):
+            self._raw = value._raw
+        else:
+            raise TypeError(f"invalid value for polynomial: `{value}`")
 
     @staticmethod
     def _new(raw: Any) -> Polynomial:
