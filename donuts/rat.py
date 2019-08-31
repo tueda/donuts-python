@@ -8,6 +8,7 @@ from .jvm import jvm
 from .poly import Polynomial
 
 _RawRationalFunction = jvm.find_class("com.github.tueda.donuts.RationalFunction")
+_JavaError = jvm.java_error_class
 
 
 class RationalFunction:
@@ -30,7 +31,10 @@ class RationalFunction:
                 else:
                     self._raw = _RawRationalFunction(str(numerator))
             elif isinstance(numerator, str):
-                self._raw = _RawRationalFunction(numerator)
+                try:
+                    self._raw = _RawRationalFunction(numerator)
+                except _JavaError as e:
+                    raise ValueError("invalid string for rational function") from e
             elif isinstance(numerator, Fraction):
                 if Polynomial._is_short_int(
                     numerator.numerator

@@ -46,5 +46,12 @@ class Py4JBackend:
         """Return a Java class."""
         return self._gateway.jvm.__getattr__(class_name)
 
+    @property
+    def java_error_class(self) -> Any:
+        """Return the error class indicating exceptions in Java client code."""
+        from py4j.protocol import Py4JJavaError
+
+        return Py4JJavaError
+
 
 jvm = Py4JBackend()

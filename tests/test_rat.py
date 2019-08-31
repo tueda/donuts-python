@@ -29,13 +29,19 @@ def test_init():
     assert a == b
 
     with raises(TypeError):
-        RationalFunction([1])
+        RationalFunction([1])  # invalid type
 
     with raises(TypeError):
-        RationalFunction("1", 2)
+        RationalFunction("1", 2)  # invalid type combinations
 
     with raises(TypeError):
-        RationalFunction([1], [2])
+        RationalFunction(Fraction(1, 2), 2)  # invalid type combinations
+
+    with raises(TypeError):
+        RationalFunction([1], [2])  # invalid types
+
+    with raises(ValueError):
+        RationalFunction("(1+x?)/(1-y)")  # invalid string
 
 
 def test_init_with_bigints(bigints):
@@ -158,7 +164,7 @@ def test_as_integer():
     a = "x"
     b = RationalFunction(a)
     with raises(ValueError):
-        b.as_integer
+        b.as_integer  # not integer
 
 
 def test_as_integer_with_bigints(bigints):
@@ -179,7 +185,7 @@ def test_as_fraction():
     a = "1+x"
     b = RationalFunction(a)
     with raises(ValueError):
-        b.as_fraction
+        b.as_fraction  # not fraction
 
 
 def test_as_polynomial():
@@ -194,4 +200,4 @@ def test_as_polynomial():
     a = "x/2"
     b = RationalFunction(a)
     with raises(ValueError):
-        b.as_polynomial
+        b.as_polynomial  # not polynomial

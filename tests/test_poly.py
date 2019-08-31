@@ -20,7 +20,13 @@ def test_init():
     assert str(a) == "a"
 
     with raises(TypeError):
-        Polynomial([1])
+        Polynomial([1])  # invalid type
+
+    with raises(ValueError):
+        Polynomial("(1+x)/(1-y)")  # not polynomial
+
+    with raises(ValueError):
+        Polynomial("x?")  # invalid string
 
 
 def test_init_with_bigints(bigints):
@@ -241,7 +247,7 @@ def test_as():
 
     a = Polynomial("x")
     with raises(ValueError):
-        a.as_integer
+        a.as_integer  # not integer
 
 
 def test_as_with_bigints(bigints):

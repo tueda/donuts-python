@@ -6,6 +6,7 @@ from typing import Any, Union
 from .jvm import jvm
 
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
+_JavaError = jvm.java_error_class
 
 
 class Polynomial:
@@ -23,7 +24,10 @@ class Polynomial:
             else:
                 self._raw = _RawPolynomial(str(value))
         elif isinstance(value, str):
-            self._raw = _RawPolynomial(value)
+            try:
+                self._raw = _RawPolynomial(value)
+            except _JavaError as e:
+                raise ValueError("invalid string for polynomial") from e
         elif isinstance(value, Polynomial):
             self._raw = value._raw
         else:
