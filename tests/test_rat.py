@@ -43,6 +43,14 @@ def test_init():
     with raises(ValueError):
         RationalFunction("(1+x?)/(1-y)")  # invalid string
 
+    with raises(ZeroDivisionError):
+        RationalFunction(1, 0)  # division by zero
+
+    with raises(ZeroDivisionError):
+        a = Polynomial("1")
+        b = Polynomial("0")
+        RationalFunction(a, b)  # division by zero
+
 
 def test_init_with_bigints(bigints):
     for n in bigints:

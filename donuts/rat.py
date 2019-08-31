@@ -64,11 +64,15 @@ class RationalFunction:
                 and Polynomial._is_short_int(numerator)
                 and Polynomial._is_short_int(denominator)
             ):
+                if denominator == 0:
+                    raise ZeroDivisionError("division by zero")
                 self._raw = _RawRationalFunction(numerator, denominator)
             else:
-                self._raw = _RawRationalFunction(
-                    Polynomial(numerator)._raw, Polynomial(denominator)._raw
-                )
+                num = Polynomial(numerator)
+                den = Polynomial(denominator)
+                if den.is_zero:
+                    raise ZeroDivisionError("division by zero")
+                self._raw = _RawRationalFunction(num._raw, den._raw)
 
     def __str__(self) -> str:
         """Return the string representation."""
