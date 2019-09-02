@@ -90,6 +90,123 @@ def test_hash():
     assert hash(a) == hash(b)
 
 
+def test_pos():
+    a = RationalFunction("0")
+    assert (+a) == a
+
+    a = RationalFunction("(-1+x)/(1-y)")
+    assert (+a) == a
+
+
+def test_neg():
+    a = RationalFunction("0")
+    assert (-a) == a
+
+    a = RationalFunction("(-1+x)/(1-y)")
+    b = 0 - a
+    assert (-a) == b
+    assert (-b) == a
+
+
+def test_add():
+    a = RationalFunction("(1+x)/(1-z)")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("(x+y)/(1-z)")
+    assert a + b == c
+
+    a = RationalFunction("(1+x)/(1-z)")
+    b = Polynomial("-1+y")
+    c = RationalFunction("(-x-y-z+y*z)/(-1+z)")
+    assert a + b == c
+
+    a = Polynomial("1+x")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("(-x-y+z+x*z)/(-1+z)")
+    assert a + b == c
+
+
+def test_sub():
+    a = RationalFunction("(1+x)/(1-z)")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("-(2+x-y)/(-1+z)")
+    assert a - b == c
+
+    a = RationalFunction("(1+x)/(1-z)")
+    b = Polynomial("-1+y")
+    c = RationalFunction("-(2+x-y-z+y*z)/(-1+z)")
+    assert a - b == c
+
+    a = Polynomial("1+x")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("(-2-x+y+z+x*z)/(-1+z)")
+    assert a - b == c
+
+
+def test_mul():
+    a = RationalFunction("(1+x)/(1-z)")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("(1+x)*(-1+y)/(-1+z)^2")
+    assert a * b == c
+
+    a = RationalFunction("(1+x)/(1-z)")
+    b = Polynomial("-1+y")
+    c = RationalFunction("-((1+x)*(-1+y)/(-1+z))")
+    assert a * b == c
+
+    a = Polynomial("1+x")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("-(1+x)*(-1+y)/(-1+z)")
+    assert a * b == c
+
+
+def test_div():
+    a = RationalFunction("(1+x)/(1-z)")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("(1+x)/(-1+y)")
+    assert a / b == c
+
+    a = RationalFunction("(1+x)/(1-z)")
+    b = Polynomial("-1+y")
+    c = RationalFunction("-(1+x)/(-1+y)/(-1+z)")
+    assert a / b == c
+
+    a = Polynomial("1+x")
+    b = RationalFunction("(-1+y)/(1-z)")
+    c = RationalFunction("-(1+x)*(-1+z)/(-1+y)")
+    assert a / b == c
+
+    a = RationalFunction("(1+x)/(1-z)")
+    b = RationalFunction("(1+x)*(1-y)/(1+x)-(1-y)")
+    with raises(ZeroDivisionError):
+        a / b  # division by zero
+
+
+def test_pow():
+    a = RationalFunction("(1-x)/(1+x)")
+    b = 3
+    c = RationalFunction("(1-3*x+3*x^2-x^3)/(1+3*x+3*x^2+x^3)")
+    assert a ** b == c
+
+    a = RationalFunction("(1-x)/(1+x)")
+    b = 0
+    c = 1
+    assert a ** b == c
+
+    a = RationalFunction("(1-x)/(1+x)")
+    b = -3
+    c = RationalFunction("(1+3*x+3*x^2+x^3)/(1-3*x+3*x^2-x^3)")
+    assert a ** b == c
+
+    a = RationalFunction("0")
+    b = 0
+    c = 1
+    assert a ** b == c  # NOTE: 0^0 = 1 in Python
+
+    a = RationalFunction("0")
+    with raises(ZeroDivisionError):
+        a ** (-3)  # division by zero
+
+
 def test_is():
     a = RationalFunction("0")
     assert a.is_zero

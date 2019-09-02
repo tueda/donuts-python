@@ -1,6 +1,7 @@
 """Polynomial."""
 from __future__ import annotations
 
+from fractions import Fraction
 from typing import Any, Union
 
 from .jvm import jvm
@@ -105,9 +106,27 @@ class Polynomial:
             return Polynomial(other) * self
         return NotImplemented  # type: ignore
 
+    def __truediv__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+        """Return ``self / other``."""
+        if isinstance(other, (Polynomial, int)):
+            return RationalFunction(self, other)
+        elif isinstance(other, Fraction):
+            return RationalFunction(self) / RationalFunction(other)
+        return NotImplemented  # type: ignore
+
+    def __rtruediv__(self, other: Union[Fraction, int]) -> RationalFunction:
+        """Return ``other / self``."""
+        if isinstance(other, int):
+            return RationalFunction(other, self)
+        elif isinstance(other, Fraction):
+            return RationalFunction(other) / RationalFunction(self)
+        return NotImplemented  # type: ignore
+
     def __pow__(self, other: int) -> Polynomial:
         """Return ``self ** other``."""
         if isinstance(other, int):
+            if other <= -1:
+                raise ValueError("negative power given for polynomial")
             return Polynomial._new(self._raw.pow(other))
         return NotImplemented  # type: ignore
 
@@ -163,3 +182,7 @@ class Polynomial:
             else:
                 return int(str(self))
         raise ValueError("not an integer")
+
+
+# This import should be after the definition of Polynomial.
+from .rat import RationalFunction  # isort:skip  # noqa: E402

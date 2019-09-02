@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import Union
+from typing import Any, Union
 
 from .jvm import jvm
 from .poly import Polynomial
@@ -74,6 +74,13 @@ class RationalFunction:
                     raise ZeroDivisionError("division by zero")
                 self._raw = _RawRationalFunction(num._raw, den._raw)
 
+    @staticmethod
+    def _new(raw: Any) -> RationalFunction:
+        """Construct a rational function from a raw object."""
+        obj = RationalFunction()
+        obj._raw = raw
+        return obj
+
     def __str__(self) -> str:
         """Return the string representation."""
         return str(self._raw)
@@ -87,6 +94,88 @@ class RationalFunction:
         if self.is_polynomial:
             return hash(self.as_polynomial)
         return hash(self._raw)
+
+    def __pos__(self) -> RationalFunction:
+        """Return ``+ self``."""
+        return self
+
+    def __neg__(self) -> RationalFunction:
+        """Return ``- self``."""
+        return RationalFunction._new(self._raw.negate())
+
+    def __add__(
+        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+    ) -> RationalFunction:
+        """Return ``self + other``."""
+        if isinstance(other, RationalFunction):
+            return RationalFunction._new(self._raw.add(other._raw))
+        elif isinstance(other, (Polynomial, Fraction, int)):
+            return self + RationalFunction(other)
+        return NotImplemented  # type: ignore
+
+    def __radd__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+        """Return ``other + self``."""
+        if isinstance(other, (Polynomial, Fraction, int)):
+            return RationalFunction(other) + self
+        return NotImplemented  # type: ignore
+
+    def __sub__(
+        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+    ) -> RationalFunction:
+        """Return ``self - other``."""
+        if isinstance(other, RationalFunction):
+            return RationalFunction._new(self._raw.subtract(other._raw))
+        elif isinstance(other, (Polynomial, Fraction, int)):
+            return self - RationalFunction(other)
+        return NotImplemented  # type: ignore
+
+    def __rsub__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+        """Return ``other - self``."""
+        if isinstance(other, (Polynomial, Fraction, int)):
+            return RationalFunction(other) - self
+        return NotImplemented  # type: ignore
+
+    def __mul__(
+        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+    ) -> RationalFunction:
+        """Return ``self * other``."""
+        if isinstance(other, RationalFunction):
+            return RationalFunction._new(self._raw.multiply(other._raw))
+        elif isinstance(other, (Polynomial, Fraction, int)):
+            return self * RationalFunction(other)
+        return NotImplemented  # type: ignore
+
+    def __rmul__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+        """Return ``other * self``."""
+        if isinstance(other, (Polynomial, Fraction, int)):
+            return RationalFunction(other) * self
+        return NotImplemented  # type: ignore
+
+    def __truediv__(
+        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+    ) -> RationalFunction:
+        """Return ``self / other``."""
+        if isinstance(other, RationalFunction):
+            if other.is_zero:
+                raise ZeroDivisionError("division by zero")
+            return RationalFunction._new(self._raw.divide(other._raw))
+        elif isinstance(other, (Polynomial, Fraction, int)):
+            return self / RationalFunction(other)
+        return NotImplemented  # type: ignore
+
+    def __rtruediv__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+        """Return ``other / self``."""
+        if isinstance(other, (Polynomial, Fraction, int)):
+            return RationalFunction(other) / self
+        return NotImplemented  # type: ignore
+
+    def __pow__(self, other: int) -> RationalFunction:
+        """Return ``self ** other``."""
+        if isinstance(other, int):
+            if other <= -1 and self.is_zero:
+                raise ZeroDivisionError("division by zero")
+            return RationalFunction._new(self._raw.pow(other))
+        return NotImplemented  # type: ignore
 
     def __eq__(self, other: object) -> bool:
         """Return ``self == other``."""

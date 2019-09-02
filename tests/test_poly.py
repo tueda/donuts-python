@@ -1,6 +1,8 @@
+from fractions import Fraction
+
 from pytest import raises
 
-from donuts import Polynomial
+from donuts import Polynomial, RationalFunction
 from fixtures.bigints import bigints
 
 
@@ -135,11 +137,52 @@ def test_mul():
     assert a * b == c
 
 
+def test_div():
+    a = Polynomial("1+x")
+    b = Polynomial("1-y")
+    c = RationalFunction("(1+x)/(1-y)")
+    assert a / b == c
+
+    a = Polynomial("1+x")
+    b = Fraction(3, 2)
+    c = RationalFunction("(2+2*x)/3")
+    assert a / b == c
+
+    a = Fraction(-4, 5)
+    b = Polynomial("1-y")
+    c = RationalFunction("-4/(5-5*y)")
+    assert a / b == c
+
+    a = 3
+    b = Polynomial("1-y")
+    c = RationalFunction("3/(1-y)")
+    assert a / b == c
+
+
 def test_pow():
     a = Polynomial("1+x")
     b = 3
     c = Polynomial("(1+x)^3")
     assert a ** b == c
+
+    a = Polynomial("1+x")
+    b = 1
+    c = a
+    assert a ** b == c
+
+    a = Polynomial("1+x")
+    b = 0
+    c = 1
+    assert a ** b == c
+
+    a = Polynomial("0")
+    b = 0
+    c = 1
+    assert a ** b == c  # NOTE: 0^0 = 1 in Python
+
+    a = Polynomial("1+x")
+    with raises(ValueError):
+        a ** (-3)  # negative power
 
 
 def test_cmp():
