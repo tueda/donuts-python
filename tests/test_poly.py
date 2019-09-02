@@ -38,6 +38,12 @@ def test_init_with_bigints(bigints):
         assert a == b
 
 
+def test_repr():
+    a = Polynomial("1+x")
+    b = eval(repr(a))
+    assert a == b
+
+
 def test_hash():
     a = Polynomial(42)
     b = 42

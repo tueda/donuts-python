@@ -85,6 +85,10 @@ class RationalFunction:
         """Return the string representation."""
         return str(self._raw)
 
+    def __repr__(self) -> str:
+        """Return the "official" string representation."""
+        return f"RationalFunction('{self._raw}')"
+
     def __hash__(self) -> int:
         """Return the hash code."""
         if self.is_integer:

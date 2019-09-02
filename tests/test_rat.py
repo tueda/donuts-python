@@ -68,6 +68,12 @@ def test_init_with_bigints(bigints):
                 assert a == c
 
 
+def test_repr():
+    a = RationalFunction("(1+x)/(1+y)")
+    b = eval(repr(a))
+    assert a == b
+
+
 def test_hash():
     a = 42
     b = RationalFunction(a)
