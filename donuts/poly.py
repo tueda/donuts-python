@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import Any, Union
+from typing import Any, List, Union
 
 from .jvm import jvm
 
@@ -195,6 +195,10 @@ class Polynomial:
     def gcd(self, other: Polynomial) -> Polynomial:
         """Return ``GCD(self, other)``."""
         return Polynomial._new(self._raw.gcd(other._raw))
+
+    def factorize(self) -> List[Polynomial]:
+        """Factorize this polynomial."""
+        return [Polynomial._new(x) for x in self._raw.factorize()]
 
 
 # This import should be after the definition of Polynomial.

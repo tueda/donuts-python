@@ -330,3 +330,14 @@ def test_gcd():
     assert zero.gcd(zero) == 0
     assert ag.gcd(zero) == ag
     assert zero.gcd(bg) == bg
+
+
+def test_factorize():
+    a = Polynomial("-2*x^4*y^3 + 2*x^3*y^4 + 2*x^2*y^5 - 2*x*y^6").factorize()
+    b = [
+        Polynomial("-2*x*y^2"),
+        Polynomial("x-y"),
+        Polynomial("x-y"),
+        Polynomial("x+y"),
+    ]
+    assert a == b
