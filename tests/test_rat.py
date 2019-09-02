@@ -96,6 +96,14 @@ def test_hash():
     assert hash(a) == hash(b)
 
 
+def test_bool():
+    a = RationalFunction("0")
+    assert not a
+
+    a = RationalFunction("(-1+x)/(1-y)")
+    assert a
+
+
 def test_pos():
     a = RationalFunction("0")
     assert (+a) == a

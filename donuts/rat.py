@@ -99,6 +99,10 @@ class RationalFunction:
             return hash(self.as_polynomial)
         return hash(self._raw)
 
+    def __bool__(self) -> bool:
+        """Return `True` for non-zero rational functions."""
+        return not self.is_zero
+
     def __pos__(self) -> RationalFunction:
         """Return ``+ self``."""
         return self

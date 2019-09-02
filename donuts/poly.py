@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import Any, List, Union
+from typing import Any, Iterator, List, Union
 
 from .jvm import jvm
 
@@ -59,6 +59,16 @@ class Polynomial:
         if self.is_integer:
             return hash(self.as_integer)
         return hash(self._raw)
+
+    def __len__(self) -> int:
+        """Return the number of terms in this polynomial."""
+        return self._raw.size()  # type: ignore
+
+    def __iter__(self) -> Iterator[Polynomial]:
+        """Return an iterator to iterate terms in this polynomial."""
+        raw_it = self._raw.iterator()
+        while raw_it.hasNext():
+            yield Polynomial._new(next(raw_it))
 
     def __pos__(self) -> Polynomial:
         """Return ``+ self``."""

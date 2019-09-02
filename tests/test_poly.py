@@ -74,6 +74,26 @@ def test_hash_as_key():
     assert d[b] == "b"
 
 
+def test_len():
+    a = Polynomial("0")
+    assert len(a) == 0
+    assert not a
+
+    a = Polynomial("1+x")
+    assert len(a) == 2
+    assert a
+
+
+def test_iter():
+    a = Polynomial("(1+x)^3")
+    n = 0
+    for t in a:
+        assert not t.is_zero
+        assert t.is_monomial
+        n += 1
+    assert n == 4
+
+
 def test_pos():
     a = Polynomial("0")
     assert (+a) == a
