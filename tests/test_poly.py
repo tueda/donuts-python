@@ -303,3 +303,30 @@ def test_as_with_bigints(bigints):
     for n in bigints:
         a = Polynomial(n)
         assert a.as_integer == n
+
+
+def test_signum():
+    a = Polynomial("1-x")
+    b = -a
+
+    assert a.signum == -b.signum
+    assert a * a.signum == b * b.signum
+
+
+def test_gcd():
+    zero = Polynomial("0")
+
+    a = Polynomial("1+x-y")
+    b = Polynomial("1+y+z")
+    g = Polynomial("1-z-z^2")
+
+    ag = a * g
+    bg = b * g
+
+    gcd = ag.gcd(bg)
+
+    assert gcd * gcd.signum == g * g.signum
+
+    assert zero.gcd(zero) == 0
+    assert ag.gcd(zero) == ag
+    assert zero.gcd(bg) == bg

@@ -187,6 +187,15 @@ class Polynomial:
                 return int(str(self))
         raise ValueError("not an integer")
 
+    @property
+    def signum(self) -> int:
+        """Return the signum of the leading coefficient."""
+        return self._raw.signum()  # type: ignore
+
+    def gcd(self, other: Polynomial) -> Polynomial:
+        """Return ``GCD(self, other)``."""
+        return Polynomial._new(self._raw.gcd(other._raw))
+
 
 # This import should be after the definition of Polynomial.
 from .rat import RationalFunction  # isort:skip  # noqa: E402
