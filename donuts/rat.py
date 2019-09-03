@@ -16,6 +16,8 @@ class RationalFunction:
 
     __slots__ = ("_raw",)
 
+    __ZERO = _RawRationalFunction()
+
     def __init__(
         self,
         numerator: Union[int, str, Fraction, Polynomial, RationalFunction, None] = None,
@@ -24,7 +26,7 @@ class RationalFunction:
         """Construct a rational function."""
         if denominator is None:
             if numerator is None:
-                self._raw = _RawRationalFunction()
+                self._raw = RationalFunction.__ZERO
             elif isinstance(numerator, int):
                 if Polynomial._is_short_int(numerator):
                     self._raw = _RawRationalFunction(numerator)

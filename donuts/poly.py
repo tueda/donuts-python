@@ -15,10 +15,12 @@ class Polynomial:
 
     __slots__ = ("_raw",)
 
+    __ZERO = _RawPolynomial()
+
     def __init__(self, value: Union[int, str, Polynomial, None] = None) -> None:
         """Construct a polynomial."""
         if value is None:
-            self._raw = _RawPolynomial()
+            self._raw = Polynomial.__ZERO
         elif isinstance(value, int):
             if Polynomial._is_short_int(value):
                 self._raw = _RawPolynomial(value)

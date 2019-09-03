@@ -55,3 +55,12 @@ html_theme = "alabaster"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
+
+
+# This hack is needed to suppress "WARNING: autodoc: failed to determine
+# JavaObject id=oxx to be documented.the following exception was raised:
+# 'JavaMember' object has no attribute 'rpartition'".
+import donuts  # isort:skip  # noqa: E402
+
+donuts.Polynomial._Polynomial__ZERO = None  # type: ignore
+donuts.RationalFunction._RationalFunction__ZERO = None  # type: ignore
