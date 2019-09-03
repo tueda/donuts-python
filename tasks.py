@@ -17,8 +17,9 @@ def lint(c):  # type: ignore
     """Run linters."""
     c.run("black --check --diff .", pty=True)
     c.run("isort --check-only --diff", pty=True)
-    c.run("flake8 donuts setup.py tasks.py", pty=True)
-    c.run("mypy donuts setup.py tasks.py", pty=True)
+    # We don't include tests/ for flake8 and mypy. It's too annoying!
+    c.run("flake8 docs donuts setup.py tasks.py", pty=True)
+    c.run("mypy docs donuts setup.py tasks.py", pty=True)
 
 
 @task
