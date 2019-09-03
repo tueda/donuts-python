@@ -40,11 +40,16 @@ class Py4JBackend:
         gateway.close()
 
         self._gateway = gateway
+        self._jvm = gateway.jvm
         self._is_instance_of = is_instance_of
 
     def find_class(self, class_name: str) -> Any:
         """Return a Java class."""
-        return self._gateway.jvm.__getattr__(class_name)
+        return self._jvm.__getattr__(class_name)
+
+    def new_array(self, java_class: Any, size: int) -> Any:
+        """Create a Java array."""
+        return self._gateway.new_array(java_class, size)
 
     @property
     def java_error_class(self) -> Any:

@@ -4,5 +4,6 @@
 from .poly import Polynomial as Polynomial
 from .rat import RationalFunction as RationalFunction
 from .var import Variable as Variable
+from .varset import VariableSet as VariableSet
 
-__all__ = ("Polynomial", "RationalFunction", "Variable")
+__all__ = ("Polynomial", "RationalFunction", "Variable", "VariableSet")
