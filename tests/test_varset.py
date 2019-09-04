@@ -1,19 +1,33 @@
+from pytest import raises
+
 from donuts import Variable, VariableSet
 
 
 def test_init():
+    a = VariableSet()
+
+    assert str(a) == "{}"
+    assert eval(repr(a)) == a
+    assert len(a) == 0
+
     x = Variable("x")
     y = Variable("y")
     z = Variable("z")
 
     a = VariableSet(x, y, z)
     b = VariableSet(z, y, x, y)
+    c = VariableSet("x", "y", y, z)
 
     assert str(a) == "{x, y, z}"
     assert eval(repr(a)) == a
     assert len(a) == 3
     assert hash(a) == hash(b)
+    assert hash(a) == hash(c)
     assert a == b
+    assert a == c
+
+    with raises(TypeError):
+        VariableSet("x", "y", ["z"])  # neither Variable nor str
 
 
 def test_iter():
@@ -42,3 +56,32 @@ def test_contains():
     assert y in a
     assert z not in a
     assert "x" not in a
+
+
+def test_union():
+    sa = ["x", "y"]
+    sb = ["x", "z"]
+    sc = sa + sb
+    a = VariableSet(*sa)
+    b = VariableSet(*sb)
+    c = VariableSet(*sc)
+    assert a.union(b) == c
+
+    sa = ["x", "y", "z"]
+    sb = ["a", "b", "c"]
+    sc = sa + sb
+    a = VariableSet(*sa)
+    b = VariableSet(*sb)
+    c = VariableSet(*sc)
+    assert a.union(b) == c
+
+    sa = ["x", "y"]
+    sb = ["a", "b", "c", "x", "y", "z"]
+    sc = sa + sb
+    a = VariableSet(*sa)
+    b = VariableSet(*sb)
+    c = VariableSet(*sc)
+    assert a.union(b) == c
+
+    with raises(TypeError):
+        a.union([])  # not set of variables

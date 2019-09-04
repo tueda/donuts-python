@@ -2,7 +2,7 @@ from fractions import Fraction
 
 from pytest import raises
 
-from donuts import Polynomial, RationalFunction
+from donuts import Polynomial, RationalFunction, Variable, VariableSet
 from fixtures.bigints import bigints
 
 
@@ -16,6 +16,9 @@ def test_init():
     assert str(a) == "42"
 
     a = Polynomial("a")
+    assert str(a) == "a"
+
+    a = Polynomial(Variable("a"))
     assert str(a) == "a"
 
     a = Polynomial(a)
@@ -47,6 +50,12 @@ def test_repr():
 def test_hash():
     a = Polynomial(42)
     b = 42
+
+    assert a == b
+    assert hash(a) == hash(b)
+
+    a = Variable("a")
+    b = Polynomial(a)
 
     assert a == b
     assert hash(a) == hash(b)
@@ -318,6 +327,13 @@ def test_as():
     with raises(ValueError):
         a.as_integer  # not integer
 
+    a = Polynomial("x")
+    assert a.as_variable == Variable("x")
+
+    a = Polynomial("1+x")
+    with raises(ValueError):
+        a.as_variable  # not variable
+
 
 def test_as_with_bigints(bigints):
     for n in bigints:
@@ -331,6 +347,82 @@ def test_signum():
 
     assert a.signum == -b.signum
     assert a * a.signum == b * b.signum
+
+
+def test_variables():
+    a = Polynomial("1+x+y+z-y")
+    assert a.variables == VariableSet("x", "y", "z")
+    assert a.min_variables == VariableSet("x", "z")
+
+
+def test_degree():
+    a = Polynomial("1+x*y+x*y*z^2")
+    assert a.degree() == 4  # total degree
+    assert a.degree(Variable("x")) == 1
+    assert a.degree("z") == 2
+    assert a.degree(VariableSet("x", "y")) == 2
+    assert a.degree("x", "z") == 3
+    assert a.degree(["x", "z", "z"]) == 3
+    assert a.degree([]) == 0  # none of variables
+
+    with raises(TypeError):
+        a.degree(1, 2, 3)  # not variable
+
+
+def test_coeff():
+    a = Polynomial("(1+x+y)^3")
+
+    assert a.coeff(Variable("x"), 0) == Polynomial("(1+y)^3")
+    assert a.coeff("x", 1) == Polynomial("3*(1+y)^2")
+    assert a.coeff("x", 4) == 0
+    assert a.coeff("z", 0) == a
+    assert a.coeff("z", 1) == 0
+
+    with raises(TypeError):
+        a.coeff(1, 1)  # x must be variable
+
+    with raises(TypeError):
+        a.coeff("x", "1")  # n must be int
+
+
+def test_translate():
+    a = Polynomial("(1+x+y)-(1+x+z)")
+
+    s = ["a", "x", "y", "z"]
+    v = VariableSet(*s)
+    b = a.translate(s)
+    assert b == a
+    assert b.variables == v
+
+    s = [Variable("a"), Variable("x"), Variable("y"), Variable("z")]
+    v = VariableSet(*s)
+    b = a.translate(s)
+    assert b == a
+    assert b.variables == v
+
+    # expansion
+    v = VariableSet("a", "x", "y", "z", "zz")
+    b = a.translate(v)
+    assert b == a
+    assert b.variables == v
+
+    # minimization
+    v = VariableSet("y", "z")
+    b = a.translate(v)
+    assert b == a
+    assert b.variables == v
+
+    # minimization and then expansion
+    v = VariableSet("a", "y", "z")
+    b = a.translate(v)
+    assert b == a
+    assert b.variables == v
+
+    with raises(TypeError):
+        a.translate(1, 2)  # not variable
+
+    with raises(ValueError):
+        a.translate("w", "x", "y")  # doesn't fit
 
 
 def test_gcd():
@@ -350,6 +442,9 @@ def test_gcd():
     assert zero.gcd(zero) == 0
     assert ag.gcd(zero) == ag
     assert zero.gcd(bg) == bg
+
+    with raises(TypeError):
+        a.gcd(1)  # not polynomial
 
 
 def test_factorize():

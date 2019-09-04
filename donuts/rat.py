@@ -1,14 +1,19 @@
 """Routines for rational functions."""
 from __future__ import annotations
 
+from collections.abc import Collection
 from fractions import Fraction
-from typing import Any, Union
+from typing import Any, Union, overload
 
 from .jvm import jvm
 from .poly import Polynomial
+from .varset import Variable, VariableSet, VariableSetLike
 
 _RawRationalFunction = jvm.find_class("com.github.tueda.donuts.RationalFunction")
 _JavaError = jvm.java_error_class
+
+# TODO: Remove workaround for F811 once new pyflakes is available.
+# See PyCQA/pyflakes#320.
 
 
 class RationalFunction:
@@ -16,17 +21,19 @@ class RationalFunction:
 
     __slots__ = ("_raw",)
 
-    __ZERO = _RawRationalFunction()
+    __RAW_ZERO = _RawRationalFunction()
 
     def __init__(
         self,
-        numerator: Union[int, str, Fraction, Polynomial, RationalFunction, None] = None,
-        denominator: Union[int, Polynomial, None] = None,
+        numerator: Union[
+            int, str, Fraction, Variable, Polynomial, RationalFunction, None
+        ] = None,
+        denominator: Union[int, Variable, Polynomial, None] = None,
     ) -> None:
         """Construct a rational function."""
         if denominator is None:
             if numerator is None:
-                self._raw = RationalFunction.__ZERO
+                self._raw = RationalFunction.__RAW_ZERO
             elif isinstance(numerator, int):
                 if Polynomial._is_short_int(numerator):
                     self._raw = _RawRationalFunction(numerator)
@@ -49,6 +56,8 @@ class RationalFunction:
                         Polynomial(numerator.numerator)._raw,
                         Polynomial(numerator.denominator)._raw,
                     )
+            elif isinstance(numerator, Variable):
+                self._raw = _RawRationalFunction(numerator._name)
             elif isinstance(numerator, Polynomial):
                 self._raw = _RawRationalFunction(numerator._raw)
             elif isinstance(numerator, RationalFunction):
@@ -93,8 +102,6 @@ class RationalFunction:
 
     def __hash__(self) -> int:
         """Return the hash code."""
-        if self.is_integer:
-            return hash(self.as_integer)
         if self.is_fraction:
             return hash(self.as_fraction)
         if self.is_polynomial:
@@ -191,7 +198,7 @@ class RationalFunction:
         """Return ``self == other``."""
         if isinstance(other, RationalFunction):
             return self._raw.equals(other._raw)  # type: ignore
-        elif isinstance(other, (int, Fraction, Polynomial)):
+        elif isinstance(other, (int, Fraction, Variable, Polynomial)):
             return self == RationalFunction(other)
         return NotImplemented
 
@@ -260,3 +267,51 @@ class RationalFunction:
         if self.is_polynomial:
             return self.numerator
         raise ValueError("not a polynomial")
+
+    @property
+    def as_variable(self) -> Variable:
+        """Cast the rational function to a variable."""
+        if self.is_variable:
+            return Variable._new(self._raw.getNumerator().asVariable())
+        raise ValueError("not a variable")
+
+    @property
+    def variables(self) -> VariableSet:
+        """Return the set of variables."""
+        return VariableSet._new(self._raw.getVariables())
+
+    @property
+    def min_variables(self) -> VariableSet:
+        """Return the set of actually used variables in this polynomial."""
+        return VariableSet._new(self._raw.getMinimalVariables())
+
+    @overload
+    def translate(self, *variables: Union[Variable, str]) -> RationalFunction:
+        """Translate the rational function in terms of the given set of variables."""
+        ...
+
+    @overload  # noqa: F811
+    def translate(self, variables: VariableSetLike) -> RationalFunction:
+        """Translate the rational function in terms of the given set of variables."""
+        ...
+
+    def translate(self, *variables) -> RationalFunction:  # type: ignore  # noqa: F811
+        """Translate the rational function in terms of the given set of variables."""
+        if len(variables) == 1:
+            xx = variables[0]
+            if isinstance(xx, VariableSet):
+                return self._translate_impl(xx._raw)
+            elif isinstance(xx, Collection) and not isinstance(xx, str):
+                return self.translate(*xx)
+
+        if any(not isinstance(x, (str, Variable)) for x in variables):
+            raise TypeError("not Variable")
+
+        return self._translate_impl(VariableSet(*variables)._raw)
+
+    def _translate_impl(self, raw_varset: Any) -> RationalFunction:
+        try:
+            raw = self._raw.translate(raw_varset)
+        except _JavaError as e:
+            raise ValueError("invalid set of variables") from e
+        return RationalFunction._new(raw)

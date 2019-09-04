@@ -1,13 +1,18 @@
 """Polynomial."""
 from __future__ import annotations
 
+from collections.abc import Collection
 from fractions import Fraction
-from typing import Any, Iterator, List, Union
+from typing import Any, Iterator, List, Union, overload
 
 from .jvm import jvm
+from .varset import Variable, VariableSet, VariableSetLike
 
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
 _JavaError = jvm.java_error_class
+
+# TODO: Remove workaround for F811 once new pyflakes is available.
+# See PyCQA/pyflakes#320.
 
 
 class Polynomial:
@@ -15,12 +20,14 @@ class Polynomial:
 
     __slots__ = ("_raw",)
 
-    __ZERO = _RawPolynomial()
+    __RAW_ZERO = _RawPolynomial()
 
-    def __init__(self, value: Union[int, str, Polynomial, None] = None) -> None:
+    def __init__(
+        self, value: Union[int, str, Variable, Polynomial, None] = None
+    ) -> None:
         """Construct a polynomial."""
         if value is None:
-            self._raw = Polynomial.__ZERO
+            self._raw = Polynomial.__RAW_ZERO
         elif isinstance(value, int):
             if Polynomial._is_short_int(value):
                 self._raw = _RawPolynomial(value)
@@ -31,6 +38,8 @@ class Polynomial:
                 self._raw = _RawPolynomial(value)
             except _JavaError as e:
                 raise ValueError("invalid string for polynomial") from e
+        elif isinstance(value, Variable):
+            self._raw = _RawPolynomial(value._name)
         elif isinstance(value, Polynomial):
             self._raw = value._raw
         else:
@@ -60,6 +69,8 @@ class Polynomial:
         """Return the hash code."""
         if self.is_integer:
             return hash(self.as_integer)
+        if self.is_variable:
+            return hash(self.as_variable)
         return hash(self._raw)
 
     def __len__(self) -> int:
@@ -150,7 +161,7 @@ class Polynomial:
         """Return ``self == other``."""
         if isinstance(other, Polynomial):
             return self._raw.equals(other._raw)  # type: ignore
-        elif isinstance(other, int):
+        elif isinstance(other, (int, Variable)):
             return self == Polynomial(other)
         return NotImplemented
 
@@ -200,12 +211,111 @@ class Polynomial:
         raise ValueError("not an integer")
 
     @property
+    def as_variable(self) -> Variable:
+        """Cast the polynomial to a variable."""
+        if self.is_variable:
+            return Variable._new(self._raw.asVariable())
+        raise ValueError("not a variable")
+
+    @property
     def signum(self) -> int:
         """Return the signum of the leading coefficient."""
         return self._raw.signum()  # type: ignore
 
+    @property
+    def variables(self) -> VariableSet:
+        """Return the set of variables."""
+        return VariableSet._new(self._raw.getVariables())
+
+    @property
+    def min_variables(self) -> VariableSet:
+        """Return the set of actually used variables in this polynomial."""
+        return VariableSet._new(self._raw.getMinimalVariables())
+
+    @overload
+    def degree(self) -> int:
+        """Return the total degree."""
+        ...
+
+    @overload  # noqa: F811
+    def degree(self, *variables: Union[Variable, str]) -> int:
+        """Return the degree with respect to the given variables."""
+        ...
+
+    @overload  # noqa: F811
+    def degree(self, variables: VariableSetLike) -> int:
+        """Return the degree with respect to the given variables."""
+        ...
+
+    def degree(self, *variables) -> int:  # type: ignore  # noqa: F811
+        """Return the degree with respect to the specified variables."""
+        if len(variables) == 0:
+            # Return the total degree.
+            return self._raw.degree()  # type: ignore
+
+        if len(variables) == 1:
+            x = variables[0]
+            if isinstance(x, Variable):
+                return self._raw.degree(x._raw)  # type: ignore
+            if isinstance(x, VariableSet):
+                return self._raw.degree(x._raw)  # type: ignore
+            if isinstance(x, Collection) and not isinstance(x, str):
+                if not x:
+                    # None of the variables are specified.
+                    return 0
+                return self.degree(*x)
+
+        if any(not isinstance(x, (str, Variable)) for x in variables):
+            raise TypeError("not Variable")
+
+        return self._raw.degree(VariableSet(*variables)._raw)  # type: ignore
+
+    def coeff(self, x: Union[Variable, str], n: int) -> Polynomial:
+        """Return the coefficient of ``x^n``."""
+        if isinstance(x, str):
+            x = Variable(x)
+        if not isinstance(x, Variable):
+            raise TypeError("x must be a Variable")
+        if not isinstance(n, int):
+            raise TypeError("n must be an int")
+
+        return Polynomial._new(self._raw.coefficientOf(x._raw, n))
+
+    @overload
+    def translate(self, *variables: Union[Variable, str]) -> Polynomial:
+        """Translate the polynomial in terms of the given set of variables."""
+        ...
+
+    @overload  # noqa: F811
+    def translate(self, variables: VariableSetLike) -> Polynomial:
+        """Translate the polynomial in terms of the given set of variables."""
+        ...
+
+    def translate(self, *variables) -> Polynomial:  # type: ignore  # noqa: F811
+        """Translate the polynomial in terms of the given set of variables."""
+        if len(variables) == 1:
+            xx = variables[0]
+            if isinstance(xx, VariableSet):
+                return self._translate_impl(xx._raw)
+            elif isinstance(xx, Collection) and not isinstance(xx, str):
+                return self.translate(*xx)
+
+        if any(not isinstance(x, (str, Variable)) for x in variables):
+            raise TypeError("not Variable")
+
+        return self._translate_impl(VariableSet(*variables)._raw)
+
+    def _translate_impl(self, raw_varset: Any) -> Polynomial:
+        try:
+            raw = self._raw.translate(raw_varset)
+        except _JavaError as e:
+            raise ValueError("invalid set of variables") from e
+        return Polynomial._new(raw)
+
     def gcd(self, other: Polynomial) -> Polynomial:
         """Return ``GCD(self, other)``."""
+        if not isinstance(other, Polynomial):
+            raise TypeError("other must be a Polynomial")
         return Polynomial._new(self._raw.gcd(other._raw))
 
     def factorize(self) -> List[Polynomial]:

@@ -2,7 +2,7 @@ from fractions import Fraction
 
 from pytest import fixture, raises
 
-from donuts import Polynomial, RationalFunction
+from donuts import Polynomial, RationalFunction, Variable, VariableSet
 from fixtures.bigints import bigints
 
 
@@ -19,6 +19,10 @@ def test_init():
     a = Fraction(3, 2)
     b = RationalFunction(a)
     assert a == b
+
+    a = Variable("x")
+    b = RationalFunction(a)
+    assert str(a) == str(b)
 
     a = Polynomial("1+x")
     b = RationalFunction(a)
@@ -81,6 +85,11 @@ def test_hash():
     assert hash(a) == hash(b)
 
     a = Fraction(3, 2)
+    b = RationalFunction(a)
+    assert a == b
+    assert hash(a) == hash(b)
+
+    a = Variable("x")
     b = RationalFunction(a)
     assert a == b
     assert hash(a) == hash(b)
@@ -340,3 +349,61 @@ def test_as_polynomial():
     b = RationalFunction(a)
     with raises(ValueError):
         b.as_polynomial  # not polynomial
+
+
+def test_as_variable():
+    a = Variable("x")
+    b = RationalFunction(str(a))
+    assert a == b.as_variable
+
+    a = RationalFunction("x/2")
+    with raises(ValueError):
+        a.as_variable  # not variable
+
+
+def test_variables():
+    p = Polynomial("(1+x)*(1+y)")
+    q = Polynomial("(1-z)*(1+y)")
+    a = RationalFunction(p, q)
+    assert a.variables == VariableSet("x", "y", "z")
+    assert a.min_variables == VariableSet("x", "z")
+
+
+def test_translate():
+    a = RationalFunction("(1-x)/(1+y)+x/(1+y)-1/(1+z)")
+
+    s = ["a", "x", "y", "z"]
+    v = VariableSet(*s)
+    b = a.translate(s)
+    assert b == a
+    assert b.variables == v
+
+    s = [Variable("a"), Variable("x"), Variable("y"), Variable("z")]
+    v = VariableSet(*s)
+    b = a.translate(s)
+    assert b == a
+    assert b.variables == v
+
+    # expansion
+    v = VariableSet("a", "x", "y", "z", "zz")
+    b = a.translate(v)
+    assert b == a
+    assert b.variables == v
+
+    # minimization
+    v = VariableSet("y", "z")
+    b = a.translate(v)
+    assert b == a
+    assert b.variables == v
+
+    # minimization and then expansion
+    v = VariableSet("a", "y", "z")
+    b = a.translate(v)
+    assert b == a
+    assert b.variables == v
+
+    with raises(TypeError):
+        a.translate(1, 2)  # not variable
+
+    with raises(ValueError):
+        a.translate("w", "x", "y")  # doesn't fit

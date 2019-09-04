@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterator
+from typing import Any, Collection, Iterator, Union
 
 from .jvm import jvm
-from .var import Variable, _RawVariable
+from .var import Variable as Variable  # explicitly re-export for mypy
+from .var import _RawVariable
 
 _RawVariableSet = jvm.find_class("com.github.tueda.donuts.VariableSet")
 _JavaError = jvm.java_error_class
@@ -19,15 +20,25 @@ class VariableSet:
 
     __NONE = Variable("PRIVATENONE")
 
-    def __init__(self, *variables: Variable) -> None:
+    __RAW_EMPTY = _RawVariableSet()
+
+    def __init__(self, *variables: Union[Variable, str]) -> None:
         """Construct a set of variables."""
         if len(variables) == 1:
             if variables[0] == VariableSet.__NONE:
                 # Called from `_new`.
                 return
 
+        if len(variables) == 0:
+            self._raw = VariableSet.__RAW_EMPTY
+            return
+
         array = _new_array(_RawVariable, len(variables))
         for i, x in enumerate(variables):
+            if isinstance(x, str):
+                x = Variable(x)
+            if not isinstance(x, Variable):
+                raise TypeError("not a Variable")
             array[i] = x._raw
 
         self._raw = _RawVariableSet(array)
@@ -74,3 +85,13 @@ class VariableSet:
         if isinstance(other, VariableSet):
             return self._raw.equals(other._raw)  # type: ignore
         return NotImplemented
+
+    def union(self, other: VariableSet) -> VariableSet:
+        """Return the union of this set and the other."""
+        if not isinstance(other, VariableSet):
+            raise TypeError("not set of variables")
+        return VariableSet._new(self._raw.union(other._raw))
+
+
+# For static typing.
+VariableSetLike = Union[VariableSet, Collection[Variable]]
