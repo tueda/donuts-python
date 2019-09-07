@@ -1,4 +1,4 @@
-"""The setup module."""
+"""The setup script."""
 
 import os
 import os.path
@@ -63,7 +63,7 @@ setup(
     version=VERSION,
     packages=find_packages(),
     package_data={"donuts": ["py.typed", "java/build/libs/donuts-all.jar"]},
-    python_requires=">=3.5",
+    python_requires=">=3.7",
     install_requires=["py4j"],
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "pytest-cov", "pytest-xdist"],
