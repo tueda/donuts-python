@@ -407,3 +407,32 @@ def test_translate():
 
     with raises(ValueError):
         a.translate("w", "x", "y")  # doesn't fit
+
+
+def test_subs():
+    a = RationalFunction("(1+x-y)^2/(1+x+y)^2")
+    lhs = Polynomial("x")
+    rhs = RationalFunction("1/y")
+    b = RationalFunction("(1+y-y^2)^2/(1+y+y^2)^2")
+    assert a.subs(lhs, rhs) == b
+
+    a = RationalFunction("(1+x-y)^2/(1+x+y)^2")
+    lhs = "x"
+    rhs = "1/y"
+    b = RationalFunction("(1+y-y^2)^2/(1+y+y^2)^2")
+    assert a.subs(lhs, rhs) == b
+
+    with raises(TypeError):
+        a.subs(1, "x")  # lhs is not a polynomial
+
+    with raises(TypeError):
+        a.subs("x", [])  # rhs is not a polynomial
+
+    with raises(ValueError):
+        a.subs("2*x", 1)  # invalid lhs
+
+    with raises(ValueError):
+        a.subs("1+x", 1)  # invalid lhs
+
+    with raises(ZeroDivisionError):
+        a.subs("x", "-1-y")  # denominator becomes zero

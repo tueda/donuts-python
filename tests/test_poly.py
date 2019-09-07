@@ -456,3 +456,33 @@ def test_factorize():
         Polynomial("x+y"),
     ]
     assert a == b
+
+
+def test_subs():
+    a = Polynomial("(1+x)^3")
+    lhs = Polynomial("x")
+    rhs = Polynomial("y")
+    b = Polynomial("(1+y)^3")
+    assert a.subs(lhs, rhs) == b
+
+    a = Polynomial("(1+x)^3")
+    lhs = "x"
+    rhs = "y"
+    b = Polynomial("(1+y)^3")
+    assert a.subs(lhs, rhs) == b
+
+    a = Polynomial("(1+x+y)^7").subs("x*y^2", 1).subs("x", 7).subs("y", 11)
+    b = 58609171
+    assert a == b
+
+    with raises(TypeError):
+        a.subs(1, "x")  # lhs is not a polynomial
+
+    with raises(TypeError):
+        a.subs("x", [])  # rhs is not a polynomial
+
+    with raises(ValueError):
+        a.subs("2*x", 1)  # invalid lhs
+
+    with raises(ValueError):
+        a.subs("1+x", 1)  # invalid lhs

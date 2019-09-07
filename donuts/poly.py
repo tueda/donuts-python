@@ -322,6 +322,27 @@ class Polynomial:
         """Factorize this polynomial."""
         return [Polynomial._new(x) for x in self._raw.factorize()]
 
+    def subs(
+        self,
+        lhs: Union[Polynomial, Variable, str],
+        rhs: Union[Polynomial, Variable, int, str],
+    ) -> Polynomial:
+        """Return the result of the given substitution."""
+        if isinstance(lhs, Polynomial):
+            if isinstance(rhs, Polynomial):
+                try:
+                    return Polynomial._new(self._raw.substitute(lhs._raw, rhs._raw))
+                except _JavaError as e:
+                    raise ValueError("invalid lhs for substitution") from e
+            elif isinstance(rhs, (Variable, int, str)):
+                return self.subs(lhs, Polynomial(rhs))
+            else:
+                raise TypeError("rhs is not a Polynomial")
+        elif isinstance(lhs, (Variable, str)):
+            return self.subs(Polynomial(lhs), rhs)
+        else:
+            raise TypeError("lhs is not a Polynomial")
+
 
 # This import should be after the definition of Polynomial.
 from .rat import RationalFunction  # isort:skip  # noqa: E402

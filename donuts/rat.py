@@ -315,3 +315,27 @@ class RationalFunction:
         except _JavaError as e:
             raise ValueError("invalid set of variables") from e
         return RationalFunction._new(raw)
+
+    def subs(
+        self,
+        lhs: Union[Polynomial, Variable, str],
+        rhs: Union[RationalFunction, Polynomial, Variable, Fraction, int, str],
+    ) -> RationalFunction:
+        """Return the result of the given substitution."""
+        if isinstance(lhs, Polynomial):
+            if isinstance(rhs, RationalFunction):
+                try:
+                    r = RationalFunction._new(self._raw.substitute(lhs._raw, rhs._raw))
+                except _JavaError as e:
+                    raise ValueError("invalid lhs for substitution") from e
+                if r.denominator.is_zero:
+                    raise ZeroDivisionError("division by zero")
+                return r
+            elif isinstance(rhs, (Polynomial, Variable, Fraction, int, str)):
+                return self.subs(lhs, RationalFunction(rhs))
+            else:
+                raise TypeError("rhs is not a RationalFunction")
+        elif isinstance(lhs, (Variable, str)):
+            return self.subs(Polynomial(lhs), rhs)
+        else:
+            raise TypeError("lhs is not a Polynomial")
