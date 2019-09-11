@@ -1,3 +1,5 @@
+from pickle import dumps, loads
+
 from pytest import raises
 
 from donuts import Variable
@@ -12,6 +14,13 @@ def test_init():
 
     with raises(ValueError):
         Variable("$x")  # invalid name
+
+
+def test_state():
+    a = Variable("a")
+    s = dumps(a)
+    b = loads(s)
+    assert a == b
 
 
 def test_repr():

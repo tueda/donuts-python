@@ -41,6 +41,15 @@ class Variable:
         obj._name = raw.getName()
         return obj
 
+    def __getstate__(self) -> Any:
+        """Get the object state."""
+        return self._name
+
+    def __setstate__(self, state: Any) -> None:
+        """Set the object state."""
+        self._name = state
+        self._raw = _RawVariable(state)
+
     def __str__(self) -> str:
         """Return the string representation."""
         return self._name

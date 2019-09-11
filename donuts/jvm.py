@@ -62,5 +62,18 @@ class Py4JBackend:
 
         return Py4JJavaError
 
+    def serialize(self, java_obj: Any) -> bytes:
+        """Serialize the given Java object."""
+        byte_stream = self._jvm.java.io.ByteArrayOutputStream()
+        object_stream = self._jvm.java.io.ObjectOutputStream(byte_stream)
+        object_stream.writeObject(java_obj)
+        return byte_stream.toByteArray()  # type: ignore
+
+    def deserialize(self, data: bytes) -> Any:
+        """Deserialize a Java object."""
+        byte_stream = self._jvm.java.io.ByteArrayInputStream(data)
+        object_stream = self._jvm.java.io.ObjectInputStream(byte_stream)
+        return object_stream.readObject()
+
 
 jvm = Py4JBackend()

@@ -50,6 +50,14 @@ class VariableSet:
         obj._raw = raw
         return obj
 
+    def __getstate__(self) -> Any:
+        """Get the object state."""
+        return jvm.serialize(self._raw)
+
+    def __setstate__(self, state: Any) -> None:
+        """Set the object state."""
+        self._raw = jvm.deserialize(state)
+
     def __str__(self) -> str:
         """Return the string representation."""
         # NOTE: somehow str(self._raw) doesn't work.

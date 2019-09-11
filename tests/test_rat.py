@@ -1,4 +1,5 @@
 from fractions import Fraction
+from pickle import dumps, loads
 
 from pytest import fixture, raises
 
@@ -70,6 +71,14 @@ def test_init_with_bigints(bigints):
                 c = RationalFunction(f"({m})/({n})")
                 assert a == b
                 assert a == c
+
+
+def test_state():
+    a = RationalFunction("(1+x+y)^3/(1-z-w)/2")
+    s = dumps(a)
+    b = loads(s)
+    assert a == b
+    assert a + b == a * 2
 
 
 def test_repr():

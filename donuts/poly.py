@@ -57,6 +57,14 @@ class Polynomial:
         """Return `True` if the given integer is *short* enough (64 bits)."""
         return -9223372036854775808 <= n <= 9223372036854775807
 
+    def __getstate__(self) -> Any:
+        """Get the object state."""
+        return jvm.serialize(self._raw)
+
+    def __setstate__(self, state: Any) -> None:
+        """Set the object state."""
+        self._raw = jvm.deserialize(state)
+
     def __str__(self) -> str:
         """Return the string representation."""
         return str(self._raw)

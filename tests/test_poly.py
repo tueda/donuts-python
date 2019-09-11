@@ -1,4 +1,5 @@
 from fractions import Fraction
+from pickle import dumps, loads
 
 from pytest import raises
 
@@ -39,6 +40,14 @@ def test_init_with_bigints(bigints):
         a = Polynomial(n)
         b = Polynomial(str(n))
         assert a == b
+
+
+def test_state():
+    a = Polynomial("(1+x+y)^3")
+    s = dumps(a)
+    b = loads(s)
+    assert a == b
+    assert a + b == a * 2
 
 
 def test_repr():

@@ -1,3 +1,5 @@
+from pickle import dumps, loads
+
 from pytest import raises
 
 from donuts import Variable, VariableSet
@@ -28,6 +30,13 @@ def test_init():
 
     with raises(TypeError):
         VariableSet("x", "y", ["z"])  # neither Variable nor str
+
+
+def test_state():
+    a = VariableSet("a", "b", "c")
+    s = dumps(a)
+    b = loads(s)
+    assert a == b
 
 
 def test_iter():
