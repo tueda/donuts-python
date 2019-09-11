@@ -43,6 +43,10 @@ class Py4JBackend:
         self._jvm = gateway.jvm
         self._is_instance_of = is_instance_of
 
+    def __del__(self) -> None:  # pragma: no cover
+        """Destructor."""
+        self._gateway.shutdown()
+
     def find_class(self, class_name: str) -> Any:
         """Return a Java class."""
         return self._jvm.__getattr__(class_name)
