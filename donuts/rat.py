@@ -335,9 +335,11 @@ class RationalFunction:
                 try:
                     r = RationalFunction._new(self._raw.substitute(lhs._raw, rhs._raw))
                 except _JavaError as e:
-                    raise ValueError("invalid lhs for substitution") from e
-                if r.denominator.is_zero:
-                    raise ZeroDivisionError("division by zero")
+                    if e.java_exception.getMessage() == "division by zero":
+                        raise ZeroDivisionError("division by zero") from e
+                    else:
+                        raise ValueError("invalid lhs for substitution") from e
+                assert not r.denominator.is_zero
                 return r
             elif isinstance(rhs, (Polynomial, Variable, Fraction, int, str)):
                 return self.subs(lhs, RationalFunction(rhs))
