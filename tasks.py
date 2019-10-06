@@ -25,7 +25,13 @@ def lint(c):  # type: ignore
 @task
 def test(c):  # type: ignore
     """Run tests."""
-    c.run("pytest --cov=donuts", pty=True)
+    c.run("pytest --benchmark-disable --cov=donuts", pty=True)
+
+
+@task
+def bench(c):  # type: ignore
+    """Run benchmark tests."""
+    c.run("pytest --benchmark-only", pty=True)
 
 
 @task

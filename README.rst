@@ -57,6 +57,7 @@ Development
     pipenv run fmt
     pipenv run lint
     pipenv run test
+    pipenv run bench
     pipenv run doc
 
     # Or run indivisual commands in a virtualenv.
@@ -65,5 +66,6 @@ Development
     isort -y
     flake8
     mypy .
-    pytest --cov=donuts
+    pytest --benchmark-disable --cov=donuts
+    pytest --benchmark-only
     make -C docs html

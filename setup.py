@@ -66,6 +66,6 @@ setup(
     python_requires=">=3.7",
     install_requires=["py4j"],
     setup_requires=["pytest-runner"],
-    tests_require=["pytest", "pytest-cov", "pytest-xdist"],
+    tests_require=["pytest", "pytest-benchmark", "pytest-cov", "pytest-xdist"],
     cmdclass={"build": build, "build_jar": build_jar},
 )
