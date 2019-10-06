@@ -59,11 +59,11 @@ class Polynomial:
 
     def __getstate__(self) -> Any:
         """Get the object state."""
-        return jvm.serialize(self._raw)
+        return self._raw.toString()
 
     def __setstate__(self, state: Any) -> None:
         """Set the object state."""
-        self._raw = jvm.deserialize(state)
+        self._raw = _RawPolynomial(state)
 
     def __str__(self) -> str:
         """Return the string representation."""
