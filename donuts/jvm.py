@@ -1,5 +1,6 @@
 """Interface to Java virtual machine."""
 
+import atexit
 from typing import Any
 
 import pkg_resources
@@ -45,6 +46,10 @@ class Py4JBackend:
 
     def __del__(self) -> None:  # pragma: no cover
         """Destructor."""
+        self.shutdown()  # just in case
+
+    def shutdown(self) -> None:  # pragma: no cover
+        """Shutdown the JVM."""
         self._gateway.shutdown()
 
     def find_class(self, class_name: str) -> Any:
@@ -77,3 +82,4 @@ class Py4JBackend:
 
 
 jvm = Py4JBackend()
+atexit.register(lambda: jvm.shutdown())
