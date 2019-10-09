@@ -69,3 +69,9 @@ Development
     pytest --benchmark-disable --cov=donuts
     pytest --benchmark-only
     make -C docs html
+
+
+License
+-------
+
+MIT
