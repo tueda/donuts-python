@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "donuts-python"
-copyright = "2019, Takahiro Ueda"
+copyright = "2019, Takahiro Ueda"  # noqa: A001
 author = "Takahiro Ueda"
 
 

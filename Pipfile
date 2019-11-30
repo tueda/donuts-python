@@ -8,13 +8,15 @@ donuts-python = {editable = true,path = "."}
 py4j = "*"
 
 [dev-packages]
-black = "==19.3b0"
+black = "==19.10b0"
 flake8 = "*"
 flake8-bugbear = "*"
+flake8-builtins = "*"
+flake8-comprehensions = "*"
 flake8-docstrings = "*"
 invoke = "*"
 isort = "*"
-mypy = ">=0.730"
+mypy = ">=0.750"
 pep8-naming = "*"
 pytest = "*"
 pytest-benchmark = "*"
