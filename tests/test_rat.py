@@ -1,10 +1,10 @@
 from fractions import Fraction
 from pickle import dumps, loads
 
+from fixtures.bigints import bigints
 from pytest import fixture, raises
 
 from donuts import Polynomial, RationalFunction, Variable, VariableSet
-from fixtures.bigints import bigints
 
 
 def test_init():

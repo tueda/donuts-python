@@ -1,7 +1,8 @@
 import pickle
 
-from donuts import RationalFunction
 from test_poly_bench import random_poly
+
+from donuts import RationalFunction
 
 
 def random_rat(nvars=10, ndegree=20, nterms=50, ncoeffbits=32, seed=42):
