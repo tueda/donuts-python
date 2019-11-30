@@ -10,7 +10,7 @@ from typing import List, Tuple
 from setuptools import Command, find_packages, setup
 
 VERSION = "0.0.1"
-JAR_VERSION = "0.0.1"
+JAR_VERSION = "0.0.1-SNAPSHOT"
 
 
 class build(build_):  # type: ignore # noqa: N801
