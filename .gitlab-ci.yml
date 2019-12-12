@@ -12,8 +12,11 @@
 lint:
   image: python:3.7
   before_script:
-    - pip install tox
-  script: tox -e lint
+    - pip install gitlint pre-commit tox
+  script:
+    - gitlint
+    - pre-commit run --all-files
+    - tox -e lint
 
 py37:
   extends: .test
