@@ -13,6 +13,12 @@ VERSION = "0.0.1"
 JAR_VERSION = "0.0.1-SNAPSHOT"
 
 
+def readme() -> str:
+    """Read the README file."""
+    with open("README.rst") as f:
+        return f.read()
+
+
 class build(build_):  # type: ignore # noqa: N801
     """Command to build everything."""
 
@@ -61,6 +67,21 @@ class build_jar(Command):  # type: ignore # noqa: N801
 setup(
     name="donuts-python",
     version=VERSION,
+    description="Python binding to Donuts",
+    long_description=readme(),
+    author="Takahiro Ueda",
+    author_email="tueda@st.seikei.ac.jp",
+    url="https://github.com/tueda/donuts-python",
+    license="MIT",
+    keywords="computer algebra, multivariate polynomial arithmetic",
+    classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Scientific/Engineering :: Mathematics",
+    ],
     packages=find_packages(),
     package_data={"donuts": ["py.typed", "java/build/libs/donuts-all.jar"]},
     python_requires=">=3.7",
