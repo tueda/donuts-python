@@ -479,10 +479,14 @@ def test_lcm():
         a.lcm(1)  # not polynomial
 
 
-def test_factorize():
-    a = Polynomial("-2*x^4*y^3 + 2*x^3*y^4 + 2*x^2*y^5 - 2*x*y^6").factorize()
+def test_factors():
+    a = Polynomial("-2*x^4*y^3 + 2*x^3*y^4 + 2*x^2*y^5 - 2*x*y^6").factors()
     b = [
-        Polynomial("-2*x*y^2"),
+        Polynomial("-2"),
+        Polynomial("y"),
+        Polynomial("y"),
+        Polynomial("y"),
+        Polynomial("x"),
         Polynomial("x-y"),
         Polynomial("x-y"),
         Polynomial("x+y"),

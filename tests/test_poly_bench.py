@@ -109,11 +109,11 @@ def test_poly_factor(benchmark):
     p2 = random_poly(nterms=5, seed=2)
     p3 = random_poly(nterms=5, seed=3)
     p = p1 * p2 * p3
-    result = benchmark(lambda a: a.factorize(), p)
+    result = benchmark(lambda a: a.factors(), p)
     assert result
 
 
 def test_poly_factor_trivial(benchmark):
     p = random_poly(nterms=100)
-    result = benchmark(lambda a: a.factorize(), p)
+    result = benchmark(lambda a: a.factors(), p)
     assert result

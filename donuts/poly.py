@@ -332,9 +332,9 @@ class Polynomial:
             raise TypeError("other must be a Polynomial")
         return Polynomial._new(self._raw.lcm(other._raw))
 
-    def factorize(self) -> List[Polynomial]:
-        """Factorize this polynomial."""
-        return [Polynomial._new(x) for x in self._raw.factorize()]
+    def factors(self) -> List[Polynomial]:
+        """Return the factorization of this polynomial."""
+        return [Polynomial._new(x) for x in self._raw.factors()]
 
     def subs(
         self,
