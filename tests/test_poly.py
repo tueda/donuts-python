@@ -456,6 +456,29 @@ def test_gcd():
         a.gcd(1)  # not polynomial
 
 
+def test_lcm():
+    zero = Polynomial("0")
+    one = Polynomial("1")
+
+    a = Polynomial("24*(1+x)^3*(1+z)")
+    b = Polynomial("18*(1+y)^2*(1+z)")
+    c = Polynomial("72*(1+x)^3*(1+y)^2*(1+z)")
+
+    assert zero.lcm(zero) == 0
+    assert one.lcm(one) == 1
+
+    assert a.lcm(zero) == 0
+    assert zero.lcm(a) == 0
+
+    assert a.lcm(one) == a
+    assert one.lcm(a) == a
+
+    assert a.lcm(b) == c
+
+    with raises(TypeError):
+        a.lcm(1)  # not polynomial
+
+
 def test_factorize():
     a = Polynomial("-2*x^4*y^3 + 2*x^3*y^4 + 2*x^2*y^5 - 2*x*y^6").factorize()
     b = [

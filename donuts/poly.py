@@ -326,6 +326,12 @@ class Polynomial:
             raise TypeError("other must be a Polynomial")
         return Polynomial._new(self._raw.gcd(other._raw))
 
+    def lcm(self, other: Polynomial) -> Polynomial:
+        """Return ``LCM(self, other)``."""
+        if not isinstance(other, Polynomial):
+            raise TypeError("other must be a Polynomial")
+        return Polynomial._new(self._raw.lcm(other._raw))
+
     def factorize(self) -> List[Polynomial]:
         """Factorize this polynomial."""
         return [Polynomial._new(x) for x in self._raw.factorize()]
