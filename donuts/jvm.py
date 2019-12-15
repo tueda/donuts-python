@@ -1,6 +1,5 @@
 """Interface to Java virtual machine."""
 
-import atexit
 from typing import Any
 
 import pkg_resources
@@ -14,9 +13,7 @@ class Py4JBackend:
     def __init__(self) -> None:
         """Create a JVM."""
         from py4j.java_gateway import (
-            CallbackServerParameters,
             GatewayParameters,
-            is_instance_of,
             JavaGateway,
             launch_gateway,
         )
@@ -25,32 +22,16 @@ class Py4JBackend:
         with open(_JAR_FILE, "rb"):
             pass
 
-        (port, token) = launch_gateway(classpath=_JAR_FILE, enable_auth=True)
+        (port, token) = launch_gateway(
+            classpath=_JAR_FILE, enable_auth=True, die_on_exit=True
+        )
 
         gateway = JavaGateway(
             gateway_parameters=GatewayParameters(port=port, auth_token=token),
-            callback_server_parameters=CallbackServerParameters(port=0),
         )
-
-        python_port = gateway.get_callback_server().get_listening_port()
-
-        gateway.java_gateway_server.resetCallbackClient(
-            gateway.java_gateway_server.getCallbackClient().getAddress(), python_port
-        )
-
-        gateway.close()
 
         self._gateway = gateway
         self._jvm = gateway.jvm
-        self._is_instance_of = is_instance_of
-
-    def __del__(self) -> None:  # pragma: no cover
-        """Destructor."""
-        self.shutdown()  # just in case
-
-    def shutdown(self) -> None:  # pragma: no cover
-        """Shutdown the JVM."""
-        self._gateway.shutdown()
 
     def find_class(self, class_name: str) -> Any:
         """Return a Java class."""
@@ -82,4 +63,3 @@ class Py4JBackend:
 
 
 jvm = Py4JBackend()
-atexit.register(lambda: jvm.shutdown())
