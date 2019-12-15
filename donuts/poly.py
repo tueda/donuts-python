@@ -246,12 +246,12 @@ class Polynomial:
         ...
 
     @overload  # noqa: F811
-    def degree(self, *variables: Union[Variable, str]) -> int:
+    def degree(self, *variables: Union[Variable, str]) -> int:  # noqa: F811
         """Return the degree with respect to the given variables."""
         ...
 
     @overload  # noqa: F811
-    def degree(self, variables: VariableSetLike) -> int:
+    def degree(self, variables: VariableSetLike) -> int:  # noqa: F811
         """Return the degree with respect to the given variables."""
         ...
 
@@ -295,7 +295,7 @@ class Polynomial:
         ...
 
     @overload  # noqa: F811
-    def translate(self, variables: VariableSetLike) -> Polynomial:
+    def translate(self, variables: VariableSetLike) -> Polynomial:  # noqa: F811
         """Translate the polynomial in terms of the given set of variables."""
         ...
 

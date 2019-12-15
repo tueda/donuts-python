@@ -1,3 +1,11 @@
+.lint:
+  before_script:
+    - pip install gitlint pre-commit tox
+  script:
+    - gitlint
+    - pre-commit run --all-files
+    - tox -e lint
+
 .test:
   before_script:
   - git submodule update --init --recursive
@@ -9,14 +17,13 @@
       - htmlcov
     expire_in: 1 week
 
-lint:
+lint37:
+  extends: .lint
   image: python:3.7
-  before_script:
-    - pip install gitlint pre-commit tox
-  script:
-    - gitlint
-    - pre-commit run --all-files
-    - tox -e lint
+
+lint38:
+  extends: .lint
+  image: python:3.8
 
 py37:
   extends: .test
@@ -25,12 +32,12 @@ py37:
 
 py38:
   extends: .test
-  image: python:3.8-rc
+  image: python:3.8
   script: tox -e py38
 
 doc:
   extends: .test
-  image: python:3.7
+  image: python:3.8
   script: tox -e doc
   artifacts:
     paths:

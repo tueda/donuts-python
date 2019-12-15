@@ -299,7 +299,7 @@ class RationalFunction:
         ...
 
     @overload  # noqa: F811
-    def translate(self, variables: VariableSetLike) -> RationalFunction:
+    def translate(self, variables: VariableSetLike) -> RationalFunction:  # noqa: F811
         """Translate the rational function in terms of the given set of variables."""
         ...
 
