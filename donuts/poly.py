@@ -3,13 +3,14 @@ from __future__ import annotations
 
 from collections.abc import Collection
 from fractions import Fraction
-from typing import Any, Iterator, List, Union, overload
+from typing import Any, Iterable, Iterator, List, Sequence, Union, overload
 
 from .jvm import jvm
 from .varset import Variable, VariableSet, VariableSetLike
 
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
 _JavaError = jvm.java_error_class
+_new_array = jvm.new_array
 
 # TODO: Remove workaround for F811 once new pyflakes is available.
 # See PyCQA/pyflakes#320.
@@ -360,6 +361,64 @@ class Polynomial:
             return self.subs(Polynomial(lhs), rhs)
         else:
             raise TypeError("lhs is not a Polynomial")
+
+
+def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
+    if len(polynomials) == 1:
+        x = polynomials[0]
+        if isinstance(x, Sequence) and not isinstance(x, (Polynomial, str)):
+            return _create_raw_poly_array(x)
+        if isinstance(x, Iterable) and not isinstance(x, (Polynomial, str)):
+            return _create_raw_poly_array(tuple(x))
+
+    array = _new_array(_RawPolynomial, len(polynomials))
+    for i in range(len(polynomials)):
+        x = polynomials[i]
+        if isinstance(x, Polynomial):
+            array[i] = x._raw
+        elif isinstance(x, int):
+            array[i] = Polynomial(x)._raw
+        else:
+            raise TypeError("not Polynomial")
+    return array
+
+
+@overload
+def gcd(*polynomials: Union[Polynomial, int]) -> Polynomial:
+    """Return the GCD of the given polynomials."""
+    pass
+
+
+@overload
+def gcd(polynomials: Iterable[Union[Polynomial, int]]) -> Polynomial:
+    """Return the GCD of the given polynomials."""
+    pass
+
+
+def gcd(*polynomials) -> Polynomial:  # type: ignore
+    """Return the GCD of the given polynomials."""
+    array = _create_raw_poly_array(polynomials)
+    return Polynomial._new(_RawPolynomial.gcdOf(array))
+
+
+@overload
+def lcm(*polynomials: Union[Polynomial, int]) -> Polynomial:
+    """Return the LCM of the given polynomials."""
+    pass
+
+
+@overload
+def lcm(polynomials: Iterable[Union[Polynomial, int]]) -> Polynomial:
+    """Return the LCM of the given polynomials."""
+    pass
+
+
+def lcm(*polynomials) -> Polynomial:  # type: ignore
+    """Return the LCM of the given polynomials."""
+    array = _create_raw_poly_array(polynomials)
+    if len(polynomials) == 0:
+        raise ValueError("lcm with no arguments")
+    return Polynomial._new(_RawPolynomial.lcmOf(array))
 
 
 # This import should be after the definition of Polynomial.

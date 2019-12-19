@@ -4,6 +4,7 @@ from pickle import dumps, loads
 from fixtures.bigints import bigints
 from pytest import raises
 
+import donuts
 from donuts import Polynomial, RationalFunction, Variable, VariableSet
 
 
@@ -528,3 +529,68 @@ def test_subs():
 
     with raises(ValueError):
         a.subs("1+x", 1)  # invalid lhs
+
+
+def test_gcd_of():
+    p1 = Polynomial("1+x")
+    p2 = Polynomial("1+y")
+    p3 = Polynomial("1+z")
+    q = p1 * p2 * p3
+    a = [p1 ** 2 * p2 ** 3 * p3 ** 2, p1 ** 3 * p2 ** 2 * p3, p1 * p2 * p3 ** 3]
+
+    assert donuts.poly.gcd(a) == q
+    assert donuts.poly.gcd(*a) == q
+    assert donuts.poly.gcd(x for x in a) == q
+    assert donuts.poly.gcd(a + [1]) == 1
+
+    assert donuts.poly.gcd() == 0
+
+    assert donuts.poly.gcd(0) == 0
+    assert donuts.poly.gcd(1) == 1
+    assert donuts.poly.gcd(p1) == p1
+
+    assert donuts.poly.gcd(0, 0) == 0
+    assert donuts.poly.gcd(0, 1) == 1
+    assert donuts.poly.gcd(0, p1) == p1
+    assert donuts.poly.gcd(1, 0) == 1
+    assert donuts.poly.gcd(1, 1) == 1
+    assert donuts.poly.gcd(1, p1) == 1
+    assert donuts.poly.gcd(p1, 0) == p1
+    assert donuts.poly.gcd(p1, 1) == 1
+    assert donuts.poly.gcd(p1, p1) == p1
+
+    with raises(TypeError):
+        donuts.poly.gcd("x")  # not Polynomial
+
+
+def test_lcm_of():
+    p1 = Polynomial("1+x")
+    p2 = Polynomial("1+y")
+    p3 = Polynomial("1+z")
+    q = p1 ** 3 * p2 ** 3 * p3 ** 3
+    a = [p1 ** 2 * p2 ** 3 * p3 ** 2, p1 ** 3 * p2 ** 2 * p3, p1 * p2 * p3 ** 3]
+
+    assert donuts.poly.lcm(a) == q
+    assert donuts.poly.lcm(*a) == q
+    assert donuts.poly.lcm(x for x in a) == q
+    assert donuts.poly.lcm(a + [2]) == 2 * q
+
+    assert donuts.poly.lcm(0) == 0
+    assert donuts.poly.lcm(1) == 1
+    assert donuts.poly.lcm(p1) == p1
+
+    assert donuts.poly.lcm(0, 0) == 0
+    assert donuts.poly.lcm(0, 1) == 0
+    assert donuts.poly.lcm(0, p1) == 0
+    assert donuts.poly.lcm(1, 0) == 0
+    assert donuts.poly.lcm(1, 1) == 1
+    assert donuts.poly.lcm(1, p1) == p1
+    assert donuts.poly.lcm(p1, 0) == 0
+    assert donuts.poly.lcm(p1, 1) == p1
+    assert donuts.poly.lcm(p1, p1) == p1
+
+    with raises(ValueError):
+        assert donuts.poly.lcm()  # no arguments
+
+    with raises(TypeError):
+        donuts.poly.lcm("x")  # not Polynomial
