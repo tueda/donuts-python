@@ -452,8 +452,11 @@ def test_gcd():
     assert ag.gcd(zero) == ag
     assert zero.gcd(bg) == bg
 
+    a = Polynomial("24*(1+x)")
+    assert a.gcd(18) == 6
+
     with raises(TypeError):
-        a.gcd(1)  # not polynomial
+        a.gcd("1")  # not polynomial
 
 
 def test_lcm():
@@ -475,8 +478,11 @@ def test_lcm():
 
     assert a.lcm(b) == c
 
+    a = Polynomial("24*(1+x)")
+    assert a.lcm(18) == Polynomial("72*(1+x)")
+
     with raises(TypeError):
-        a.lcm(1)  # not polynomial
+        a.lcm("1")  # not polynomial
 
 
 def test_factors():

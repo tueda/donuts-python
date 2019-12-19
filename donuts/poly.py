@@ -320,14 +320,18 @@ class Polynomial:
             raise ValueError("invalid set of variables") from e
         return Polynomial._new(raw)
 
-    def gcd(self, other: Polynomial) -> Polynomial:
+    def gcd(self, other: Union[Polynomial, int]) -> Polynomial:
         """Return ``GCD(self, other)``."""
+        if isinstance(other, int):
+            return self.gcd(Polynomial(other))
         if not isinstance(other, Polynomial):
             raise TypeError("other must be a Polynomial")
         return Polynomial._new(self._raw.gcd(other._raw))
 
-    def lcm(self, other: Polynomial) -> Polynomial:
+    def lcm(self, other: Union[Polynomial, int]) -> Polynomial:
         """Return ``LCM(self, other)``."""
+        if isinstance(other, int):
+            return self.lcm(Polynomial(other))
         if not isinstance(other, Polynomial):
             raise TypeError("other must be a Polynomial")
         return Polynomial._new(self._raw.lcm(other._raw))
