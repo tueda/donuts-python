@@ -26,9 +26,9 @@ class RationalFunction:
     def __init__(
         self,
         numerator: Union[
-            int, str, Fraction, Variable, Polynomial, RationalFunction, None
+            RationalFunction, Polynomial, Variable, Fraction, int, str, None
         ] = None,
-        denominator: Union[int, Variable, Polynomial, None] = None,
+        denominator: Union[Polynomial, Variable, int, None] = None,
     ) -> None:
         """Construct a rational function."""
         if denominator is None:
@@ -65,7 +65,7 @@ class RationalFunction:
             else:
                 raise TypeError(f"invalid numerator: `{numerator}`")
         else:
-            if isinstance(numerator, (str, Fraction, RationalFunction)):
+            if isinstance(numerator, (RationalFunction, Fraction, str)):
                 raise TypeError(
                     f"invalid numerator as denominator is given: `{numerator}`"
                 )
@@ -129,68 +129,76 @@ class RationalFunction:
         return RationalFunction._new(self._raw.negate())
 
     def __add__(
-        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+        self, other: Union[RationalFunction, Polynomial, Variable, Fraction, int]
     ) -> RationalFunction:
         """Return ``self + other``."""
         if isinstance(other, RationalFunction):
             return RationalFunction._new(self._raw.add(other._raw))
-        elif isinstance(other, (Polynomial, Fraction, int)):
+        elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self + RationalFunction(other)
         return NotImplemented  # type: ignore
 
-    def __radd__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+    def __radd__(
+        self, other: Union[Polynomial, Variable, Fraction, int]
+    ) -> RationalFunction:
         """Return ``other + self``."""
-        if isinstance(other, (Polynomial, Fraction, int)):
+        if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) + self
         return NotImplemented  # type: ignore
 
     def __sub__(
-        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+        self, other: Union[RationalFunction, Polynomial, Variable, Fraction, int]
     ) -> RationalFunction:
         """Return ``self - other``."""
         if isinstance(other, RationalFunction):
             return RationalFunction._new(self._raw.subtract(other._raw))
-        elif isinstance(other, (Polynomial, Fraction, int)):
+        elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self - RationalFunction(other)
         return NotImplemented  # type: ignore
 
-    def __rsub__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+    def __rsub__(
+        self, other: Union[Polynomial, Variable, Fraction, int]
+    ) -> RationalFunction:
         """Return ``other - self``."""
-        if isinstance(other, (Polynomial, Fraction, int)):
+        if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) - self
         return NotImplemented  # type: ignore
 
     def __mul__(
-        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+        self, other: Union[RationalFunction, Polynomial, Variable, Fraction, int]
     ) -> RationalFunction:
         """Return ``self * other``."""
         if isinstance(other, RationalFunction):
             return RationalFunction._new(self._raw.multiply(other._raw))
-        elif isinstance(other, (Polynomial, Fraction, int)):
+        elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self * RationalFunction(other)
         return NotImplemented  # type: ignore
 
-    def __rmul__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+    def __rmul__(
+        self, other: Union[Polynomial, Variable, Fraction, int]
+    ) -> RationalFunction:
         """Return ``other * self``."""
-        if isinstance(other, (Polynomial, Fraction, int)):
+        if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) * self
         return NotImplemented  # type: ignore
 
     def __truediv__(
-        self, other: Union[RationalFunction, Polynomial, Fraction, int]
+        self, other: Union[RationalFunction, Polynomial, Variable, Fraction, int]
     ) -> RationalFunction:
         """Return ``self / other``."""
         if isinstance(other, RationalFunction):
             if other.is_zero:
                 raise ZeroDivisionError("division by zero")
             return RationalFunction._new(self._raw.divide(other._raw))
-        elif isinstance(other, (Polynomial, Fraction, int)):
+        elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self / RationalFunction(other)
         return NotImplemented  # type: ignore
 
-    def __rtruediv__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+    def __rtruediv__(
+        self, other: Union[Polynomial, Variable, Fraction, int]
+    ) -> RationalFunction:
         """Return ``other / self``."""
-        if isinstance(other, (Polynomial, Fraction, int)):
+        if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) / self
         return NotImplemented  # type: ignore
 
@@ -206,7 +214,7 @@ class RationalFunction:
         """Return ``self == other``."""
         if isinstance(other, RationalFunction):
             return self._raw.equals(other._raw)  # type: ignore
-        elif isinstance(other, (int, Fraction, Variable, Polynomial)):
+        elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self == RationalFunction(other)
         return NotImplemented
 

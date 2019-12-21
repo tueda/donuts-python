@@ -2,7 +2,7 @@ from pickle import dumps, loads
 
 from pytest import raises
 
-from donuts import Variable
+from donuts import Polynomial, Variable
 
 
 def test_init():
@@ -54,3 +54,47 @@ def test_cmp():
                 assert x > y
             if i >= j:
                 assert x >= y
+
+
+def test_pos():
+    a = Variable("a")
+    assert (+a) == Polynomial("a")
+
+
+def test_neg():
+    a = Variable("a")
+    assert (-a) == Polynomial("-a")
+
+
+def test_add():
+    a = Variable("a")
+    b = Variable("b")
+    assert a + a == Polynomial("2*a")
+    assert a + b == Polynomial("a+b")
+    assert a + 1 == Polynomial("a+1")
+    assert 1 + a == Polynomial("1+a")
+
+
+def test_sub():
+    a = Variable("a")
+    b = Variable("b")
+    assert a - a == Polynomial("0")
+    assert a - b == Polynomial("a-b")
+    assert a - 1 == Polynomial("a-1")
+    assert 1 - a == Polynomial("1-a")
+
+
+def test_mul():
+    a = Variable("a")
+    b = Variable("b")
+    assert a * a == Polynomial("a^2")
+    assert a * b == Polynomial("a*b")
+    assert a * 2 == Polynomial("2*a")
+    assert 2 * a == Polynomial("2*a")
+
+
+def test_pow():
+    a = Variable("a")
+    assert a ** 0 == Polynomial("1")
+    assert a ** 1 == Polynomial("a")
+    assert a ** 2 == Polynomial("a^2")

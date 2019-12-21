@@ -6,7 +6,6 @@ from fractions import Fraction
 from typing import Any, Iterable, Iterator, List, Sequence, Union, overload
 
 from .jvm import jvm
-from .varset import Variable, VariableSet, VariableSetLike
 
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
 _JavaError = jvm.java_error_class
@@ -24,7 +23,7 @@ class Polynomial:
     __RAW_ZERO = _RawPolynomial()
 
     def __init__(
-        self, value: Union[int, str, Variable, Polynomial, None] = None
+        self, value: Union[Polynomial, Variable, int, str, None] = None
     ) -> None:
         """Construct a polynomial."""
         if value is None:
@@ -100,59 +99,61 @@ class Polynomial:
         """Return ``- self``."""
         return Polynomial._new(self._raw.negate())
 
-    def __add__(self, other: Union[Polynomial, int]) -> Polynomial:
+    def __add__(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``self + other``."""
         if isinstance(other, Polynomial):
             return Polynomial._new(self._raw.add(other._raw))
-        elif isinstance(other, int):
+        elif isinstance(other, (Variable, int)):
             return self + Polynomial(other)
         return NotImplemented  # type: ignore
 
-    def __radd__(self, other: int) -> Polynomial:
+    def __radd__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``other + self``."""
-        if isinstance(other, int):
+        if isinstance(other, (Variable, int)):
             return Polynomial(other) + self
         return NotImplemented  # type: ignore
 
-    def __sub__(self, other: Union[Polynomial, int]) -> Polynomial:
+    def __sub__(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``self - other``."""
         if isinstance(other, Polynomial):
             return Polynomial._new(self._raw.subtract(other._raw))
-        elif isinstance(other, int):
+        elif isinstance(other, (Variable, int)):
             return self - Polynomial(other)
         return NotImplemented  # type: ignore
 
-    def __rsub__(self, other: int) -> Polynomial:
+    def __rsub__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``other - self``."""
-        if isinstance(other, int):
+        if isinstance(other, (Variable, int)):
             return Polynomial(other) - self
         return NotImplemented  # type: ignore
 
-    def __mul__(self, other: Union[Polynomial, int]) -> Polynomial:
+    def __mul__(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``self * other``."""
         if isinstance(other, Polynomial):
             return Polynomial._new(self._raw.multiply(other._raw))
-        elif isinstance(other, int):
+        elif isinstance(other, (Variable, int)):
             return self * Polynomial(other)
         return NotImplemented  # type: ignore
 
-    def __rmul__(self, other: int) -> Polynomial:
+    def __rmul__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``other * self``."""
-        if isinstance(other, int):
+        if isinstance(other, (Variable, int)):
             return Polynomial(other) * self
         return NotImplemented  # type: ignore
 
-    def __truediv__(self, other: Union[Polynomial, Fraction, int]) -> RationalFunction:
+    def __truediv__(
+        self, other: Union[Polynomial, Variable, Fraction, int]
+    ) -> RationalFunction:
         """Return ``self / other``."""
-        if isinstance(other, (Polynomial, int)):
+        if isinstance(other, (Polynomial, Variable, int)):
             return RationalFunction(self, other)
         elif isinstance(other, Fraction):
             return RationalFunction(self) / RationalFunction(other)
         return NotImplemented  # type: ignore
 
-    def __rtruediv__(self, other: Union[Fraction, int]) -> RationalFunction:
+    def __rtruediv__(self, other: Union[Variable, Fraction, int]) -> RationalFunction:
         """Return ``other / self``."""
-        if isinstance(other, int):
+        if isinstance(other, (Variable, int)):
             return RationalFunction(other, self)
         elif isinstance(other, Fraction):
             return RationalFunction(other) / RationalFunction(self)
@@ -170,7 +171,7 @@ class Polynomial:
         """Return ``self == other``."""
         if isinstance(other, Polynomial):
             return self._raw.equals(other._raw)  # type: ignore
-        elif isinstance(other, (int, Variable)):
+        elif isinstance(other, (Variable, int)):
             return self == Polynomial(other)
         return NotImplemented
 
@@ -274,7 +275,7 @@ class Polynomial:
                     return 0
                 return self.degree(*x)
 
-        if any(not isinstance(x, (str, Variable)) for x in variables):
+        if any(not isinstance(x, (Variable, str)) for x in variables):
             raise TypeError("not Variable")
 
         return self._raw.degree(VariableSet(*variables)._raw)  # type: ignore
@@ -309,7 +310,7 @@ class Polynomial:
             elif isinstance(xx, Collection) and not isinstance(xx, str):
                 return self.translate(*xx)
 
-        if any(not isinstance(x, (str, Variable)) for x in variables):
+        if any(not isinstance(x, (Variable, str)) for x in variables):
             raise TypeError("not Variable")
 
         return self._translate_impl(VariableSet(*variables)._raw)
@@ -321,17 +322,17 @@ class Polynomial:
             raise ValueError("invalid set of variables") from e
         return Polynomial._new(raw)
 
-    def gcd(self, other: Union[Polynomial, int]) -> Polynomial:
+    def gcd(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``GCD(self, other)``."""
-        if isinstance(other, int):
+        if isinstance(other, (Variable, int)):
             return self.gcd(Polynomial(other))
         if not isinstance(other, Polynomial):
             raise TypeError("other must be a Polynomial")
         return Polynomial._new(self._raw.gcd(other._raw))
 
-    def lcm(self, other: Union[Polynomial, int]) -> Polynomial:
+    def lcm(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``LCM(self, other)``."""
-        if isinstance(other, int):
+        if isinstance(other, (Variable, int)):
             return self.lcm(Polynomial(other))
         if not isinstance(other, Polynomial):
             raise TypeError("other must be a Polynomial")
@@ -376,7 +377,7 @@ def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
         x = polynomials[i]
         if isinstance(x, Polynomial):
             array[i] = x._raw
-        elif isinstance(x, int):
+        elif isinstance(x, (Variable, int)):
             array[i] = Polynomial(x)._raw
         else:
             raise TypeError("not Polynomial")
@@ -384,15 +385,15 @@ def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
 
 
 @overload
-def gcd(*polynomials: Union[Polynomial, int]) -> Polynomial:
+def gcd(*polynomials: Union[Polynomial, Variable, int]) -> Polynomial:
     """Return the GCD of the given polynomials."""
-    pass
+    ...
 
 
 @overload
-def gcd(polynomials: Iterable[Union[Polynomial, int]]) -> Polynomial:
+def gcd(polynomials: Iterable[Union[Polynomial, Variable, int]]) -> Polynomial:
     """Return the GCD of the given polynomials."""
-    pass
+    ...
 
 
 def gcd(*polynomials) -> Polynomial:  # type: ignore
@@ -402,15 +403,15 @@ def gcd(*polynomials) -> Polynomial:  # type: ignore
 
 
 @overload
-def lcm(*polynomials: Union[Polynomial, int]) -> Polynomial:
+def lcm(*polynomials: Union[Polynomial, Variable, int]) -> Polynomial:
     """Return the LCM of the given polynomials."""
-    pass
+    ...
 
 
 @overload
-def lcm(polynomials: Iterable[Union[Polynomial, int]]) -> Polynomial:
+def lcm(polynomials: Iterable[Union[Polynomial, Variable, int]]) -> Polynomial:
     """Return the LCM of the given polynomials."""
-    pass
+    ...
 
 
 def lcm(*polynomials) -> Polynomial:  # type: ignore
@@ -421,5 +422,6 @@ def lcm(*polynomials) -> Polynomial:  # type: ignore
     return Polynomial._new(_RawPolynomial.lcmOf(array))
 
 
-# This import should be after the definition of Polynomial.
+# These imports should be after the definition of Polynomial.
+from .varset import Variable, VariableSet, VariableSetLike  # isort:skip  # noqa: E402
 from .rat import RationalFunction  # isort:skip  # noqa: E402
