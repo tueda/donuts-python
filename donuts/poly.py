@@ -363,6 +363,20 @@ class Polynomial:
         else:
             raise TypeError("lhs is not a Polynomial")
 
+    def diff(self, x: Union[Variable, str], n: int = 1) -> Polynomial:
+        """Differentiate this polynomial."""
+        if isinstance(x, str):
+            x = Variable(x)
+
+        if not isinstance(x, Variable):
+            raise TypeError("x must be a Variable")
+        if not isinstance(n, int):
+            raise TypeError("n must be an int")
+        if n < 0:
+            raise ValueError("n must be non-negative")
+
+        return Polynomial._new(self._raw.derivative(x._raw, n))
+
 
 def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
     if len(polynomials) == 1:

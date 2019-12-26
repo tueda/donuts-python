@@ -531,6 +531,29 @@ def test_subs():
         a.subs("1+x", 1)  # invalid lhs
 
 
+def test_diff():
+    a = Polynomial("(1+x+y)^3")
+    x = Variable("x")
+    assert a.diff(x) == Polynomial("3*(1+x+y)^2")
+
+    a = Polynomial("(1+x+y)^3")
+    assert a.diff("y") == Polynomial("3*(1+x+y)^2")
+
+    a = Polynomial("(1+x)^9")
+    assert a.diff("x", 0) == a
+    assert a.diff("x", 1) == Polynomial("9*(1+x)^8")
+    assert a.diff("x", 2) == Polynomial("72*(1+x)^7")
+
+    with raises(TypeError):
+        a.diff(1)  # x must be a Variable
+
+    with raises(TypeError):
+        a.diff(x, "x")  # n must be an int
+
+    with raises(ValueError):
+        a.diff(x, -1)  # n must be non-negative
+
+
 def test_gcd_of():
     p1 = Polynomial("1+x")
     p2 = Polynomial("1+y")

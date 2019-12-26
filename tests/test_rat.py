@@ -445,3 +445,28 @@ def test_subs():
 
     with raises(ZeroDivisionError):
         a.subs("x", "-1-y")  # denominator becomes zero
+
+
+def test_diff():
+    a = RationalFunction("(1+x+y)^2/(1/2+x-y*x^5)")
+    x = Variable("x")
+    assert a.diff(x) == RationalFunction(
+        "(4*(1+x+y)*(x-y+5*x^4*y+3*x^5*y+5*x^4*y^2))/(-1-2*x+2*x^5*y)^2"
+    )
+
+    a = RationalFunction("(1+x+y)/(1-x-y)")
+    assert a.diff("y") == RationalFunction("2/(1-x-y)^2")
+
+    a = RationalFunction("(1+x)/(1-x)")
+    assert a.diff("x", 0) == a
+    assert a.diff("x", 1) == RationalFunction("2/(1-x)^2")
+    assert a.diff("x", 2) == RationalFunction("4/(1-x)^3")
+
+    with raises(TypeError):
+        a.diff(1)  # x must be a Variable
+
+    with raises(TypeError):
+        a.diff(x, "x")  # n must be an int
+
+    with raises(ValueError):
+        a.diff(x, -1)  # n must be non-negative
