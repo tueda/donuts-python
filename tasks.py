@@ -29,9 +29,14 @@ def test(c):  # type: ignore
 
 
 @task
-def bench(c):  # type: ignore
+def bench(c, save=False, compare=None):  # type: ignore
     """Run benchmark tests."""
-    c.run("pytest --benchmark-only", pty=True)
+    args = ""
+    if save:
+        args += " --benchmark-autosave"
+    if compare:
+        args += f" --benchmark-group-by=func --benchmark-compare={compare}"
+    c.run("pytest --benchmark-only" + args, pty=True)
 
 
 @task
