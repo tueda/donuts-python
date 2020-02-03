@@ -1,7 +1,7 @@
 import pickle
 import random
 
-from donuts import Polynomial
+from donuts import Polynomial, Variable
 
 
 def random_poly(nvars=10, ndegree=20, nterms=50, ncoeffbits=32, seed=42):
@@ -116,4 +116,11 @@ def test_poly_factor(benchmark):
 def test_poly_factor_trivial(benchmark):
     p = random_poly(nterms=100)
     result = benchmark(lambda a: a.factors(), p)
+    assert result
+
+
+def test_poly_varsubs(benchmark):
+    p = random_poly(nterms=10) + Polynomial("x1")
+    x = Variable("x1")
+    result = benchmark(lambda a, b: a.subs(b, 1), p, x)
     assert result
