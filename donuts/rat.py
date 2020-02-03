@@ -1,6 +1,7 @@
 """Routines for rational functions."""
 from __future__ import annotations
 
+import functools
 from collections.abc import Collection
 from fractions import Fraction
 from typing import Any, Union, overload
@@ -16,12 +17,35 @@ _JavaError = jvm.java_error_class
 # See PyCQA/pyflakes#320.
 
 
+_RAW_ZERO = _RawRationalFunction()
+_RAW_ONE = _RawRationalFunction(1)
+_RAW_MINUS_ONE = _RawRationalFunction(-1)
+
+
+def _raw_rationalfunction_from_short_int(value: int) -> Any:
+    if value == 0:
+        return _RAW_ZERO
+    if value == 1:
+        return _RAW_ONE
+    if value == -1:
+        return _RAW_MINUS_ONE
+    return _raw_rationalfunction_from_short_int_impl(value)
+
+
+@functools.lru_cache(maxsize=1024)
+def _raw_rationalfunction_from_short_int_impl(value: int) -> Any:
+    return _RawRationalFunction(value)
+
+
+@functools.lru_cache(maxsize=1024)
+def _raw_rationalfunction_from_str(value: str) -> Any:
+    return _RawRationalFunction(value)
+
+
 class RationalFunction:
     """Rational function."""
 
     __slots__ = ("_raw",)
-
-    __RAW_ZERO = _RawRationalFunction()
 
     def __init__(
         self,
@@ -33,10 +57,10 @@ class RationalFunction:
         """Construct a rational function."""
         if denominator is None:
             if numerator is None:
-                self._raw = RationalFunction.__RAW_ZERO
+                self._raw = _RAW_ZERO
             elif isinstance(numerator, int):
                 if Polynomial._is_short_int(numerator):
-                    self._raw = _RawRationalFunction(numerator)
+                    self._raw = _raw_rationalfunction_from_short_int(numerator)
                 else:
                     self._raw = _RawRationalFunction(str(numerator))
             elif isinstance(numerator, str):
@@ -57,7 +81,7 @@ class RationalFunction:
                         Polynomial(numerator.denominator)._raw,
                     )
             elif isinstance(numerator, Variable):
-                self._raw = _RawRationalFunction(numerator._name)
+                self._raw = _raw_rationalfunction_from_str(numerator._name)
             elif isinstance(numerator, Polynomial):
                 self._raw = _RawRationalFunction(numerator._raw)
             elif isinstance(numerator, RationalFunction):

@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
+import functools
 from typing import Any, Union
 
 from .jvm import jvm
 
 _RawVariable = jvm.find_class("com.github.tueda.donuts.Variable")
 _JavaError = jvm.java_error_class
+
+
+@functools.lru_cache(maxsize=1024)
+def _raw_variable_from_str(name: str) -> Any:
+    return _RawVariable(name)
 
 
 class Variable:
@@ -27,7 +33,7 @@ class Variable:
             raise TypeError(f"invalid argument for variable: `{name}`")
 
         try:
-            self._raw = _RawVariable(name)
+            self._raw = _raw_variable_from_str(name)
         except _JavaError as e:
             raise ValueError(f"invalid string for variable: `{name}'") from e
 
@@ -48,7 +54,7 @@ class Variable:
     def __setstate__(self, state: Any) -> None:
         """Set the object state."""
         self._name = state
-        self._raw = _RawVariable(state)
+        self._raw = _raw_variable_from_str(state)
 
     def __str__(self) -> str:
         """Return the string representation."""

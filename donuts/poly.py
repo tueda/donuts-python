@@ -1,6 +1,7 @@
 """Polynomial."""
 from __future__ import annotations
 
+import functools
 from collections.abc import Collection
 from fractions import Fraction
 from typing import Any, Iterable, Iterator, List, Sequence, Union, overload
@@ -14,23 +15,45 @@ _new_array = jvm.new_array
 # TODO: Remove workaround for F811 once new pyflakes is available.
 # See PyCQA/pyflakes#320.
 
+_RAW_ZERO = _RawPolynomial()
+_RAW_ONE = _RawPolynomial(1)
+_RAW_MINUS_ONE = _RawPolynomial(-1)
+
+
+def _raw_polynomial_from_short_int(value: int) -> Any:
+    if value == 0:
+        return _RAW_ZERO
+    if value == 1:
+        return _RAW_ONE
+    if value == -1:
+        return _RAW_MINUS_ONE
+    return _raw_polynomial_from_short_int_impl(value)
+
+
+@functools.lru_cache(maxsize=1024)
+def _raw_polynomial_from_short_int_impl(value: int) -> Any:
+    return _RawPolynomial(value)
+
+
+@functools.lru_cache(maxsize=1024)
+def _raw_polynomial_from_str(value: str) -> Any:
+    return _RawPolynomial(value)
+
 
 class Polynomial:
     """Polynomial."""
 
     __slots__ = ("_raw",)
 
-    __RAW_ZERO = _RawPolynomial()
-
     def __init__(
         self, value: Union[Polynomial, Variable, int, str, None] = None
     ) -> None:
         """Construct a polynomial."""
         if value is None:
-            self._raw = Polynomial.__RAW_ZERO
+            self._raw = _RAW_ZERO
         elif isinstance(value, int):
             if Polynomial._is_short_int(value):
-                self._raw = _RawPolynomial(value)
+                self._raw = _raw_polynomial_from_short_int(value)
             else:
                 self._raw = _RawPolynomial(str(value))
         elif isinstance(value, str):
@@ -39,7 +62,7 @@ class Polynomial:
             except _JavaError as e:
                 raise ValueError("invalid string for polynomial") from e
         elif isinstance(value, Variable):
-            self._raw = _RawPolynomial(value._name)
+            self._raw = _raw_polynomial_from_str(value._name)
         elif isinstance(value, Polynomial):
             self._raw = value._raw
         else:
