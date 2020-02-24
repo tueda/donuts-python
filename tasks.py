@@ -1,4 +1,4 @@
-"""Tasks for Pipenv."""
+"""Developers' daily tasks."""
 
 import os
 
@@ -9,6 +9,7 @@ from invoke import task
 def fmt(c):  # type: ignore
     """Run formatters."""
     c.run("black .", pty=True)
+    c.run("seed-isort-config", pty=True)
     c.run("isort -y", pty=True)
 
 
@@ -17,15 +18,14 @@ def lint(c):  # type: ignore
     """Run linters."""
     c.run("black --check --diff .", pty=True)
     c.run("isort --check-only --diff", pty=True)
-    # We don't include tests/ for flake8 and mypy. It's too annoying!
-    c.run("flake8 docs donuts setup.py tasks.py", pty=True)
-    c.run("mypy docs donuts setup.py tasks.py", pty=True)
+    c.run("flake8", pty=True)
+    c.run("mypy .", pty=True)
 
 
 @task
 def test(c):  # type: ignore
     """Run tests."""
-    c.run("pytest --benchmark-disable --cov=donuts", pty=True)
+    c.run("pytest --benchmark-skip --cov=donuts", pty=True)
 
 
 @task
@@ -47,7 +47,14 @@ def doc(c):  # type: ignore
 
 
 @task
-def output_dev_only_requirements(c):  # type: ignore
-    """Write dev-only-requirements.txt."""
-    with open("dev-only-requirements.txt", "w") as f:
-        c.run("pipenv lock -r -d", out_stream=f)
+def build(c):  # type: ignore
+    """Build the JAR file."""
+    from build import build_jar
+
+    build_jar()
+
+
+@task
+def build_sdist(c):  # type: ignore
+    """Build the sdist."""
+    c.run("python setup.py sdist", pty=True)

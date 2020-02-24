@@ -48,31 +48,19 @@ Development
 
 .. code:: shell
 
-    git clone --recursive https://github.com/tueda/donuts-python
-    cd donuts-python
-    pipenv install --dev
-    pipenv run python setup.py build
+    poetry install
+    poetry run pre-commit install
+    poetry run pre-commit install --hook-type commit-msg
 
-    # Run predefined scripts.
-    pipenv run fmt
-    pipenv run lint
-    pipenv run test
-    pipenv run bench
-    pipenv run doc
+    git submodule update --init
+    poetry run invoke build
 
-    # Or run indivisual commands in a virtualenv.
-    pipenv shell
-    black .
-    isort -y
-    flake8
-    mypy .
-    pytest --benchmark-disable --cov=donuts
-    pytest --benchmark-only
-    make -C docs html
-
-    # Git hooks.
-    pre-commit install
-    pre-commit install --hook-type commit-msg
+    poetry run invoke fmt
+    poetry run invoke lint
+    poetry run invoke test
+    poetry run invoke bench
+    poetry run invoke doc
+    poetry run invoke build-sdist
 
 
 License

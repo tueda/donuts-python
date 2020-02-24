@@ -1,7 +1,6 @@
 from fractions import Fraction
 from pickle import dumps, loads
 
-from fixtures.bigints import bigints
 from pytest import raises
 
 import donuts
@@ -36,7 +35,7 @@ def test_init():
         Polynomial("x?")  # invalid string
 
 
-def test_init_with_bigints(bigints):
+def test_init_with_bigints(bigints):  # noqa: F811
     for n in bigints:
         a = Polynomial(n)
         b = Polynomial(str(n))
@@ -345,7 +344,7 @@ def test_as():
         a.as_variable  # not variable
 
 
-def test_as_with_bigints(bigints):
+def test_as_with_bigints(bigints):  # noqa: F811
     for n in bigints:
         a = Polynomial(n)
         assert a.as_integer == n

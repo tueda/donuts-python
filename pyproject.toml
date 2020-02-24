@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "donuts-python"
+version = "0.0.1"
+description = "Python binding to Donuts"
+license = "MIT"
+authors = ["Takahiro Ueda <tueda@st.seikei.ac.jp>"]
+readme = "README.rst"
+keywords = ["computer algebra", "multivariate polynomial arithmetic"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+packages = [
+    { include = "donuts" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+py4j = "^0.10.9"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+flake8 = "^3.7.9"
+flake8-bugbear = "^20.1.4"
+flake8-builtins = "^1.4.2"
+flake8-comprehensions = "^3.2.2"
+flake8-docstrings = "^1.5.0"
+invoke = "^1.4.1"
+isort = "^4.3.21"
+mypy = "^0.761"
+pep8-naming = "^0.9.1"
+pre-commit = "^2.1.0"
+pytest = "^5.3.5"
+pytest-benchmark = "^3.2.3"
+pytest-cov = "^2.8.1"
+seed-isort-config = "^2.0.0"
+sphinx = "^2.4.3"
+sphinx-autodoc-typehints = "^1.10.3"
+
+[tool.coverage.report]
+exclude_lines = [
+    "@overload",
+    "pragma: no cover",
+    "raise AssertionError()",
+    "return NotImplemented",
+]
+
+[tool.isort]
+force_grid_wrap = 0
+include_trailing_comma = true
+known_first_party = ["conftest"]
+known_third_party = ["invoke", "pkg_resources", "pytest", "setuptools"]
+line_length = 88
+multi_line_output = 3
+use_parentheses = true

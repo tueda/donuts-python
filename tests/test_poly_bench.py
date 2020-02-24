@@ -1,52 +1,7 @@
 import pickle
-import random
 
+from conftest import random_poly
 from donuts import Polynomial, Variable
-
-
-def random_poly(nvars=10, ndegree=20, nterms=50, ncoeffbits=32, seed=42):
-    random.seed(seed)
-
-    variables = ["x" + str(i) for i in range(1, nvars + 1)]
-
-    def random_coeff():
-        m = 2 ** ncoeffbits - 1
-        if m < 1:
-            m = 1
-        while True:
-            n = random.randint(-m, m)
-            if m != 0:
-                return n
-        return 1
-
-    def random_exponents():
-        a = [0] * nvars
-        n = ndegree
-        while True:
-            m = random.randint(0, n)
-            i = random.randint(0, nvars - 1)
-            a[i] += m
-            n -= m
-            if n == 0:
-                break
-        random.shuffle(a)
-        return tuple(a)
-
-    def monomial_to_str(v, c):
-        e = "".join((f"*{variables[i]}^{n}" if n > 0 else "") for i, n in enumerate(v))
-        return f"+({c}{e})"
-
-    monomials = {}
-
-    for _ in range(10):
-        for i in range(nterms - len(monomials)):
-            e = random_exponents()
-            if not e in monomials:
-                monomials[e] = random_coeff()
-        if len(monomials) == nterms:
-            break
-
-    return Polynomial("".join(monomial_to_str(v, c) for v, c in monomials.items()))
 
 
 def test_poly_to_string(benchmark):

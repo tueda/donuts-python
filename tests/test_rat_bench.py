@@ -1,17 +1,7 @@
 import pickle
 
-from test_poly_bench import random_poly
-
+from conftest import random_rat
 from donuts import RationalFunction
-
-
-def random_rat(nvars=10, ndegree=20, nterms=50, ncoeffbits=32, seed=42):
-    while True:
-        r1 = random_poly(nvars, ndegree, nterms, ncoeffbits, seed)
-        r2 = random_poly(nvars, ndegree, nterms, ncoeffbits, seed + 1000)
-        gcd = r1.gcd(r2)
-        if gcd.is_one or gcd.is_minus_one:
-            return r1 / r2
 
 
 def test_rat_to_string(benchmark):

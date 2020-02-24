@@ -1,4 +1,5 @@
 include LICENSE
+include build.py
 recursive-include donuts/java *
 prune donuts/java/.github
 prune donuts/java/.gradle

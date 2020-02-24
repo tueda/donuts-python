@@ -1,8 +1,7 @@
 from fractions import Fraction
 from pickle import dumps, loads
 
-from fixtures.bigints import bigints
-from pytest import fixture, raises
+from pytest import fixture, raises  # noqa: F401
 
 from donuts import Polynomial, RationalFunction, Variable, VariableSet
 
@@ -57,7 +56,7 @@ def test_init():
         RationalFunction(a, b)  # division by zero
 
 
-def test_init_with_bigints(bigints):
+def test_init_with_bigints(bigints):  # noqa: F811
     for n in bigints:
         a = RationalFunction(n)
         b = RationalFunction(str(n))
@@ -324,7 +323,7 @@ def test_as_integer():
         b.as_integer  # not integer
 
 
-def test_as_integer_with_bigints(bigints):
+def test_as_integer_with_bigints(bigints):  # noqa: F811
     for n in bigints:
         a = RationalFunction(n)
         assert a.as_integer == n

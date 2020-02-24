@@ -8,10 +8,10 @@
 
 .test:
   before_script:
-  - git submodule update --init --recursive
-  - apt-get update
-  - apt-get install -qy default-jdk-headless
-  - pip install tox
+    - git submodule update --init --recursive
+    - apt-get update
+    - apt-get install -qy default-jdk-headless
+    - pip install tox
   artifacts:
     paths:
       - htmlcov

@@ -1,5 +1,4 @@
 import pickle
-import random
 
 from donuts import VariableSet
 

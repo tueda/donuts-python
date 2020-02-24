@@ -1,14 +1,9 @@
 """The setup script."""
 
-import os
-import os.path
-import subprocess
-from distutils.command.build import build as build_  # type: ignore
+from distutils.command.build import build  # type: ignore
 from typing import List, Tuple
 
 from setuptools import Command, find_packages, setup
-
-VERSION = "0.0.1"
 
 
 def readme() -> str:
@@ -17,13 +12,13 @@ def readme() -> str:
         return f.read()
 
 
-class build(build_):  # type: ignore # noqa: N801
+class BuildCommand(build):  # type: ignore
     """Command to build everything."""
 
-    sub_commands = [("build_jar", None)] + build_.sub_commands
+    sub_commands = [("build_jar", None)] + build.sub_commands
 
 
-class build_jar(Command):  # type: ignore # noqa: N801
+class BuildJarCommand(Command):  # type: ignore
     """Command to build the JAR file."""
 
     description = "build JAR archives"
@@ -39,31 +34,15 @@ class build_jar(Command):  # type: ignore # noqa: N801
 
     def run(self) -> None:
         """Run the command."""
+        from build import build_jar
+
         if not self.dry_run:
-            setup_dir = os.path.dirname(os.path.abspath(__file__))
-            java_dir = os.path.join(setup_dir, "donuts", "java")
-            lib_dir = os.path.join(java_dir, "build", "libs")
-            jar_file = os.path.join(lib_dir, "donuts-all.jar")
-
-            if os.path.isfile(os.path.join(java_dir, "build.gradle")):
-                # Build the fat JAR file by Gradle.
-                if os.name == "posix":
-                    gradlew_cmd = "./gradlew"
-                elif os.name == "nt":
-                    gradlew_cmd = "gradlew.bat"
-                subprocess.run(
-                    [gradlew_cmd, "-Dorg.gradle.project.version=", "shadowJar"],
-                    cwd=java_dir,
-                    check=True,
-                )
-
-            if not os.path.isfile(jar_file):
-                raise OSError("Failed to generate the JAR file")
+            build_jar()
 
 
 setup(
     name="donuts-python",
-    version=VERSION,
+    version="0.0.1",
     description="Python binding to Donuts",
     long_description=readme(),
     author="Takahiro Ueda",
@@ -84,6 +63,6 @@ setup(
     python_requires=">=3.7",
     install_requires=["py4j"],
     setup_requires=["pytest-runner"],
-    tests_require=["pytest", "pytest-benchmark", "pytest-cov", "pytest-xdist"],
-    cmdclass={"build": build, "build_jar": build_jar},
+    tests_require=["pytest", "pytest-benchmark", "pytest-cov"],
+    cmdclass={"build": BuildCommand, "build_jar": BuildJarCommand},
 )
