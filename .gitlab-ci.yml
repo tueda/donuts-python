@@ -43,3 +43,23 @@ doc:
     paths:
       - docs/_build/html
     expire_in: 1 week
+
+readme_dev:
+# Test the code in "Development" in README.rst.
+  image: python:latest
+  before_script:
+    - apt-get update
+    - apt-get install -qy default-jdk-headless
+    - pip install poetry
+  script:
+    - poetry install
+    - poetry run pre-commit install
+    - poetry run pre-commit install --hook-type commit-msg
+    - git submodule update --init
+    - poetry run invoke build
+    - poetry run invoke fmt
+    - poetry run invoke lint
+    - poetry run invoke test
+#   - poetry run invoke bench
+    - poetry run invoke doc
+    - poetry run invoke build-sdist

@@ -46,6 +46,8 @@ Example
 Development
 -----------
 
+.. The code is tested by "readme_dev" in .gitlab-ci.yml.
+
 .. code:: shell
 
     poetry install
