@@ -30,6 +30,25 @@ def test_poly_loads(benchmark):
     assert result
 
 
+def test_poly_bool(benchmark):
+    p = random_poly(nterms=100)
+    result = benchmark(lambda a: bool(a), p)
+    assert result
+
+
+def test_poly_it(benchmark):
+    p = random_poly(nterms=10)
+    result = benchmark(lambda a: list(a), p)
+    assert len(result) == 10
+
+
+def test_poly_eq(benchmark):
+    p1 = random_poly(nterms=100, seed=1)
+    p2 = random_poly(nterms=120, seed=2)
+    result = benchmark(lambda a, b: a == b, p1, p2)
+    assert not result
+
+
 def test_poly_add(benchmark):
     p1 = random_poly(nterms=100, seed=1)
     p2 = random_poly(nterms=100, seed=2)
