@@ -6,11 +6,9 @@ from typing import Any, Collection, Iterator, Union
 
 from .jvm import jvm
 from .var import Variable as Variable  # explicitly re-export for mypy
-from .var import _RawVariable
 
 _RawVariableSet = jvm.find_class("com.github.tueda.donuts.VariableSet")
 _JavaError = jvm.java_error_class
-_new_array = jvm.new_array
 
 
 class VariableSet:
@@ -33,15 +31,18 @@ class VariableSet:
             self._raw = VariableSet.__RAW_EMPTY
             return
 
-        array = _new_array(_RawVariable, len(variables))
-        for i, x in enumerate(variables):
+        raw = _RawVariableSet()
+        for x in variables:
             if isinstance(x, str):
                 x = Variable(x)
             if not isinstance(x, Variable):
                 raise TypeError("not a Variable")
-            array[i] = x._raw
-
-        self._raw = _RawVariableSet(array)
+            # Somehow the following line doesn't work with pyjnius 1.2.1.
+            # Use a temporary variable.
+            # raw = raw.union(_RawVariableSet(x._raw))
+            raw1 = _RawVariableSet(x._raw)
+            raw = raw.union(raw1)
+        self._raw = raw
 
     @staticmethod
     def _new(raw: Any) -> VariableSet:
@@ -60,17 +61,20 @@ class VariableSet:
 
     def __str__(self) -> str:
         """Return the string representation."""
-        # NOTE: somehow str(self._raw) doesn't work.
         return self._raw.toString()  # type: ignore
 
     def __repr__(self) -> str:
         """Return the "official" string representation."""
-        variables = ", ".join(f"Variable('{x.getName()}')" for x in self._raw)
+        it = self._raw.iterator()
+        xx = []
+        while it.hasNext():
+            xx.append(it.next().getName())
+        variables = ", ".join(f"Variable('{x}')" for x in xx)
         return f"VariableSet({variables})"
 
     def __hash__(self) -> int:
         """Return the hash code."""
-        return hash(self._raw)
+        return self._raw.hashCode()  # type: ignore
 
     def __len__(self) -> int:
         """Return the number of variables in this set."""
@@ -80,7 +84,7 @@ class VariableSet:
         """Return an iterator to iterate variables in this set."""
         raw_it = self._raw.iterator()
         while raw_it.hasNext():
-            yield Variable._new(next(raw_it))
+            yield Variable._new(raw_it.next())  # noqa: B305
 
     def __contains__(self, item: object) -> bool:
         """Return `True` if the set contains the given variable."""

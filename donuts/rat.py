@@ -126,11 +126,11 @@ class RationalFunction:
 
     def __str__(self) -> str:
         """Return the string representation."""
-        return str(self._raw)
+        return self._raw.toString()  # type: ignore
 
     def __repr__(self) -> str:
         """Return the "official" string representation."""
-        return f"RationalFunction('{self._raw}')"
+        return f"RationalFunction('{self._raw.toString()}')"
 
     def __hash__(self) -> int:
         """Return the hash code."""
@@ -138,7 +138,7 @@ class RationalFunction:
             return hash(self.as_fraction)
         if self.is_polynomial:
             return hash(self.as_polynomial)
-        return hash(self._raw)
+        return self._raw.hashCode()  # type: ignore
 
     def __bool__(self) -> bool:
         """Return `True` for non-zero rational functions."""
@@ -367,7 +367,7 @@ class RationalFunction:
                 try:
                     r = RationalFunction._new(self._raw.substitute(lhs._raw, rhs._raw))
                 except _JavaError as e:
-                    if e.java_exception.getMessage() == "division by zero":
+                    if jvm.get_error_message(e) == "division by zero":
                         raise ZeroDivisionError("division by zero") from e
                     else:
                         raise ValueError("invalid lhs for substitution") from e

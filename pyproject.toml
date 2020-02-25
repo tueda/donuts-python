@@ -18,7 +18,8 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.7"
 
-py4j = "^0.10.9"
+# py4j = "^0.10.9"
+pyjnius = "^1.2.1"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

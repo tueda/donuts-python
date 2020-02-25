@@ -9,6 +9,7 @@ from typing import Any, Iterable, Iterator, List, Sequence, Union, overload
 from .jvm import jvm
 
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
+_RawPythonUtils = jvm.find_class("com.github.tueda.donuts.python.PythonUtils")
 _JavaError = jvm.java_error_class
 _new_array = jvm.new_array
 
@@ -90,11 +91,11 @@ class Polynomial:
 
     def __str__(self) -> str:
         """Return the string representation."""
-        return str(self._raw)
+        return self._raw.toString()  # type: ignore
 
     def __repr__(self) -> str:
         """Return the "official" string representation."""
-        return f"Polynomial('{self._raw}')"
+        return f"Polynomial('{self._raw.toString()}')"
 
     def __hash__(self) -> int:
         """Return the hash code."""
@@ -102,7 +103,7 @@ class Polynomial:
             return hash(self.as_integer)
         if self.is_variable:
             return hash(self.as_variable)
-        return hash(self._raw)
+        return self._raw.hashCode()  # type: ignore
 
     def __len__(self) -> int:
         """Return the number of terms in this polynomial."""
@@ -112,7 +113,7 @@ class Polynomial:
         """Return an iterator to iterate terms in this polynomial."""
         raw_it = self._raw.iterator()
         while raw_it.hasNext():
-            yield Polynomial._new(next(raw_it))
+            yield Polynomial._new(raw_it.next())  # noqa: B305
 
     def __pos__(self) -> Polynomial:
         """Return ``+ self``."""
@@ -436,7 +437,7 @@ def gcd(polynomials: Iterable[Union[Polynomial, Variable, int]]) -> Polynomial:
 def gcd(*polynomials) -> Polynomial:  # type: ignore
     """Return the GCD of the given polynomials."""
     array = _create_raw_poly_array(polynomials)
-    return Polynomial._new(_RawPolynomial.gcdOf(array))
+    return Polynomial._new(_RawPythonUtils.gcdOf(array))
 
 
 @overload
@@ -456,7 +457,7 @@ def lcm(*polynomials) -> Polynomial:  # type: ignore
     array = _create_raw_poly_array(polynomials)
     if len(polynomials) == 0:
         raise ValueError("lcm with no arguments")
-    return Polynomial._new(_RawPolynomial.lcmOf(array))
+    return Polynomial._new(_RawPythonUtils.lcmOf(array))
 
 
 # These imports should be after the definition of Polynomial.

@@ -61,7 +61,7 @@ setup(
     packages=find_packages(),
     package_data={"donuts": ["py.typed", "java/build/libs/donuts-all.jar"]},
     python_requires=">=3.7",
-    install_requires=["py4j"],
+    install_requires=["pyjnius"],
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "pytest-benchmark", "pytest-cov"],
     cmdclass={"build": BuildCommand, "build_jar": BuildJarCommand},

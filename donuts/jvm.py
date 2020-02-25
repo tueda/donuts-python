@@ -48,6 +48,11 @@ class Py4JBackend:
 
         return Py4JJavaError
 
+    @staticmethod
+    def get_error_message(error: Any) -> str:
+        """Return the error message from the given exception object."""
+        return error.java_exception.getMessage()  # type: ignore
+
     def serialize(self, java_obj: Any) -> bytes:
         """Serialize the given Java object."""
         byte_stream = self._jvm.java.io.ByteArrayOutputStream()
@@ -62,4 +67,59 @@ class Py4JBackend:
         return object_stream.readObject()
 
 
-jvm = Py4JBackend()
+class JniusBackend:
+    """JVM with Pyjnius backend."""
+
+    def __init__(self) -> None:
+        """Create a JVM."""
+        import jnius_config
+
+        # Check if the jar file exists.
+        with open(_JAR_FILE, "rb"):
+            pass
+
+        jnius_config.set_classpath(_JAR_FILE)
+
+        from jnius import autoclass
+
+        self._autoclass = autoclass
+        self._java_array_new_instance = autoclass("java.lang.reflect.Array").newInstance
+
+    def find_class(self, class_name: str) -> Any:
+        """Return a Java class."""
+        return self._autoclass(class_name)
+
+    def new_array(self, java_class: Any, size: int) -> Any:
+        """Create a Java array."""
+        return self._java_array_new_instance(java_class, size)
+
+    @property
+    def java_error_class(self) -> Any:
+        """Return the error class indicating exceptions in Java client code."""
+        from jnius import JavaException
+
+        return JavaException
+
+    @staticmethod
+    def get_error_message(error: Any) -> str:
+        """Return the error message from the given exception object."""
+        return error.innermessage  # type: ignore
+
+    def serialize(self, java_obj: Any) -> bytes:
+        """Serialize the given Java object."""
+        byte_stream = self._autoclass("java.io.ByteArrayOutputStream")()
+        object_stream = self._autoclass("java.io.ObjectOutputStream")(byte_stream)
+        object_stream.writeObject(java_obj)
+        return byte_stream.toByteArray().tostring()  # type: ignore
+
+    def deserialize(self, data: bytes) -> Any:
+        """Deserialize a Java object."""
+        byte_stream = self._autoclass("java.io.ByteArrayInputStream")(data)
+        object_stream = self._autoclass(
+            "com.github.tueda.donuts.python.PythonUtils"
+        ).createObjectInputStream(byte_stream)
+        return object_stream.readObject()
+
+
+# jvm = Py4JBackend()
+jvm = JniusBackend()
