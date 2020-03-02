@@ -1,0 +1,46 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    strategy:
+      matrix:
+        python: [ 3.7, 3.8 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: pip install gitlint pre-commit tox
+      - run: gitlint
+      - run: pre-commit run --all-files
+      - run: tox -e lint
+  build:
+    strategy:
+      matrix:
+        python: [ 3.7, 3.8 ]
+        java: [ 8, 11 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout submodules
+        uses: actions/checkout@v2
+        with:
+          # See: https://github.com/actions/checkout/issues/116#issuecomment-569367620
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          repository: tueda/donuts
+          path: donuts/java
+      - name: Update submodules
+        run: git submodule update
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Install dependencies
+        run: pip install tox tox-gh-actions
+      - run: tox
