@@ -530,6 +530,48 @@ def test_subs():
         a.subs("1+x", 1)  # invalid lhs
 
 
+def test_evaluate_at_zero():
+    a = Polynomial("(1+x)^3").evaluate_at_zero(Variable("x"))
+    b = 1
+    assert a == b
+
+    a = Polynomial("(1+x)^3").evaluate_at_zero(["x", "y", "z"])
+    b = 1
+    assert a == b
+
+    a = Polynomial("(1+x)^3").evaluate_at_zero([])
+    b = Polynomial("(1+x)^3")
+    assert a == b
+
+    a = Polynomial("(1+x)^3").evaluate_at_zero()
+    b = Polynomial("(1+x)^3")
+    assert a == b
+
+    with raises(TypeError):
+        a.evaluate_at_zero(1)  # not variable
+
+
+def test_evaluate_at_one():
+    a = Polynomial("(1+x)^3").evaluate_at_one(Variable("x"))
+    b = 8
+    assert a == b
+
+    a = Polynomial("(1+x)^3").evaluate_at_one(["x", "y", "z"])
+    b = 8
+    assert a == b
+
+    a = Polynomial("(1+x)^3").evaluate_at_one([])
+    b = Polynomial("(1+x)^3")
+    assert a == b
+
+    a = Polynomial("(1+x)^3").evaluate_at_one()
+    b = Polynomial("(1+x)^3")
+    assert a == b
+
+    with raises(TypeError):
+        a.evaluate_at_one(1)  # not variable
+
+
 def test_diff():
     a = Polynomial("(1+x+y)^3")
     x = Variable("x")

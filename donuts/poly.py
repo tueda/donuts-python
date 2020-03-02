@@ -387,6 +387,68 @@ class Polynomial:
         else:
             raise TypeError("lhs is not a Polynomial")
 
+    @overload
+    def evaluate_at_zero(self, *variables: Union[Variable, str]) -> Polynomial:
+        """Return the result of setting all the given variables to zero."""
+        ...
+
+    @overload  # noqa: F811
+    def evaluate_at_zero(self, variables: VariableSetLike) -> Polynomial:  # noqa: F811
+        """Return the result of setting all the given variables to zero."""
+        ...
+
+    def evaluate_at_zero(self, *variables) -> Polynomial:  # type: ignore  # noqa: F811
+        """Return the result of setting all the given variables to zero."""
+        if len(variables) == 1:
+            x = variables[0]
+            if isinstance(x, (Variable, VariableSet)):
+                return Polynomial._new(self._raw.evaluateAtZero(x._raw))
+            if isinstance(x, Collection) and not isinstance(x, str):
+                if not x:
+                    # None of the variables are specified.
+                    return self
+                return self.evaluate_at_zero(*x)
+
+        if len(variables) == 0:
+            # None of the variables are specified.
+            return self
+
+        if any(not isinstance(x, (Variable, str)) for x in variables):
+            raise TypeError("not Variable")
+
+        return self.evaluate_at_zero(VariableSet(*variables))
+
+    @overload
+    def evaluate_at_one(self, *variables: Union[Variable, str]) -> Polynomial:
+        """Return the result of setting all the given variables to unity."""
+        ...
+
+    @overload  # noqa: F811
+    def evaluate_at_one(self, variables: VariableSetLike) -> Polynomial:  # noqa: F811
+        """Return the result of setting all the given variables to unity."""
+        ...
+
+    def evaluate_at_one(self, *variables) -> Polynomial:  # type: ignore  # noqa: F811
+        """Return the result of setting all the given variables to unity."""
+        if len(variables) == 1:
+            x = variables[0]
+            if isinstance(x, (Variable, VariableSet)):
+                return Polynomial._new(self._raw.evaluateAtOne(x._raw))
+            if isinstance(x, Collection) and not isinstance(x, str):
+                if not x:
+                    # None of the variables are specified.
+                    return self
+                return self.evaluate_at_one(*x)
+
+        if len(variables) == 0:
+            # None of the variables are specified.
+            return self
+
+        if any(not isinstance(x, (Variable, str)) for x in variables):
+            raise TypeError("not Variable")
+
+        return self.evaluate_at_one(VariableSet(*variables))
+
     def diff(self, x: Union[Variable, str], n: int = 1) -> Polynomial:
         """Differentiate this polynomial."""
         if isinstance(x, str):

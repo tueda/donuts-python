@@ -446,6 +446,48 @@ def test_subs():
         a.subs("x", "-1-y")  # denominator becomes zero
 
 
+def test_evaluate_at_zero():
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_zero(Variable("x"))
+    b = RationalFunction("1/(3-y)")
+    assert a == b
+
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_zero(["x", "y", "z"])
+    b = RationalFunction("1/3")
+    assert a == b
+
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_zero([])
+    b = RationalFunction("(1+x)^3/(3-x-y)")
+    assert a == b
+
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_zero()
+    b = RationalFunction("(1+x)^3/(3-x-y)")
+    assert a == b
+
+    with raises(TypeError):
+        a.evaluate_at_zero(1)  # not variable
+
+
+def test_evaluate_at_one():
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_one(Variable("x"))
+    b = RationalFunction("8/(2-y)")
+    assert a == b
+
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_one(["x", "y", "z"])
+    b = RationalFunction("8")
+    assert a == b
+
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_one([])
+    b = RationalFunction("(1+x)^3/(3-x-y)")
+    assert a == b
+
+    a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_one()
+    b = RationalFunction("(1+x)^3/(3-x-y)")
+    assert a == b
+
+    with raises(TypeError):
+        a.evaluate_at_one(1)  # not variable
+
+
 def test_diff():
     a = RationalFunction("(1+x+y)^2/(1/2+x-y*x^5)")
     x = Variable("x")
