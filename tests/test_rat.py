@@ -446,6 +446,36 @@ def test_subs():
         a.subs("x", "-1-y")  # denominator becomes zero
 
 
+def test_evaluate():
+    a = RationalFunction("(1+x+y)^3/(1-x)/(1-z)").evaluate("x", 3)
+    b = RationalFunction("-(4+y)^3/2/(1-z)")
+    assert a == b
+
+    a = RationalFunction("(1+x+y)^3/(1-x)/(1-z)").evaluate(
+        [Variable("x"), "y"], [3, -2]
+    )
+    b = RationalFunction("-4/(1-z)")
+    assert a == b
+
+    with raises(TypeError):
+        a.evaluate(["x"], 1)  # values must be also a collection
+
+    with raises(ValueError):
+        a.evaluate(["x"], [1, 2])  # different sizes
+
+    with raises(TypeError):
+        a.evaluate("x", "y")  # value must be an integer
+
+    with raises(TypeError):
+        a.evaluate(1, 1)  # invalid variables
+
+    with raises(TypeError):
+        a.evaluate(["x"], ["y"])  # values are not integers
+
+    with raises(TypeError):
+        a.evaluate([1], [1])  # not variables
+
+
 def test_evaluate_at_zero():
     a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_zero(Variable("x"))
     b = RationalFunction("1/(3-y)")

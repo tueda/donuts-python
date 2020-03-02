@@ -4,10 +4,10 @@ from __future__ import annotations
 import functools
 from collections.abc import Collection
 from fractions import Fraction
-from typing import Any, Union, overload
+from typing import Any, Sequence, Union, overload
 
 from .jvm import jvm
-from .poly import Polynomial
+from .poly import Polynomial, _create_raw_int_array, _create_raw_var_array
 from .varset import Variable, VariableSet, VariableSetLike
 
 _RawRationalFunction = jvm.find_class("com.github.tueda.donuts.RationalFunction")
@@ -381,6 +381,48 @@ class RationalFunction:
             return self.subs(Polynomial(lhs), rhs)
         else:
             raise TypeError("lhs is not a Polynomial")
+
+    @overload
+    def evaluate(self, variable: Union[Variable, str], value: int) -> RationalFunction:
+        """Return the result of setting the given variable to the specified value."""
+        ...
+
+    @overload  # noqa: F811
+    def evaluate(  # noqa: F811
+        self, variables: Sequence[Union[Variable, str]], values: Sequence[int]
+    ) -> RationalFunction:
+        """Return the result of setting the given variables to the specified values."""
+        ...
+
+    def evaluate(  # type: ignore  # noqa: F811
+        self, variables, values
+    ) -> RationalFunction:
+        """Return the result of setting the given variables to the specified values."""
+        # TODO: integer overflow occurs >= 2^31.
+
+        if isinstance(variables, Collection) and not isinstance(variables, str):
+            if not (isinstance(values, Collection) and not isinstance(values, str)):
+                raise TypeError("values must be a collection")
+            if len(variables) != len(values):
+                raise ValueError("variables and values have different sizes")
+            return RationalFunction._new(
+                self._raw.evaluate(
+                    _create_raw_var_array(tuple(variables)),
+                    _create_raw_int_array(tuple(values)),
+                )
+            )
+
+        if isinstance(variables, Variable):
+            x = variables
+            if not isinstance(values, int):
+                raise TypeError("value must be an integer")
+            n = values
+            return RationalFunction._new(self._raw.evaluate(x._raw, n))
+
+        if isinstance(variables, str):
+            return self.evaluate(Variable(variables), values)
+
+        raise TypeError(f"invalid variables")
 
     @overload
     def evaluate_at_zero(self, *variables: Union[Variable, str]) -> RationalFunction:

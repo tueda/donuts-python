@@ -530,6 +530,34 @@ def test_subs():
         a.subs("1+x", 1)  # invalid lhs
 
 
+def test_evaluate():
+    a = Polynomial("(1+x+y)^3").evaluate("x", 3)
+    b = Polynomial("(4+y)^3")
+    assert a == b
+
+    a = Polynomial("(1+x+y)^3").evaluate([Variable("x"), "y"], [3, -2])
+    b = Polynomial("8")
+    assert a == b
+
+    with raises(TypeError):
+        a.evaluate(["x"], 1)  # values must be also a collection
+
+    with raises(ValueError):
+        a.evaluate(["x"], [1, 2])  # different sizes
+
+    with raises(TypeError):
+        a.evaluate("x", "y")  # value must be an integer
+
+    with raises(TypeError):
+        a.evaluate(1, 1)  # invalid variables
+
+    with raises(TypeError):
+        a.evaluate(["x"], ["y"])  # values are not integers
+
+    with raises(TypeError):
+        a.evaluate([1], [1])  # not variables
+
+
 def test_evaluate_at_zero():
     a = Polynomial("(1+x)^3").evaluate_at_zero(Variable("x"))
     b = 1

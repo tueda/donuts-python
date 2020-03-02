@@ -44,6 +44,10 @@ class Py4JBackend:
         """Create a Java array."""
         return self._gateway.new_array(java_class, size)
 
+    def new_int_array(self, size: int) -> Any:
+        """Create a Java int array."""
+        return self._gateway.new_array(self._gateway.jvm.int, size)
+
     @property
     def java_error_class(self) -> Any:
         """Return the error class indicating exceptions in Java client code."""
@@ -95,6 +99,10 @@ class JniusBackend:
     def new_array(self, java_class: Any, size: int) -> Any:
         """Create a Java array."""
         return self._java_array_new_instance(java_class, size)
+
+    def new_int_array(self, size: int) -> Any:
+        """Create a Java int array."""
+        return [0] * size
 
     @property
     def java_error_class(self) -> Any:

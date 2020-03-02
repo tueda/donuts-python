@@ -8,10 +8,12 @@ from typing import Any, Iterable, Iterator, List, Sequence, Union, overload
 
 from .jvm import jvm
 
+_RawVariable = jvm.find_class("com.github.tueda.donuts.Variable")
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
 _RawPythonUtils = jvm.find_class("com.github.tueda.donuts.python.PythonUtils")
 _JavaError = jvm.java_error_class
 _new_array = jvm.new_array
+_new_int_array = jvm.new_int_array
 
 # TODO: Remove workaround for F811 once new pyflakes is available.
 # See PyCQA/pyflakes#320.
@@ -388,6 +390,46 @@ class Polynomial:
             raise TypeError("lhs is not a Polynomial")
 
     @overload
+    def evaluate(self, variable: Union[Variable, str], value: int) -> Polynomial:
+        """Return the result of setting the given variable to the specified value."""
+        ...
+
+    @overload  # noqa: F811
+    def evaluate(  # noqa: F811
+        self, variables: Sequence[Union[Variable, str]], values: Sequence[int]
+    ) -> Polynomial:
+        """Return the result of setting the given variables to the specified values."""
+        ...
+
+    def evaluate(self, variables, values) -> Polynomial:  # type: ignore  # noqa: F811
+        """Return the result of setting the given variables to the specified values."""
+        # TODO: integer overflow occurs >= 2^31.
+
+        if isinstance(variables, Collection) and not isinstance(variables, str):
+            if not (isinstance(values, Collection) and not isinstance(values, str)):
+                raise TypeError("values must be a collection")
+            if len(variables) != len(values):
+                raise ValueError("variables and values have different sizes")
+            return Polynomial._new(
+                self._raw.evaluate(
+                    _create_raw_var_array(tuple(variables)),
+                    _create_raw_int_array(tuple(values)),
+                )
+            )
+
+        if isinstance(variables, Variable):
+            x = variables
+            if not isinstance(values, int):
+                raise TypeError("value must be an integer")
+            n = values
+            return Polynomial._new(self._raw.evaluate(x._raw, n))
+
+        if isinstance(variables, str):
+            return self.evaluate(Variable(variables), values)
+
+        raise TypeError(f"invalid variables")
+
+    @overload
     def evaluate_at_zero(self, *variables: Union[Variable, str]) -> Polynomial:
         """Return the result of setting all the given variables to zero."""
         ...
@@ -462,6 +504,29 @@ class Polynomial:
             raise ValueError("n must be non-negative")
 
         return Polynomial._new(self._raw.derivative(x._raw, n))
+
+
+def _create_raw_int_array(values: Sequence[int]) -> Any:
+    array = _new_int_array(len(values))
+    for i in range(len(values)):
+        x = values[i]
+        if not isinstance(x, int):
+            raise TypeError("not integer")
+        array[i] = x
+    return array
+
+
+def _create_raw_var_array(variables: Sequence[Union[Variable, str]]) -> Any:
+    array = _new_array(_RawVariable, len(variables))
+    for i in range(len(variables)):
+        x = variables[i]
+        if isinstance(x, Variable):
+            array[i] = x._raw
+        elif isinstance(x, str):
+            array[i] = Variable(x)._raw
+        else:
+            raise TypeError("not Variable")
+    return array
 
 
 def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
