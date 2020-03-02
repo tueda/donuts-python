@@ -1,10 +1,13 @@
 """Interface to Java virtual machine."""
 
+import os
 from typing import Any
 
 import pkg_resources
 
 _JAR_FILE = pkg_resources.resource_filename("donuts", "java/build/libs/donuts-all.jar")
+
+_BACKEND = os.getenv("DONUTS_PYTHON_BACKEND", "pyjnius")
 
 
 class Py4JBackend:
@@ -121,5 +124,7 @@ class JniusBackend:
         return object_stream.readObject()
 
 
-# jvm = Py4JBackend()
-jvm = JniusBackend()
+if _BACKEND == "py4j":
+    jvm = Py4JBackend()
+elif _BACKEND == "pyjnius":
+    jvm = JniusBackend()  # type: ignore
