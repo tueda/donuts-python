@@ -600,6 +600,34 @@ def test_evaluate_at_one():
         a.evaluate_at_one(1)  # not variable
 
 
+def test_shift():
+    a = Polynomial("(1+x+2*y)^3").shift("x", 3)
+    b = Polynomial("(4+x+2*y)^3")
+    assert a == b
+
+    a = Polynomial("(1+x+2*y)^3").shift([Variable("x"), "y"], [3, -2])
+    b = Polynomial("(x+2*y)^3")
+    assert a == b
+
+    with raises(TypeError):
+        a.shift(["x"], 1)  # values must be also a collection
+
+    with raises(ValueError):
+        a.shift(["x"], [1, 2])  # different sizes
+
+    with raises(TypeError):
+        a.shift("x", "y")  # value must be an integer
+
+    with raises(TypeError):
+        a.shift(1, 1)  # invalid variables
+
+    with raises(TypeError):
+        a.shift(["x"], ["y"])  # values are not integers
+
+    with raises(TypeError):
+        a.shift([1], [1])  # not variables
+
+
 def test_diff():
     a = Polynomial("(1+x+y)^3")
     x = Variable("x")

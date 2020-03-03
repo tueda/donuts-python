@@ -491,6 +491,46 @@ class Polynomial:
 
         return self.evaluate_at_one(VariableSet(*variables))
 
+    @overload
+    def shift(self, variable: Union[Variable, str], shift: int) -> Polynomial:
+        """Return the result of the given variable shift."""
+        ...
+
+    @overload  # noqa: F811
+    def shift(  # noqa: F811
+        self, variables: Sequence[Union[Variable, str]], values: Sequence[int]
+    ) -> Polynomial:
+        """Return the result of the given variable shifts."""
+        ...
+
+    def shift(self, variables, values) -> Polynomial:  # type: ignore  # noqa: F811
+        """Return the result of the given variable shifts."""
+        # TODO: integer overflow occurs >= 2^31.
+
+        if isinstance(variables, Collection) and not isinstance(variables, str):
+            if not (isinstance(values, Collection) and not isinstance(values, str)):
+                raise TypeError("values must be a collection")
+            if len(variables) != len(values):
+                raise ValueError("variables and values have different sizes")
+            return Polynomial._new(
+                self._raw.shift(
+                    _create_raw_var_array(tuple(variables)),
+                    _create_raw_int_array(tuple(values)),
+                )
+            )
+
+        if isinstance(variables, Variable):
+            x = variables
+            if not isinstance(values, int):
+                raise TypeError("value must be an integer")
+            n = values
+            return Polynomial._new(self._raw.shift(x._raw, n))
+
+        if isinstance(variables, str):
+            return self.shift(Variable(variables), values)
+
+        raise TypeError(f"invalid variables")
+
     def diff(self, x: Union[Variable, str], n: int = 1) -> Polynomial:
         """Differentiate this polynomial."""
         if isinstance(x, str):
