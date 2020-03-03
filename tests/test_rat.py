@@ -475,6 +475,12 @@ def test_evaluate():
     with raises(TypeError):
         a.evaluate([1], [1])  # not variables
 
+    with raises(ZeroDivisionError):
+        RationalFunction("(1+x+y)/(2-x)").evaluate("x", 2)
+
+    with raises(ZeroDivisionError):
+        RationalFunction("(1+x+y)/(5-x-y)").evaluate(["x", "y"], [2, 3])
+
 
 def test_evaluate_at_zero():
     a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_zero(Variable("x"))
@@ -496,6 +502,12 @@ def test_evaluate_at_zero():
     with raises(TypeError):
         a.evaluate_at_zero(1)  # not variable
 
+    with raises(ZeroDivisionError):
+        RationalFunction("(1+x+y)/x").evaluate_at_zero("x")
+
+    with raises(ZeroDivisionError):
+        RationalFunction("(1+x+y)/(x-y)").evaluate_at_zero(["x", "y"])
+
 
 def test_evaluate_at_one():
     a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_one(Variable("x"))
@@ -516,6 +528,12 @@ def test_evaluate_at_one():
 
     with raises(TypeError):
         a.evaluate_at_one(1)  # not variable
+
+    with raises(ZeroDivisionError):
+        RationalFunction("(1+x+y)/(1-x)").evaluate_at_one("x")
+
+    with raises(ZeroDivisionError):
+        RationalFunction("(1+x+y)/(x-y)").evaluate_at_one(["x", "y"])
 
 
 def test_shift():

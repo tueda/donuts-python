@@ -405,19 +405,29 @@ class RationalFunction:
                 raise TypeError("values must be a collection")
             if len(variables) != len(values):
                 raise ValueError("variables and values have different sizes")
-            return RationalFunction._new(
-                self._raw.evaluate(
-                    _create_raw_var_array(tuple(variables)),
-                    _create_raw_int_array(tuple(values)),
+            try:
+                return RationalFunction._new(
+                    self._raw.evaluate(
+                        _create_raw_var_array(tuple(variables)),
+                        _create_raw_int_array(tuple(values)),
+                    )
                 )
-            )
+            except _JavaError as e:
+                if jvm.get_error_message(e) == "division by zero":
+                    raise ZeroDivisionError("division by zero") from e
+                raise e  # pragma: no cover
 
         if isinstance(variables, Variable):
             x = variables
             if not isinstance(values, int):
                 raise TypeError("value must be an integer")
             n = values
-            return RationalFunction._new(self._raw.evaluate(x._raw, n))
+            try:
+                return RationalFunction._new(self._raw.evaluate(x._raw, n))
+            except _JavaError as e:
+                if jvm.get_error_message(e) == "division by zero":
+                    raise ZeroDivisionError("division by zero") from e
+                raise e  # pragma: no cover
 
         if isinstance(variables, str):
             return self.evaluate(Variable(variables), values)
@@ -443,7 +453,12 @@ class RationalFunction:
         if len(variables) == 1:
             x = variables[0]
             if isinstance(x, (Variable, VariableSet)):
-                return RationalFunction._new(self._raw.evaluateAtZero(x._raw))
+                try:
+                    return RationalFunction._new(self._raw.evaluateAtZero(x._raw))
+                except _JavaError as e:
+                    if jvm.get_error_message(e) == "division by zero":
+                        raise ZeroDivisionError("division by zero") from e
+                    raise e  # pragma: no cover
             if isinstance(x, Collection) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
@@ -478,7 +493,12 @@ class RationalFunction:
         if len(variables) == 1:
             x = variables[0]
             if isinstance(x, (Variable, VariableSet)):
-                return RationalFunction._new(self._raw.evaluateAtOne(x._raw))
+                try:
+                    return RationalFunction._new(self._raw.evaluateAtOne(x._raw))
+                except _JavaError as e:
+                    if jvm.get_error_message(e) == "division by zero":
+                        raise ZeroDivisionError("division by zero") from e
+                    raise e  # pragma: no cover
             if isinstance(x, Collection) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
