@@ -387,11 +387,22 @@ def test_coeff():
     assert a.coeff("z", 0) == a
     assert a.coeff("z", 1) == 0
 
-    with raises(TypeError):
-        a.coeff(1, 1)  # x must be variable
+    assert a.coeff(["x", "y"], [0, 0]) == 1
+    assert a.coeff(["x", "y"], [1, 1]) == 6
+    assert a.coeff(["x", "y"], [1, 2]) == 3
+    assert a.coeff(["x", "y"], [2, 2]) == 0
 
     with raises(TypeError):
-        a.coeff("x", "1")  # n must be int
+        a.coeff(1, 1)  # x must be a variable
+
+    with raises(TypeError):
+        a.coeff("x", "1")  # n must be an integer
+
+    with raises(TypeError):
+        a.coeff(["x", "y"], 1)  # exponents must be a collection
+
+    with raises(ValueError):
+        a.coeff(["x", "y"], [1, 2, 3])  # different sizes
 
 
 def test_translate():

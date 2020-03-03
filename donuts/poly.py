@@ -306,16 +306,46 @@ class Polynomial:
 
         return self._raw.degree(VariableSet(*variables)._raw)  # type: ignore
 
+    @overload
     def coeff(self, x: Union[Variable, str], n: int) -> Polynomial:
         """Return the coefficient of ``x^n``."""
+        ...
+
+    @overload  # noqa: F811
+    def coeff(  # noqa: F811
+        self, variables: Sequence[Union[Variable, str]], exponents: Sequence[int]
+    ) -> Polynomial:
+        """Return the coefficient specified by `variables` and `exponents`."""
+        ...
+
+    def coeff(self, variables, exponents) -> Polynomial:  # type: ignore  # noqa: F811
+        """Return the coefficient specified by `variables` and `exponents`."""
+        # TODO: integer overflow occurs >= 2^31.
+
+        if isinstance(variables, Collection) and not isinstance(variables, str):
+            if not (
+                isinstance(exponents, Collection) and not isinstance(exponents, str)
+            ):
+                raise TypeError("exponents must be a collection")
+            if len(variables) != len(exponents):
+                raise ValueError("variables and exponents have different sizes")
+            return Polynomial._new(
+                self._raw.coefficientOf(
+                    _create_raw_var_array(tuple(variables)),
+                    _create_raw_int_array(tuple(exponents)),
+                )
+            )
+
+        x = variables
+        n = exponents
         if isinstance(x, str):
             x = Variable(x)
-        if not isinstance(x, Variable):
-            raise TypeError("x must be a Variable")
-        if not isinstance(n, int):
-            raise TypeError("n must be an int")
+        if isinstance(x, Variable):
+            if not isinstance(n, int):
+                raise TypeError("exponent must be an integer")
+            return Polynomial._new(self._raw.coefficientOf(x._raw, n))
 
-        return Polynomial._new(self._raw.coefficientOf(x._raw, n))
+        raise TypeError(f"invalid variables")
 
     @overload
     def translate(self, *variables: Union[Variable, str]) -> Polynomial:
