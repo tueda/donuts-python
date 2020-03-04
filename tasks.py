@@ -23,19 +23,24 @@ def lint(c):  # type: ignore
 
 
 @task
-def test(c):  # type: ignore
+def test(c, keyword=None):  # type: ignore
     """Run tests."""
-    c.run("pytest --benchmark-skip --cov=donuts", pty=True)
+    args = ""
+    if keyword:
+        args += f" -k '{keyword}'"
+    c.run("pytest --benchmark-skip --cov=donuts" + args, pty=True)
 
 
 @task
-def bench(c, save=False, compare=None):  # type: ignore
+def bench(c, save=False, compare=None, keyword=None):  # type: ignore
     """Run benchmark tests."""
     args = ""
     if save:
         args += " --benchmark-autosave"
     if compare:
         args += f" --benchmark-group-by=func --benchmark-compare={compare}"
+    if keyword:
+        args += f" -k '{keyword}'"
     c.run("pytest --benchmark-only" + args, pty=True)
 
 
