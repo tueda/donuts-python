@@ -378,6 +378,22 @@ class Polynomial:
             raise ValueError("invalid set of variables") from e
         return Polynomial._new(raw)
 
+    def divide_exact(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
+        """Return ```self / other``` if divisible."""
+        if isinstance(other, (Variable, int)):
+            return self.divide_exact(Polynomial(other))
+        if not isinstance(other, Polynomial):
+            raise TypeError("other must be a Polynomial")
+        try:
+            return Polynomial._new(self._raw.divideExact(other._raw))
+        except _JavaError as e:
+            error = jvm.get_error_message(e)
+            if error == "divide by zero":
+                raise ZeroDivisionError("division by zero") from e
+            elif error.startswith("not divisible"):
+                raise ValueError("not divisible") from e
+            raise e  # pragma: no cover
+
     def gcd(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``GCD(self, other)``."""
         if isinstance(other, (Variable, int)):

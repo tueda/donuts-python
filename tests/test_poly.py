@@ -445,6 +445,27 @@ def test_translate():
         a.translate("w", "x", "y")  # doesn't fit
 
 
+def test_divide_exact():
+    a = Polynomial("(1+x)*(1-y)")
+    b = Polynomial("1+x")
+    c = Polynomial("1-y")
+    assert a.divide_exact(b) == c
+
+    a = Polynomial("6*(1+x)")
+    b = 3
+    c = Polynomial("2*(1+x)")
+    assert a.divide_exact(b) == c
+
+    with raises(TypeError):
+        a.divide_exact("1")  # not polynomial
+
+    with raises(ZeroDivisionError):
+        a.divide_exact(0)
+
+    with raises(ValueError):
+        a.divide_exact(100)  # not divisible
+
+
 def test_gcd():
     zero = Polynomial("0")
 
