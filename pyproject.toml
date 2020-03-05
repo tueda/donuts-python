@@ -55,4 +55,5 @@ known_first_party = ["conftest"]
 known_third_party = ["invoke", "pkg_resources", "pytest", "setuptools"]
 line_length = 88
 multi_line_output = 3
+skip_glob = [".*"]
 use_parentheses = true

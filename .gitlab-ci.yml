@@ -1,6 +1,24 @@
+variables:
+  GRADLE_USER_HOME: $CI_PROJECT_DIR/.cache/gradle
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+  PRE_COMMIT_HOME: $CI_PROJECT_DIR/.cache/pre-commit
+  PYTHONUSERBASE: $CI_PROJECT_DIR/.cache/python-user-packages
+cache:
+  key: $CI_JOB_NAME
+  paths:
+    - $CI_PROJECT_DIR/.tox
+    - $CI_PROJECT_DIR/.venv  # for poetry
+    - $GRADLE_USER_HOME/caches
+    - $GRADLE_USER_HOME/wrapper
+    - $PIP_CACHE_DIR
+    - $PRE_COMMIT_HOME
+    - $PYTHONUSERBASE
+
 .lint:
   before_script:
-    - pip install gitlint pre-commit tox
+    - python -V
+    - export PATH="$PATH:$PYTHONUSERBASE/bin"
+    - pip install --user gitlint pre-commit tox
   script:
     - gitlint
     - pre-commit run --all-files
@@ -11,7 +29,9 @@
     - git submodule update --init --recursive
     - apt-get update
     - apt-get install -qy default-jdk-headless
-    - pip install tox
+    - python -V
+    - export PATH="$PATH:$PYTHONUSERBASE/bin"
+    - pip install --user tox
   artifacts:
     paths:
       - htmlcov
@@ -50,7 +70,11 @@ readme_dev:
   before_script:
     - apt-get update
     - apt-get install -qy default-jdk-headless
-    - pip install poetry
+    - python -V
+    - export PATH="$PATH:$PYTHONUSERBASE/bin"
+    - pip install --user poetry
+    - poetry --version
+    - poetry config virtualenvs.in-project true
   script:
     - poetry install
     - poetry run pre-commit install
