@@ -15,7 +15,7 @@ repos:
     -   id: black
         language_version: python3
 -   repo: https://github.com/asottile/seed-isort-config
-    rev: v2.0.0
+    rev: v2.1.0
     hooks:
     -   id: seed-isort-config
 -   repo: https://github.com/pre-commit/mirrors-isort
@@ -47,6 +47,6 @@ repos:
         -   --scripts-are-modules
         exclude: ^tests/test_.*\.py$
 -   repo: https://github.com/jorisroovers/gitlint
-    rev: v0.12.0
+    rev: v0.13.1
     hooks:
     -   id: gitlint
