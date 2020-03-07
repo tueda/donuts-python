@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Collection, Iterator, Union
+from typing import Any, Collection, Iterator, Sequence, Union, overload
 
 from .jvm import jvm
 from .var import Variable as Variable  # explicitly re-export for mypy
@@ -16,20 +16,53 @@ class VariableSet:
 
     __slots__ = "_raw"
 
-    __NONE = Variable("PRIVATENONE")
+    __NONE = "[__PRIVATE_NONE__]"
 
     __RAW_EMPTY = _RawVariableSet()
 
-    def __init__(self, *variables: Union[Variable, str]) -> None:
-        """Construct a set of variables."""
-        if len(variables) == 1:
-            if variables[0] == VariableSet.__NONE:
-                # Called from `_new`.
-                return
+    @overload
+    def __init__(self) -> None:
+        """Construct an empty set of variables."""
+        ...
 
+    @overload  # noqa: F811
+    def __init__(self, variables: VariableSet) -> None:  # noqa: F811
+        """Construct a set of variables from the given set."""
+        ...
+
+    @overload  # noqa: F811
+    def __init__(self, variable: Union[Variable, str]) -> None:  # noqa: F811
+        """Construct a set of variables containing only the given variable."""
+        ...
+
+    @overload  # noqa: F811
+    def __init__(self, *variables: Union[Variable, str]) -> None:  # noqa: F811
+        """Construct a set of variables from the given variables."""
+        ...
+
+    @overload  # noqa: F811
+    def __init__(self, variables: Sequence[Union[Variable, str]]) -> None:  # noqa: F811
+        """Construct a set of variables from the given variables."""
+        ...
+
+    def __init__(self, *variables) -> None:  # type: ignore  # noqa: F811
+        """Construct a set of variables."""
         if len(variables) == 0:
             self._raw = VariableSet.__RAW_EMPTY
             return
+
+        if len(variables) == 1:
+            v = variables[0]
+            if v == VariableSet.__NONE:
+                # Called from `_new`.
+                return
+
+            if isinstance(v, VariableSet):
+                self._raw = v._raw
+                return
+
+            if isinstance(v, Collection) and not isinstance(v, str):
+                variables = v  # type: ignore
 
         raw = _RawVariableSet()
         for x in variables:

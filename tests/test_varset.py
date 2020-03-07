@@ -19,14 +19,20 @@ def test_init():
     a = VariableSet(x, y, z)
     b = VariableSet(z, y, x, y)
     c = VariableSet("x", "y", y, z)
+    d = VariableSet(["x", "y", y, z])
+    e = VariableSet(a)
 
     assert str(a) == "{x, y, z}"
     assert eval(repr(a)) == a
     assert len(a) == 3
     assert hash(a) == hash(b)
     assert hash(a) == hash(c)
+    assert hash(a) == hash(d)
+    assert hash(a) == hash(e)
     assert a == b
     assert a == c
+    assert a == d
+    assert a == e
 
     with raises(TypeError):
         VariableSet("x", "y", ["z"])  # neither Variable nor str
