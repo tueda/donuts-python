@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import functools
-from typing import Any, Union
+from typing import Any, Union, overload
 
 from .jvm import jvm
 
@@ -23,21 +23,38 @@ class Variable:
 
     __NONE = "[__PRIVATE_NONE__]"
 
+    @overload
     def __init__(self, name: str) -> None:
         """Construct a variable."""
-        if name == Variable.__NONE:
+        ...
+
+    @overload  # noqa: F811
+    def __init__(self, variable: Variable) -> None:  # noqa: F811
+        """Construct a variable."""
+        ...
+
+    def __init__(  # type: ignore  # noqa: F811
+        self, variable: Union[Variable, str]
+    ) -> None:
+        """Construct a variable."""
+        if variable == Variable.__NONE:
             # Called from `_new`.
             return
 
-        if not isinstance(name, str):
-            raise TypeError(f"invalid argument for variable: `{name}`")
+        if isinstance(variable, Variable):
+            self._name: str = variable._name
+            self._raw: Any = variable._raw
+            return
+
+        if not isinstance(variable, str):
+            raise TypeError(f"invalid argument for variable: `{variable}`")
 
         try:
-            self._raw = _raw_variable_from_str(name)
+            self._raw = _raw_variable_from_str(variable)
         except _JavaError as e:
-            raise ValueError(f"invalid string for variable: `{name}'") from e
+            raise ValueError(f"invalid string for variable: `{variable}'") from e
 
-        self._name = name
+        self._name = variable
 
     @staticmethod
     def _new(raw: Any) -> Variable:

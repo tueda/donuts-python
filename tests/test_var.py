@@ -9,6 +9,11 @@ def test_init():
     x = Variable("x")
     assert str(x) == "x"
 
+    y = Variable(x)
+    assert str(y) == "x"
+
+    assert x == y
+
     with raises(TypeError):
         Variable(42)  # not string
 
