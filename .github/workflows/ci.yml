@@ -44,3 +44,7 @@ jobs:
       - name: Install dependencies
         run: pip install tox tox-gh-actions
       - run: tox
+      - name: Run tox (py4j)
+        env:
+          DONUTS_PYTHON_BACKEND: py4j
+        run: tox

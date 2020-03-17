@@ -48,12 +48,16 @@ lint38:
 py37:
   extends: .test
   image: python:3.7
-  script: tox -e py37
+  script:
+    - tox -e py37
+    - DONUTS_PYTHON_BACKEND=py4j tox -e py37
 
 py38:
   extends: .test
   image: python:3.8
-  script: tox -e py38
+  script:
+    - tox -e py38
+    - DONUTS_PYTHON_BACKEND=py4j tox -e py38
 
 doc:
   extends: .test
