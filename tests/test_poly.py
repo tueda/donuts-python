@@ -405,6 +405,29 @@ def test_coeff():
         a.coeff(["x", "y"], [1, 2, 3])  # different sizes
 
 
+def test_coeff_dict():
+    p = Polynomial("(1+x-y)^2")
+
+    res = {
+        (0,): Polynomial("(1-y)^2"),
+        (1,): Polynomial("2*(1-y)"),
+        (2,): Polynomial("1"),
+    }
+    assert p.coeff_dict("x") == res
+
+    res = {
+        (0, 0): Polynomial("1"),
+        (0, 1): Polynomial("-2"),
+        (0, 2): Polynomial("1"),
+        (1, 0): Polynomial("2"),
+        (1, 1): Polynomial("-2"),
+        (2, 0): Polynomial("1"),
+    }
+    assert p.coeff_dict("x", "y") == res
+    assert p.coeff_dict([Variable("x"), "y"]) == res
+    assert p.coeff_dict(x for x in ["x", "y"]) == res
+
+
 def test_translate():
     a = Polynomial("(1+x+y)-(1+x+z)")
 

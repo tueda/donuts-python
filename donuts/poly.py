@@ -4,7 +4,7 @@ from __future__ import annotations
 import functools
 from collections.abc import Collection
 from fractions import Fraction
-from typing import Any, Iterable, Iterator, List, Sequence, Union, overload
+from typing import Any, Dict, Iterable, Iterator, List, Sequence, Union, overload
 
 from .jvm import jvm
 
@@ -348,6 +348,34 @@ class Polynomial:
         raise TypeError(f"invalid variables")
 
     @overload
+    def coeff_dict(
+        self, *variables: Union[Variable, str]
+    ) -> Dict[Sequence[int], Polynomial]:
+        """Cast this polynomial to a map from exponents to coefficients."""
+        ...
+
+    @overload  # noqa: F811
+    def coeff_dict(  # noqa: F811
+        self, variables: Iterable[Union[Variable, str]]
+    ) -> Dict[Sequence[int], Polynomial]:
+        """Cast this polynomial to a map from exponents to coefficients."""
+        ...
+
+    def coeff_dict(  # type: ignore  # noqa: F811
+        self, *variables
+    ) -> Dict[Sequence[int], Polynomial]:
+        """Cast this polynomial to a map from exponents to coefficients."""
+        array = _create_raw_var_array(variables)
+        it = _RawPythonUtils.getCoefficientMap(self._raw, array).entrySet().iterator()
+        result: Dict[Sequence[int], Polynomial] = {}
+        while it.hasNext():
+            entry = it.next()  # noqa: B305
+            exponents = tuple(entry.getKey())
+            coefficient = Polynomial._new(entry.getValue())
+            result[exponents] = coefficient
+        return result
+
+    @overload
     def translate(self, *variables: Union[Variable, str]) -> Polynomial:
         """Translate the polynomial in terms of the given set of variables."""
         ...
@@ -602,7 +630,14 @@ def _create_raw_int_array(values: Sequence[int]) -> Any:
     return array
 
 
-def _create_raw_var_array(variables: Sequence[Union[Variable, str]]) -> Any:
+def _create_raw_var_array(variables: Sequence[Any]) -> Any:
+    if len(variables) == 1:
+        x = variables[0]
+        if isinstance(x, Sequence) and not isinstance(x, str):
+            return _create_raw_var_array(x)
+        if isinstance(x, Iterable) and not isinstance(x, str):
+            return _create_raw_var_array(tuple(x))
+
     array = _new_array(_RawVariable, len(variables))
     for i in range(len(variables)):
         x = variables[i]
