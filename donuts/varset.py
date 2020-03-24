@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from typing import Any, Collection, Iterator, Sequence, Union, overload
 
+from .array import _create_raw_var_array
 from .jvm import jvm
 from .var import Variable as Variable  # explicitly re-export for mypy
 
 _RawVariableSet = jvm.find_class("com.github.tueda.donuts.VariableSet")
+_RawPythonUtils = jvm.find_class("com.github.tueda.donuts.python.PythonUtils")
 
 
 class VariableSet:
@@ -63,18 +65,7 @@ class VariableSet:
             if isinstance(v, Collection) and not isinstance(v, str):
                 variables = v  # type: ignore
 
-        raw = _RawVariableSet()
-        for x in variables:
-            if isinstance(x, str):
-                x = Variable(x)
-            if not isinstance(x, Variable):
-                raise TypeError("not a Variable")
-            # Somehow the following line doesn't work with pyjnius 1.2.1.
-            # Use a temporary variable.
-            # raw = raw.union(_RawVariableSet(x._raw))
-            raw1 = _RawVariableSet(x._raw)
-            raw = raw.union(raw1)
-        self._raw = raw
+        self._raw = _RawPythonUtils.variableSet(_create_raw_var_array(variables))
 
     @staticmethod
     def _new(raw: Any) -> VariableSet:
