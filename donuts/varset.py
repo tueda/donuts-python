@@ -8,7 +8,6 @@ from .jvm import jvm
 from .var import Variable as Variable  # explicitly re-export for mypy
 
 _RawVariableSet = jvm.find_class("com.github.tueda.donuts.VariableSet")
-_JavaError = jvm.java_error_class
 
 
 class VariableSet:

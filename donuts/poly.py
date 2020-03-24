@@ -1,4 +1,5 @@
 """Polynomial."""
+
 from __future__ import annotations
 
 import functools
@@ -8,12 +9,9 @@ from typing import Any, Dict, Iterable, Iterator, List, Sequence, Union, overloa
 
 from .jvm import jvm
 
-_RawVariable = jvm.find_class("com.github.tueda.donuts.Variable")
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
 _RawPythonUtils = jvm.find_class("com.github.tueda.donuts.python.PythonUtils")
 _JavaError = jvm.java_error_class
-_new_array = jvm.new_array
-_new_int_array = jvm.new_int_array
 
 # TODO: Remove workaround for F811 once new pyflakes is available.
 # See PyCQA/pyflakes#320.
@@ -620,56 +618,6 @@ class Polynomial:
         return Polynomial._new(self._raw.derivative(x._raw, n))
 
 
-def _create_raw_int_array(values: Sequence[int]) -> Any:
-    array = _new_int_array(len(values))
-    for i in range(len(values)):
-        x = values[i]
-        if not isinstance(x, int):
-            raise TypeError("not integer")
-        array[i] = x
-    return array
-
-
-def _create_raw_var_array(variables: Sequence[Any]) -> Any:
-    if len(variables) == 1:
-        x = variables[0]
-        if isinstance(x, Sequence) and not isinstance(x, str):
-            return _create_raw_var_array(x)
-        if isinstance(x, Iterable) and not isinstance(x, str):
-            return _create_raw_var_array(tuple(x))
-
-    array = _new_array(_RawVariable, len(variables))
-    for i in range(len(variables)):
-        x = variables[i]
-        if isinstance(x, Variable):
-            array[i] = x._raw
-        elif isinstance(x, str):
-            array[i] = Variable(x)._raw
-        else:
-            raise TypeError("not Variable")
-    return array
-
-
-def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
-    if len(polynomials) == 1:
-        x = polynomials[0]
-        if isinstance(x, Sequence) and not isinstance(x, (Polynomial, str)):
-            return _create_raw_poly_array(x)
-        if isinstance(x, Iterable) and not isinstance(x, (Polynomial, str)):
-            return _create_raw_poly_array(tuple(x))
-
-    array = _new_array(_RawPolynomial, len(polynomials))
-    for i in range(len(polynomials)):
-        x = polynomials[i]
-        if isinstance(x, Polynomial):
-            array[i] = x._raw
-        elif isinstance(x, (Variable, int)):
-            array[i] = Polynomial(x)._raw
-        else:
-            raise TypeError("not Polynomial")
-    return array
-
-
 @overload  # noqa: A001
 def sum(*polynomials: Union[Polynomial, Variable, int]) -> Polynomial:  # noqa: A001
     """Return the sum of the given polynomials."""
@@ -747,5 +695,10 @@ def lcm(*polynomials) -> Polynomial:  # type: ignore
 
 
 # These imports should be after the definition of Polynomial.
+from .array import (  # isort:skip  # noqa: E402
+    _create_raw_int_array,
+    _create_raw_poly_array,
+    _create_raw_var_array,
+)
 from .varset import Variable, VariableSet, VariableSetLike  # isort:skip  # noqa: E402
 from .rat import RationalFunction  # isort:skip  # noqa: E402

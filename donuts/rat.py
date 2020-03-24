@@ -1,4 +1,5 @@
 """Routines for rational functions."""
+
 from __future__ import annotations
 
 import functools
@@ -6,8 +7,9 @@ from collections.abc import Collection
 from fractions import Fraction
 from typing import Any, Sequence, Union, overload
 
+from .array import _create_raw_int_array, _create_raw_var_array
 from .jvm import jvm
-from .poly import Polynomial, _create_raw_int_array, _create_raw_var_array
+from .poly import Polynomial
 from .varset import Variable, VariableSet, VariableSetLike
 
 _RawRationalFunction = jvm.find_class("com.github.tueda.donuts.RationalFunction")
