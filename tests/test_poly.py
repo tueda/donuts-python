@@ -683,6 +683,28 @@ def test_diff():
         a.diff(x, -1)  # n must be non-negative
 
 
+def test_sum_of():
+    p1 = Polynomial("1+x")
+    p2 = Polynomial("1+y")
+    p3 = Polynomial("1+z")
+
+    assert donuts.poly.sum() == 0
+    assert donuts.poly.sum(p1) == p1
+    assert donuts.poly.sum(p1, p2) == p1 + p2
+    assert donuts.poly.sum(p1, p2, p3) == p1 + p2 + p3
+
+
+def test_product_of():
+    p1 = Polynomial("1+x")
+    p2 = Polynomial("1+y")
+    p3 = Polynomial("1+z")
+
+    assert donuts.poly.product() == 1
+    assert donuts.poly.product(p1) == p1
+    assert donuts.poly.product(p1, p2) == p1 * p2
+    assert donuts.poly.product(p1, p2, p3) == p1 * p2 * p3
+
+
 def test_gcd_of():
     p1 = Polynomial("1+x")
     p2 = Polynomial("1+y")

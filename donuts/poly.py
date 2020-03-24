@@ -635,6 +635,44 @@ def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
     return array
 
 
+@overload  # noqa: A001
+def sum(*polynomials: Union[Polynomial, Variable, int]) -> Polynomial:  # noqa: A001
+    """Return the sum of the given polynomials."""
+    ...
+
+
+@overload  # noqa: A001
+def sum(  # noqa: A001
+    polynomials: Iterable[Union[Polynomial, Variable, int]]
+) -> Polynomial:
+    """Return the sum of the given polynomials."""
+    ...
+
+
+def sum(*polynomials) -> Polynomial:  # type: ignore  # noqa: A001
+    """Return the sum of the given polynomials."""
+    array = _create_raw_poly_array(polynomials)
+    return Polynomial._new(_RawPythonUtils.sumOf(array))
+
+
+@overload
+def product(*polynomials: Union[Polynomial, Variable, int]) -> Polynomial:
+    """Return the product of the given polynomials."""
+    ...
+
+
+@overload
+def product(polynomials: Iterable[Union[Polynomial, Variable, int]]) -> Polynomial:
+    """Return the product of the given polynomials."""
+    ...
+
+
+def product(*polynomials) -> Polynomial:  # type: ignore
+    """Return the product of the given polynomials."""
+    array = _create_raw_poly_array(polynomials)
+    return Polynomial._new(_RawPythonUtils.productOf(array))
+
+
 @overload
 def gcd(*polynomials: Union[Polynomial, Variable, int]) -> Polynomial:
     """Return the GCD of the given polynomials."""
