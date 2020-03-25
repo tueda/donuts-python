@@ -54,14 +54,16 @@ def doc(c):  # type: ignore
 
 
 @task
-def build(c):  # type: ignore
-    """Build the JAR file."""
+def build(c, sdist=False, wheel=False):  # type: ignore
+    """Build the JAR file/distribution."""
     from build import build_jar
 
-    build_jar()
+    if not wheel:
+        build_jar()
 
+    if sdist:
+        c.run("python setup.py sdist", pty=True)
 
-@task
-def build_sdist(c):  # type: ignore
-    """Build the sdist."""
-    c.run("python setup.py sdist", pty=True)
+    if wheel:
+        # NOTE: "pip install wheel" needed.
+        c.run("python setup.py bdist_wheel", pty=True)

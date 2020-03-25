@@ -3,9 +3,6 @@ Donuts-Python
 
 Python binding to the `Donuts`_ wrapper for `Rings`_.
 
-.. _Donuts: https://github.com/tueda/donuts
-.. _Rings:  https://github.com/PoslavskySV/rings
-
 
 Requirements
 ------------
@@ -62,10 +59,29 @@ Development
     poetry run invoke test
     poetry run invoke bench
     poetry run invoke doc
-    poetry run invoke build-sdist
+
+    poetry run pip install wheel
+    poetry run invoke build --sdist --wheel
 
 
 License
 -------
 
-MIT
+Donuts-Python is distributed under the MIT license.
+
+The wheel contains a fat JAR file generated from the following dependencies:
+
+* `Donuts`_ (MIT)
+* `Rings`_ (Apache 2.0)
+* `libdivide4j`_ (Apache 2.0)
+* `Combinatorics for Java`_ (Apache 2.0)
+* `Apache Commons Math`_ (Apache 2.0)
+* `GNU Trove`_ (LGPL 2.1)
+
+
+.. _Donuts: https://github.com/tueda/donuts
+.. _Rings:  https://github.com/PoslavskySV/rings
+.. _libdivide4j: https://github.com/PoslavskySV/libdivide4j
+.. _Combinatorics for Java: https://github.com/PoslavskySV/combinatorics
+.. _Apache Commons Math: https://github.com/apache/commons-math
+.. _GNU Trove: https://bitbucket.org/trove4j/trove

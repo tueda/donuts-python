@@ -90,4 +90,5 @@ readme_dev:
     - poetry run invoke test
 #   - poetry run invoke bench
     - poetry run invoke doc
-    - poetry run invoke build-sdist
+    - poetry run pip install wheel
+    - poetry run invoke build --sdist --wheel
