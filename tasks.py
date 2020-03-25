@@ -23,11 +23,13 @@ def lint(c):  # type: ignore
 
 
 @task
-def test(c, keyword=None):  # type: ignore
+def test(c, keyword=None, verbose=False):  # type: ignore
     """Run tests."""
     args = ""
     if keyword:
         args += f" -k '{keyword}'"
+    if verbose:
+        args += " -vv"
     c.run("pytest --benchmark-skip --cov=donuts" + args, pty=True)
 
 
