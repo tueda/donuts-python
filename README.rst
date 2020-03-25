@@ -43,7 +43,7 @@ Example
 Development
 -----------
 
-.. The code is tested by "readme_dev" in .gitlab-ci.yml.
+.. The code is tested by "readme_dev" in .gitlab-ci.yml and .github/workflows/ci.yml.
 
 .. code:: shell
 
