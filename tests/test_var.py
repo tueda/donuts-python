@@ -2,7 +2,7 @@ from pickle import dumps, loads
 
 from pytest import raises
 
-from donuts import Polynomial, Variable
+from donuts import Polynomial, RationalFunction, Variable
 
 
 def test_init():
@@ -96,6 +96,14 @@ def test_mul():
     assert a * b == Polynomial("a*b")
     assert a * 2 == Polynomial("2*a")
     assert 2 * a == Polynomial("2*a")
+
+
+def test_div():
+    a = Variable("a")
+    b = Variable("b")
+    assert a / b == RationalFunction("a/b")
+    assert a / 2 == RationalFunction("a/2")
+    assert 1 / a == RationalFunction("1/a")
 
 
 def test_pow():

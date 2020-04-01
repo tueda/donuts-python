@@ -9,6 +9,7 @@ from .jvm import jvm
 
 if TYPE_CHECKING:
     from .poly import Polynomial
+    from .rat import RationalFunction
 
 _RawVariable = jvm.find_class("com.github.tueda.donuts.Variable")
 _JavaError = jvm.java_error_class
@@ -146,6 +147,22 @@ class Variable:
 
         if isinstance(other, int):
             return Polynomial(other) * Polynomial(self)
+        return NotImplemented  # type: ignore
+
+    def __truediv__(self, other: Union[Variable, int]) -> RationalFunction:
+        """Return ``self / other``."""
+        from .rat import RationalFunction
+
+        if isinstance(other, (Variable, int)):
+            return RationalFunction(self, other)
+        return NotImplemented  # type: ignore
+
+    def __rtruediv__(self, other: int) -> RationalFunction:
+        """Return ``other / self``."""
+        from .rat import RationalFunction
+
+        if isinstance(other, int):
+            return RationalFunction(other, self)
         return NotImplemented  # type: ignore
 
     def __pow__(self, other: int) -> Polynomial:
