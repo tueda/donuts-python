@@ -44,6 +44,7 @@ sphinx-autodoc-typehints = "^1.10.3"
 [tool.coverage.report]
 exclude_lines = [
     "@overload",
+    "if TYPE_CHECKING:",
     "pragma: no cover",
     "raise AssertionError()",
     "return NotImplemented",

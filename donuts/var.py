@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import functools
-from typing import Any, Union, overload
+from typing import TYPE_CHECKING, Any, Union, overload
 
 from .jvm import jvm
+
+if TYPE_CHECKING:
+    from .poly import Polynomial
 
 _RawVariable = jvm.find_class("com.github.tueda.donuts.Variable")
 _JavaError = jvm.java_error_class
@@ -87,50 +90,68 @@ class Variable:
 
     def __pos__(self) -> Polynomial:
         """Return ``+ self``."""
+        from .poly import Polynomial
+
         return Polynomial(self)
 
     def __neg__(self) -> Polynomial:
         """Return ``- self``."""
+        from .poly import Polynomial
+
         return -Polynomial(self)
 
     def __add__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``self + other``."""
+        from .poly import Polynomial
+
         if isinstance(other, (Variable, int)):
             return Polynomial(self) + Polynomial(other)
         return NotImplemented  # type: ignore
 
     def __radd__(self, other: int) -> Polynomial:
         """Return ``other + self."""
+        from .poly import Polynomial
+
         if isinstance(other, int):
             return Polynomial(other) + Polynomial(self)
         return NotImplemented  # type: ignore
 
     def __sub__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``self - other``."""
+        from .poly import Polynomial
+
         if isinstance(other, (Variable, int)):
             return Polynomial(self) - Polynomial(other)
         return NotImplemented  # type: ignore
 
     def __rsub__(self, other: int) -> Polynomial:
         """Return ``other - self."""
+        from .poly import Polynomial
+
         if isinstance(other, int):
             return Polynomial(other) - Polynomial(self)
         return NotImplemented  # type: ignore
 
     def __mul__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``self * other``."""
+        from .poly import Polynomial
+
         if isinstance(other, (Variable, int)):
             return Polynomial(self) * Polynomial(other)
         return NotImplemented  # type: ignore
 
     def __rmul__(self, other: int) -> Polynomial:
         """Return ``other * self."""
+        from .poly import Polynomial
+
         if isinstance(other, int):
             return Polynomial(other) * Polynomial(self)
         return NotImplemented  # type: ignore
 
     def __pow__(self, other: int) -> Polynomial:
         """Return ``self ** other``."""
+        from .poly import Polynomial
+
         if isinstance(other, int):
             return Polynomial(self) ** other
         return NotImplemented  # type: ignore
@@ -152,7 +173,3 @@ class Variable:
         if isinstance(other, Variable):
             return self._raw.compareTo(other._raw) < 0  # type: ignore
         return NotImplemented
-
-
-# This import should be after the definition of Variable.
-from .poly import Polynomial  # isort:skip  # noqa: E402

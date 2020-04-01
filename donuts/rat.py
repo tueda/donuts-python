@@ -10,7 +10,8 @@ from typing import Any, Sequence, Union, overload
 from .array import _create_raw_int_array, _create_raw_var_array
 from .jvm import jvm
 from .poly import Polynomial
-from .varset import Variable, VariableSet, VariableSetLike
+from .var import Variable
+from .varset import VariableSet, VariableSetLike
 
 _RawRationalFunction = jvm.find_class("com.github.tueda.donuts.RationalFunction")
 _JavaError = jvm.java_error_class

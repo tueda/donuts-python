@@ -3,8 +3,6 @@
 from typing import Any, Iterable, Sequence
 
 from .jvm import jvm
-from .poly import Polynomial
-from .var import Variable
 
 _RawVariable = jvm.find_class("com.github.tueda.donuts.Variable")
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
@@ -25,6 +23,8 @@ def _create_raw_int_array(values: Sequence[int]) -> Any:
 
 def _create_raw_var_array(variables: Sequence[Any]) -> Any:
     """Create a Java array of variables."""
+    from .var import Variable
+
     if len(variables) == 1:
         x = variables[0]
         if isinstance(x, Sequence) and not isinstance(x, str):
@@ -46,6 +46,9 @@ def _create_raw_var_array(variables: Sequence[Any]) -> Any:
 
 def _create_raw_poly_array(polynomials: Sequence[Any]) -> Any:
     """Create a Java array of polynomials."""
+    from .poly import Polynomial
+    from .var import Variable
+
     if len(polynomials) == 1:
         x = polynomials[0]
         if isinstance(x, Sequence) and not isinstance(x, (Polynomial, str)):

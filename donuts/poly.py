@@ -5,9 +5,25 @@ from __future__ import annotations
 import functools
 from collections.abc import Collection
 from fractions import Fraction
-from typing import Any, Dict, Iterable, Iterator, List, Sequence, Union, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Sequence,
+    Union,
+    overload,
+)
 
+from .array import _create_raw_int_array, _create_raw_poly_array, _create_raw_var_array
 from .jvm import jvm
+from .var import Variable
+from .varset import VariableSet, VariableSetLike
+
+if TYPE_CHECKING:
+    from .rat import RationalFunction
 
 _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
 _RawPythonUtils = jvm.find_class("com.github.tueda.donuts.python.PythonUtils")
@@ -169,6 +185,8 @@ class Polynomial:
         self, other: Union[Polynomial, Variable, Fraction, int]
     ) -> RationalFunction:
         """Return ``self / other``."""
+        from .rat import RationalFunction
+
         if isinstance(other, (Polynomial, Variable, int)):
             return RationalFunction(self, other)
         elif isinstance(other, Fraction):
@@ -177,6 +195,8 @@ class Polynomial:
 
     def __rtruediv__(self, other: Union[Variable, Fraction, int]) -> RationalFunction:
         """Return ``other / self``."""
+        from .rat import RationalFunction
+
         if isinstance(other, (Variable, int)):
             return RationalFunction(other, self)
         elif isinstance(other, Fraction):
@@ -692,13 +712,3 @@ def lcm(*polynomials) -> Polynomial:  # type: ignore
     if len(polynomials) == 0:
         raise ValueError("lcm with no arguments")
     return Polynomial._new(_RawPythonUtils.lcmOf(array))
-
-
-# These imports should be after the definition of Polynomial.
-from .array import (  # isort:skip  # noqa: E402
-    _create_raw_int_array,
-    _create_raw_poly_array,
-    _create_raw_var_array,
-)
-from .varset import Variable, VariableSet, VariableSetLike  # isort:skip  # noqa: E402
-from .rat import RationalFunction  # isort:skip  # noqa: E402
