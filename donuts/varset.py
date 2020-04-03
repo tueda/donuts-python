@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Collection, Iterator, Sequence, Union, overload
+from typing import Any, Iterable, Iterator, Union, overload
 
 from .array import _create_raw_var_array
 from .jvm import jvm
@@ -42,7 +42,7 @@ class VariableSet:
         ...
 
     @overload  # noqa: F811
-    def __init__(self, variables: Sequence[Union[Variable, str]]) -> None:  # noqa: F811
+    def __init__(self, variables: Iterable[Union[Variable, str]]) -> None:  # noqa: F811
         """Construct a set of variables from the given variables."""
         ...
 
@@ -62,7 +62,7 @@ class VariableSet:
                 self._raw = v._raw
                 return
 
-            if isinstance(v, Collection) and not isinstance(v, str):
+            if isinstance(v, Iterable) and not isinstance(v, str):
                 variables = v  # type: ignore
 
         self._raw = _RawPythonUtils.variableSet(_create_raw_var_array(variables))
@@ -129,4 +129,4 @@ class VariableSet:
 
 
 # For static typing.
-VariableSetLike = Union[VariableSet, Collection[Variable]]
+VariableSetLike = Union[VariableSet, Iterable[Variable]]

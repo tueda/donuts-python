@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import functools
-from collections.abc import Collection
 from fractions import Fraction
 from typing import (
     TYPE_CHECKING,
@@ -313,7 +312,7 @@ class Polynomial:
                 return self._raw.degree(x._raw)  # type: ignore
             if isinstance(x, VariableSet):
                 return self._raw.degree(x._raw)  # type: ignore
-            if isinstance(x, Collection) and not isinstance(x, str):
+            if isinstance(x, Iterable) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
                     return 0
@@ -340,11 +339,9 @@ class Polynomial:
         """Return the coefficient specified by `variables` and `exponents`."""
         # TODO: integer overflow occurs >= 2^31.
 
-        if isinstance(variables, Collection) and not isinstance(variables, str):
-            if not (
-                isinstance(exponents, Collection) and not isinstance(exponents, str)
-            ):
-                raise TypeError("exponents must be a collection")
+        if isinstance(variables, Sequence) and not isinstance(variables, str):
+            if not (isinstance(exponents, Sequence) and not isinstance(exponents, str)):
+                raise TypeError("exponents must be a sequence")
             if len(variables) != len(exponents):
                 raise ValueError("variables and exponents have different sizes")
             return Polynomial._new(
@@ -409,7 +406,7 @@ class Polynomial:
             xx = variables[0]
             if isinstance(xx, VariableSet):
                 return self._translate_impl(xx._raw)
-            elif isinstance(xx, Collection) and not isinstance(xx, str):
+            elif isinstance(xx, Iterable) and not isinstance(xx, str):
                 return self.translate(*xx)
 
         if any(not isinstance(x, (Variable, str)) for x in variables):
@@ -497,9 +494,9 @@ class Polynomial:
         """Return the result of setting the given variables to the specified values."""
         # TODO: integer overflow occurs >= 2^31.
 
-        if isinstance(variables, Collection) and not isinstance(variables, str):
-            if not (isinstance(values, Collection) and not isinstance(values, str)):
-                raise TypeError("values must be a collection")
+        if isinstance(variables, Sequence) and not isinstance(variables, str):
+            if not (isinstance(values, Sequence) and not isinstance(values, str)):
+                raise TypeError("values must be a sequence")
             if len(variables) != len(values):
                 raise ValueError("variables and values have different sizes")
             return Polynomial._new(
@@ -537,7 +534,7 @@ class Polynomial:
             x = variables[0]
             if isinstance(x, (Variable, VariableSet)):
                 return Polynomial._new(self._raw.evaluateAtZero(x._raw))
-            if isinstance(x, Collection) and not isinstance(x, str):
+            if isinstance(x, Iterable) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
                     return self
@@ -568,7 +565,7 @@ class Polynomial:
             x = variables[0]
             if isinstance(x, (Variable, VariableSet)):
                 return Polynomial._new(self._raw.evaluateAtOne(x._raw))
-            if isinstance(x, Collection) and not isinstance(x, str):
+            if isinstance(x, Iterable) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
                     return self
@@ -599,9 +596,9 @@ class Polynomial:
         """Return the result of the given variable shifts."""
         # TODO: integer overflow occurs >= 2^31.
 
-        if isinstance(variables, Collection) and not isinstance(variables, str):
-            if not (isinstance(values, Collection) and not isinstance(values, str)):
-                raise TypeError("values must be a collection")
+        if isinstance(variables, Sequence) and not isinstance(variables, str):
+            if not (isinstance(values, Sequence) and not isinstance(values, str)):
+                raise TypeError("values must be a sequence")
             if len(variables) != len(values):
                 raise ValueError("variables and values have different sizes")
             return Polynomial._new(

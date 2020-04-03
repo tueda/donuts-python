@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import functools
-from collections.abc import Collection
 from fractions import Fraction
-from typing import Any, Sequence, Union, overload
+from typing import Any, Iterable, Sequence, Union, overload
 
 from .array import _create_raw_int_array, _create_raw_var_array
 from .jvm import jvm
@@ -344,7 +343,7 @@ class RationalFunction:
             xx = variables[0]
             if isinstance(xx, VariableSet):
                 return self._translate_impl(xx._raw)
-            elif isinstance(xx, Collection) and not isinstance(xx, str):
+            elif isinstance(xx, Iterable) and not isinstance(xx, str):
                 return self.translate(*xx)
 
         if any(not isinstance(x, (str, Variable)) for x in variables):
@@ -403,9 +402,9 @@ class RationalFunction:
         """Return the result of setting the given variables to the specified values."""
         # TODO: integer overflow occurs >= 2^31.
 
-        if isinstance(variables, Collection) and not isinstance(variables, str):
-            if not (isinstance(values, Collection) and not isinstance(values, str)):
-                raise TypeError("values must be a collection")
+        if isinstance(variables, Sequence) and not isinstance(variables, str):
+            if not (isinstance(values, Sequence) and not isinstance(values, str)):
+                raise TypeError("values must be a sequence")
             if len(variables) != len(values):
                 raise ValueError("variables and values have different sizes")
             try:
@@ -462,7 +461,7 @@ class RationalFunction:
                     if jvm.get_error_message(e) == "division by zero":
                         raise ZeroDivisionError("division by zero") from e
                     raise e  # pragma: no cover
-            if isinstance(x, Collection) and not isinstance(x, str):
+            if isinstance(x, Iterable) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
                     return self
@@ -502,7 +501,7 @@ class RationalFunction:
                     if jvm.get_error_message(e) == "division by zero":
                         raise ZeroDivisionError("division by zero") from e
                     raise e  # pragma: no cover
-            if isinstance(x, Collection) and not isinstance(x, str):
+            if isinstance(x, Iterable) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
                     return self
@@ -535,9 +534,9 @@ class RationalFunction:
         """Return the result of the given variable shifts."""
         # TODO: integer overflow occurs >= 2^31.
 
-        if isinstance(variables, Collection) and not isinstance(variables, str):
-            if not (isinstance(values, Collection) and not isinstance(values, str)):
-                raise TypeError("values must be a collection")
+        if isinstance(variables, Sequence) and not isinstance(variables, str):
+            if not (isinstance(values, Sequence) and not isinstance(values, str)):
+                raise TypeError("values must be a sequence")
             if len(variables) != len(values):
                 raise ValueError("variables and values have different sizes")
             return RationalFunction._new(
