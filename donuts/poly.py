@@ -28,9 +28,6 @@ _RawPolynomial = jvm.find_class("com.github.tueda.donuts.Polynomial")
 _RawPythonUtils = jvm.find_class("com.github.tueda.donuts.python.PythonUtils")
 _JavaError = jvm.java_error_class
 
-# TODO: Remove workaround for F811 once new pyflakes is available.
-# See PyCQA/pyflakes#320.
-
 _RAW_ZERO = _RawPolynomial()
 _RAW_ONE = _RawPolynomial(1)
 _RAW_MINUS_ONE = _RawPolynomial(-1)
@@ -290,17 +287,17 @@ class Polynomial:
         """Return the total degree."""
         ...
 
-    @overload  # noqa: F811
-    def degree(self, *variables: Union[Variable, str]) -> int:  # noqa: F811
+    @overload
+    def degree(self, *variables: Union[Variable, str]) -> int:
         """Return the degree with respect to the given variables."""
         ...
 
-    @overload  # noqa: F811
-    def degree(self, variables: VariableSetLike) -> int:  # noqa: F811
+    @overload
+    def degree(self, variables: VariableSetLike) -> int:
         """Return the degree with respect to the given variables."""
         ...
 
-    def degree(self, *variables) -> int:  # type: ignore  # noqa: F811
+    def degree(self, *variables) -> int:  # type: ignore
         """Return the degree with respect to the specified variables."""
         if len(variables) == 0:
             # Return the total degree.
@@ -328,14 +325,14 @@ class Polynomial:
         """Return the coefficient of ``x^n``."""
         ...
 
-    @overload  # noqa: F811
-    def coeff(  # noqa: F811
+    @overload
+    def coeff(
         self, variables: Sequence[Union[Variable, str]], exponents: Sequence[int]
     ) -> Polynomial:
         """Return the coefficient specified by `variables` and `exponents`."""
         ...
 
-    def coeff(self, variables, exponents) -> Polynomial:  # type: ignore  # noqa: F811
+    def coeff(self, variables, exponents) -> Polynomial:  # type: ignore
         """Return the coefficient specified by `variables` and `exponents`."""
         # TODO: integer overflow occurs >= 2^31.
 
@@ -369,14 +366,14 @@ class Polynomial:
         """Cast this polynomial to a map from exponents to coefficients."""
         ...
 
-    @overload  # noqa: F811
-    def coeff_dict(  # noqa: F811
+    @overload
+    def coeff_dict(
         self, variables: Iterable[Union[Variable, str]]
     ) -> Dict[Sequence[int], Polynomial]:
         """Cast this polynomial to a map from exponents to coefficients."""
         ...
 
-    def coeff_dict(  # type: ignore  # noqa: F811
+    def coeff_dict(  # type: ignore
         self, *variables
     ) -> Dict[Sequence[int], Polynomial]:
         """Cast this polynomial to a map from exponents to coefficients."""
@@ -395,12 +392,12 @@ class Polynomial:
         """Translate the polynomial in terms of the given set of variables."""
         ...
 
-    @overload  # noqa: F811
-    def translate(self, variables: VariableSetLike) -> Polynomial:  # noqa: F811
+    @overload
+    def translate(self, variables: VariableSetLike) -> Polynomial:
         """Translate the polynomial in terms of the given set of variables."""
         ...
 
-    def translate(self, *variables) -> Polynomial:  # type: ignore  # noqa: F811
+    def translate(self, *variables) -> Polynomial:  # type: ignore
         """Translate the polynomial in terms of the given set of variables."""
         if len(variables) == 1:
             xx = variables[0]
@@ -483,14 +480,14 @@ class Polynomial:
         """Return the result of setting the given variable to the specified value."""
         ...
 
-    @overload  # noqa: F811
-    def evaluate(  # noqa: F811
+    @overload
+    def evaluate(
         self, variables: Sequence[Union[Variable, str]], values: Sequence[int]
     ) -> Polynomial:
         """Return the result of setting the given variables to the specified values."""
         ...
 
-    def evaluate(self, variables, values) -> Polynomial:  # type: ignore  # noqa: F811
+    def evaluate(self, variables, values) -> Polynomial:  # type: ignore
         """Return the result of setting the given variables to the specified values."""
         # TODO: integer overflow occurs >= 2^31.
 
@@ -523,12 +520,12 @@ class Polynomial:
         """Return the result of setting all the given variables to zero."""
         ...
 
-    @overload  # noqa: F811
-    def evaluate_at_zero(self, variables: VariableSetLike) -> Polynomial:  # noqa: F811
+    @overload
+    def evaluate_at_zero(self, variables: VariableSetLike) -> Polynomial:
         """Return the result of setting all the given variables to zero."""
         ...
 
-    def evaluate_at_zero(self, *variables) -> Polynomial:  # type: ignore  # noqa: F811
+    def evaluate_at_zero(self, *variables) -> Polynomial:  # type: ignore
         """Return the result of setting all the given variables to zero."""
         if len(variables) == 1:
             x = variables[0]
@@ -554,12 +551,12 @@ class Polynomial:
         """Return the result of setting all the given variables to unity."""
         ...
 
-    @overload  # noqa: F811
-    def evaluate_at_one(self, variables: VariableSetLike) -> Polynomial:  # noqa: F811
+    @overload
+    def evaluate_at_one(self, variables: VariableSetLike) -> Polynomial:
         """Return the result of setting all the given variables to unity."""
         ...
 
-    def evaluate_at_one(self, *variables) -> Polynomial:  # type: ignore  # noqa: F811
+    def evaluate_at_one(self, *variables) -> Polynomial:  # type: ignore
         """Return the result of setting all the given variables to unity."""
         if len(variables) == 1:
             x = variables[0]
@@ -585,14 +582,14 @@ class Polynomial:
         """Return the result of the given variable shift."""
         ...
 
-    @overload  # noqa: F811
-    def shift(  # noqa: F811
+    @overload
+    def shift(
         self, variables: Sequence[Union[Variable, str]], values: Sequence[int]
     ) -> Polynomial:
         """Return the result of the given variable shifts."""
         ...
 
-    def shift(self, variables, values) -> Polynomial:  # type: ignore  # noqa: F811
+    def shift(self, variables, values) -> Polynomial:  # type: ignore
         """Return the result of the given variable shifts."""
         # TODO: integer overflow occurs >= 2^31.
 

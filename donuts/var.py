@@ -32,12 +32,12 @@ class Variable:
         """Construct a variable."""
         ...
 
-    @overload  # noqa: F811
-    def __init__(self, variable: Variable) -> None:  # noqa: F811
+    @overload
+    def __init__(self, variable: Variable) -> None:
         """Construct a variable."""
         ...
 
-    def __init__(  # type: ignore  # noqa: F811
+    def __init__(  # type: ignore
         self, variable: Union[Variable, str]
     ) -> None:
         """Construct a variable."""

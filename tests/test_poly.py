@@ -35,7 +35,7 @@ def test_init():
         Polynomial("x?")  # invalid string
 
 
-def test_init_with_bigints(bigints):  # noqa: F811
+def test_init_with_bigints(bigints):
     for n in bigints:
         a = Polynomial(n)
         b = Polynomial(str(n))
@@ -344,7 +344,7 @@ def test_as():
         a.as_variable  # not variable
 
 
-def test_as_with_bigints(bigints):  # noqa: F811
+def test_as_with_bigints(bigints):
     for n in bigints:
         a = Polynomial(n)
         assert a.as_integer == n

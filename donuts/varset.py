@@ -26,27 +26,27 @@ class VariableSet:
         """Construct an empty set of variables."""
         ...
 
-    @overload  # noqa: F811
-    def __init__(self, variables: VariableSet) -> None:  # noqa: F811
+    @overload
+    def __init__(self, variables: VariableSet) -> None:
         """Construct a set of variables from the given set."""
         ...
 
-    @overload  # noqa: F811
-    def __init__(self, variable: Union[Variable, str]) -> None:  # noqa: F811
+    @overload
+    def __init__(self, variable: Union[Variable, str]) -> None:
         """Construct a set of variables containing only the given variable."""
         ...
 
-    @overload  # noqa: F811
-    def __init__(self, *variables: Union[Variable, str]) -> None:  # noqa: F811
+    @overload
+    def __init__(self, *variables: Union[Variable, str]) -> None:
         """Construct a set of variables from the given variables."""
         ...
 
-    @overload  # noqa: F811
-    def __init__(self, variables: Iterable[Union[Variable, str]]) -> None:  # noqa: F811
+    @overload
+    def __init__(self, variables: Iterable[Union[Variable, str]]) -> None:
         """Construct a set of variables from the given variables."""
         ...
 
-    def __init__(self, *variables) -> None:  # type: ignore  # noqa: F811
+    def __init__(self, *variables) -> None:  # type: ignore
         """Construct a set of variables."""
         if len(variables) == 0:
             self._raw = VariableSet.__RAW_EMPTY

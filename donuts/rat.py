@@ -15,9 +15,6 @@ from .varset import VariableSet, VariableSetLike
 _RawRationalFunction = jvm.find_class("com.github.tueda.donuts.RationalFunction")
 _JavaError = jvm.java_error_class
 
-# TODO: Remove workaround for F811 once new pyflakes is available.
-# See PyCQA/pyflakes#320.
-
 
 _RAW_ZERO = _RawRationalFunction()
 _RAW_ONE = _RawRationalFunction(1)
@@ -332,12 +329,12 @@ class RationalFunction:
         """Translate the rational function in terms of the given set of variables."""
         ...
 
-    @overload  # noqa: F811
-    def translate(self, variables: VariableSetLike) -> RationalFunction:  # noqa: F811
+    @overload
+    def translate(self, variables: VariableSetLike) -> RationalFunction:
         """Translate the rational function in terms of the given set of variables."""
         ...
 
-    def translate(self, *variables) -> RationalFunction:  # type: ignore  # noqa: F811
+    def translate(self, *variables) -> RationalFunction:  # type: ignore
         """Translate the rational function in terms of the given set of variables."""
         if len(variables) == 1:
             xx = variables[0]
@@ -389,14 +386,14 @@ class RationalFunction:
         """Return the result of setting the given variable to the specified value."""
         ...
 
-    @overload  # noqa: F811
-    def evaluate(  # noqa: F811
+    @overload
+    def evaluate(
         self, variables: Sequence[Union[Variable, str]], values: Sequence[int]
     ) -> RationalFunction:
         """Return the result of setting the given variables to the specified values."""
         ...
 
-    def evaluate(  # type: ignore  # noqa: F811
+    def evaluate(  # type: ignore
         self, variables, values
     ) -> RationalFunction:
         """Return the result of setting the given variables to the specified values."""
@@ -441,14 +438,12 @@ class RationalFunction:
         """Return the result of setting all the given variables to zero."""
         ...
 
-    @overload  # noqa: F811
-    def evaluate_at_zero(  # noqa: F811
-        self, variables: VariableSetLike
-    ) -> RationalFunction:
+    @overload
+    def evaluate_at_zero(self, variables: VariableSetLike) -> RationalFunction:
         """Return the result of setting all the given variables to zero."""
         ...
 
-    def evaluate_at_zero(  # type: ignore  # noqa: F811
+    def evaluate_at_zero(  # type: ignore
         self, *variables
     ) -> RationalFunction:
         """Return the result of setting all the given variables to zero."""
@@ -481,14 +476,12 @@ class RationalFunction:
         """Return the result of setting all the given variables to unity."""
         ...
 
-    @overload  # noqa: F811
-    def evaluate_at_one(  # noqa: F811
-        self, variables: VariableSetLike
-    ) -> RationalFunction:
+    @overload
+    def evaluate_at_one(self, variables: VariableSetLike) -> RationalFunction:
         """Return the result of setting all the given variables to unity."""
         ...
 
-    def evaluate_at_one(  # type: ignore  # noqa: F811
+    def evaluate_at_one(  # type: ignore
         self, *variables
     ) -> RationalFunction:
         """Return the result of setting all the given variables to unity."""
@@ -521,14 +514,14 @@ class RationalFunction:
         """Return the result of the given variable shift."""
         ...
 
-    @overload  # noqa: F811
-    def shift(  # noqa: F811
+    @overload
+    def shift(
         self, variables: Sequence[Union[Variable, str]], values: Sequence[int]
     ) -> RationalFunction:
         """Return the result of the given variable shifts."""
         ...
 
-    def shift(  # type: ignore  # noqa: F811
+    def shift(  # type: ignore
         self, variables, values
     ) -> RationalFunction:
         """Return the result of the given variable shifts."""
