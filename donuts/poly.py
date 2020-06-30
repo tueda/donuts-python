@@ -360,7 +360,7 @@ class Polynomial:
                 raise TypeError("exponent must be an integer")
             return Polynomial._new(self._raw.coefficientOf(x._raw, n))
 
-        raise TypeError(f"invalid variables")
+        raise TypeError("invalid variables")
 
     @overload
     def coeff_dict(
@@ -516,7 +516,7 @@ class Polynomial:
         if isinstance(variables, str):
             return self.evaluate(Variable(variables), values)
 
-        raise TypeError(f"invalid variables")
+        raise TypeError("invalid variables")
 
     @overload
     def evaluate_at_zero(self, *variables: Union[Variable, str]) -> Polynomial:
@@ -618,7 +618,7 @@ class Polynomial:
         if isinstance(variables, str):
             return self.shift(Variable(variables), values)
 
-        raise TypeError(f"invalid variables")
+        raise TypeError("invalid variables")
 
     def diff(self, x: Union[Variable, str], n: int = 1) -> Polynomial:
         """Differentiate this polynomial."""

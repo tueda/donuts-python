@@ -434,7 +434,7 @@ class RationalFunction:
         if isinstance(variables, str):
             return self.evaluate(Variable(variables), values)
 
-        raise TypeError(f"invalid variables")
+        raise TypeError("invalid variables")
 
     @overload
     def evaluate_at_zero(self, *variables: Union[Variable, str]) -> RationalFunction:
@@ -556,7 +556,7 @@ class RationalFunction:
         if isinstance(variables, str):
             return self.shift(Variable(variables), values)
 
-        raise TypeError(f"invalid variables")
+        raise TypeError("invalid variables")
 
     def diff(self, x: Union[Variable, str], n: int = 1) -> RationalFunction:
         """Differentiate this rational function."""
