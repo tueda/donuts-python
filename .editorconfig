@@ -1,0 +1,21 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.java]
+indent_size = 2
+indent_style = space
+
+[*.py]
+indent_size = 4
+indent_style = space
+
+[{.github/workflows/*.yml,.gitlab-ci.yml,build.gradle}]
+indent_size = 2
+indent_style = space
+
+[{.pre-commit-config.yaml,pyproject.toml,setup.cfg,tox.ini}]
+indent_size = 4
+indent_style = space
