@@ -65,5 +65,4 @@ def build(c, sdist=False, wheel=False):  # type: ignore
         c.run("python setup.py sdist", pty=True)
 
     if wheel:
-        # NOTE: "pip install wheel" needed.
         c.run("python setup.py bdist_wheel", pty=True)

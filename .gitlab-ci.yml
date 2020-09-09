@@ -16,6 +16,7 @@ cache:
 
 .lint:
   before_script:
+    - git submodule update --init --recursive
     - python -V
     - export PATH="$PATH:$PYTHONUSERBASE/bin"
     - pip install --user gitlint pre-commit tox

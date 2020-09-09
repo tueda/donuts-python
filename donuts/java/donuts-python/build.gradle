@@ -1,0 +1,85 @@
+plugins {
+  id 'jacoco'
+  id 'java-library'
+// Somehow applying Spotless plugin fails??
+//id 'com.diffplug.spotless' version '5.4.0'
+  id 'com.github.ben-manes.versions' version '0.31.0'
+  id 'com.github.johnrengelman.shadow' version '6.0.0'
+  id 'ru.vyarus.quality' version '4.3.0'
+}
+
+group = 'com.github.tueda'
+archivesBaseName = 'donuts-python'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+def versions = [
+  checkstyle: '8.36',
+  junit: '5.6.2',
+  lombok: '1.18.12',
+  pmd: '6.27.0',
+  spotbugs: '4.0.1',
+  truth: '1.0.1',
+]
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation project(':donuts-java')
+  compileOnly "org.projectlombok:lombok:${versions.lombok}"
+  annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+  testImplementation "com.google.truth:truth:${versions.truth}"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
+  // for dependencyUpdates
+  testRuntimeOnly "net.sourceforge.pmd:pmd:${versions.pmd}"
+}
+
+test {
+  useJUnitPlatform()
+}
+
+//spotless {
+//  java {
+//    googleJavaFormat('1.7')
+//  }
+//  groovyGradle {
+//    greclipse().configFile('config/greclipse.properties')
+//  }
+//}
+
+configurations {
+  checkstyleConfig
+}
+
+dependencies {
+  checkstyleConfig("com.puppycrawl.tools:checkstyle:${versions.checkstyle}") {
+    transitive = false
+  }
+}
+
+quality {
+  checkstyleVersion = versions.checkstyle
+  pmdVersion = versions.pmd
+  spotbugsVersion = versions.spotbugs
+
+  spotbugsEffort = 'max'
+  spotbugsLevel = 'low'
+}
+
+afterEvaluate {
+  checkstyle {
+    config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
+  }
+  pmd {
+    incrementalAnalysis = true
+    ruleSetFiles = files('config/pmd.xml')
+  }
+}
+
+shadowJar {
+  minimize()
+}

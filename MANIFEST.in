@@ -1,9 +1,18 @@
 include LICENSE
 include build.py
 recursive-include donuts/java *
-prune donuts/java/.github
 prune donuts/java/.gradle
 prune donuts/java/build
-prune donuts/java/src/test
-exclude donuts/java/.git*
-exclude donuts/java/.pre-commit-config.yaml
+prune donuts/java/donuts-java/.github
+prune donuts/java/donuts-java/.gradle
+prune donuts/java/donuts-java/build
+prune donuts/java/donuts-java/gradle/wrapper
+prune donuts/java/donuts-java/src/test
+prune donuts/java/donuts-python/build
+prune donuts/java/donuts-python/src/test
+exclude donuts/java/.gitignore
+exclude donuts/java/donuts-all.jar
+exclude donuts/java/donuts-java/.git*
+exclude donuts/java/donuts-java/.pre-commit-config.yaml
+exclude donuts/java/donuts-java/gradlew
+exclude donuts/java/donuts-java/gradlew.bat

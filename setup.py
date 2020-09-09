@@ -59,7 +59,7 @@ setup(
         "Topic :: Scientific/Engineering :: Mathematics",
     ],
     packages=find_packages(),
-    package_data={"donuts": ["py.typed", "java/build/libs/donuts-all.jar"]},
+    package_data={"donuts": ["py.typed", "java/donuts-all.jar"]},
     python_requires=">=3.7",
     install_requires=["pyjnius"],
     setup_requires=["pytest-runner"],

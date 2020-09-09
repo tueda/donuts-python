@@ -1,0 +1,3 @@
+rootProject.name = 'donuts-python-binding'
+include 'donuts-java'
+include 'donuts-python'

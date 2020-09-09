@@ -5,7 +5,7 @@ from typing import Any
 
 import pkg_resources
 
-_JAR_FILE = pkg_resources.resource_filename("donuts", "java/build/libs/donuts-all.jar")
+_JAR_FILE = pkg_resources.resource_filename("donuts", "java/donuts-all.jar")
 
 _BACKEND = os.getenv("DONUTS_PYTHON_BACKEND", "pyjnius")
 
