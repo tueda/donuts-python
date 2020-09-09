@@ -37,9 +37,7 @@ class Variable:
         """Construct a variable."""
         ...
 
-    def __init__(  # type: ignore
-        self, variable: Union[Variable, str]
-    ) -> None:
+    def __init__(self, variable: Union[Variable, str]) -> None:  # type: ignore
         """Construct a variable."""
         if variable == Variable.__NONE:
             # Called from `_new`.

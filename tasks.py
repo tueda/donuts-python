@@ -9,15 +9,14 @@ from invoke import task
 def fmt(c):  # type: ignore
     """Run formatters."""
     c.run("black .", pty=True)
-    c.run("seed-isort-config", pty=True)
-    c.run("isort -y", pty=True)
+    c.run("isort .", pty=True)
 
 
 @task
 def lint(c):  # type: ignore
     """Run linters."""
     c.run("black --check --diff .", pty=True)
-    c.run("isort --check-only --diff", pty=True)
+    c.run("isort --check-only --diff .", pty=True)
     c.run("flake8", pty=True)
     c.run("mypy .", pty=True)
 

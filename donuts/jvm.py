@@ -15,11 +15,7 @@ class Py4JBackend:
 
     def __init__(self) -> None:
         """Create a JVM."""
-        from py4j.java_gateway import (
-            GatewayParameters,
-            JavaGateway,
-            launch_gateway,
-        )
+        from py4j.java_gateway import GatewayParameters, JavaGateway, launch_gateway
 
         # Check if the jar file exists.
         with open(_JAR_FILE, "rb"):

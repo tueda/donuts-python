@@ -1,6 +1,7 @@
 import pickle
 
 from conftest import random_poly
+
 from donuts import Polynomial, Variable
 
 

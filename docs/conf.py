@@ -60,7 +60,7 @@ html_theme = "alabaster"
 # This hack is needed to suppress "WARNING: autodoc: failed to determine
 # JavaObject id=oxx to be documented.the following exception was raised:
 # 'JavaMember' object has no attribute 'rpartition'".
-import donuts  # isort:skip  # noqa: E402
+import donuts  # noqa: E402
 
 donuts.VariableSet._VariableSet__RAW_EMPTY = None  # type: ignore
 donuts.Polynomial._Polynomial__RAW_ZERO = None  # type: ignore

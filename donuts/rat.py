@@ -393,9 +393,7 @@ class RationalFunction:
         """Return the result of setting the given variables to the specified values."""
         ...
 
-    def evaluate(  # type: ignore
-        self, variables, values
-    ) -> RationalFunction:
+    def evaluate(self, variables, values) -> RationalFunction:  # type: ignore
         """Return the result of setting the given variables to the specified values."""
         # TODO: integer overflow occurs >= 2^31.
 
@@ -443,9 +441,7 @@ class RationalFunction:
         """Return the result of setting all the given variables to zero."""
         ...
 
-    def evaluate_at_zero(  # type: ignore
-        self, *variables
-    ) -> RationalFunction:
+    def evaluate_at_zero(self, *variables) -> RationalFunction:  # type: ignore
         """Return the result of setting all the given variables to zero."""
         if len(variables) == 1:
             x = variables[0]
@@ -481,9 +477,7 @@ class RationalFunction:
         """Return the result of setting all the given variables to unity."""
         ...
 
-    def evaluate_at_one(  # type: ignore
-        self, *variables
-    ) -> RationalFunction:
+    def evaluate_at_one(self, *variables) -> RationalFunction:  # type: ignore
         """Return the result of setting all the given variables to unity."""
         if len(variables) == 1:
             x = variables[0]
@@ -521,9 +515,7 @@ class RationalFunction:
         """Return the result of the given variable shifts."""
         ...
 
-    def shift(  # type: ignore
-        self, variables, values
-    ) -> RationalFunction:
+    def shift(self, variables, values) -> RationalFunction:  # type: ignore
         """Return the result of the given variable shifts."""
         # TODO: integer overflow occurs >= 2^31.
 

@@ -373,9 +373,7 @@ class Polynomial:
         """Cast this polynomial to a map from exponents to coefficients."""
         ...
 
-    def coeff_dict(  # type: ignore
-        self, *variables
-    ) -> Dict[Sequence[int], Polynomial]:
+    def coeff_dict(self, *variables) -> Dict[Sequence[int], Polynomial]:  # type: ignore
         """Cast this polynomial to a map from exponents to coefficients."""
         array = _create_raw_var_array(variables)
         it = _RawPythonUtils.getCoefficientMap(self._raw, array).entrySet().iterator()

@@ -1,6 +1,7 @@
 import pickle
 
 from conftest import random_rat
+
 from donuts import RationalFunction
 
 
