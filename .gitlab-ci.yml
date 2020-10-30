@@ -17,6 +17,8 @@ cache:
 .lint:
   before_script:
     - git submodule update --init --recursive
+    - apt-get update
+    - apt-get install -qy default-jdk-headless
     - python -V
     - export PATH="$PATH:$PYTHONUSERBASE/bin"
     - pip install --user gitlint pre-commit tox
@@ -46,6 +48,10 @@ lint38:
   extends: .lint
   image: python:3.8
 
+lint39:
+  extends: .lint
+  image: python:3.9
+
 py37:
   extends: .test
   image: python:3.7
@@ -60,9 +66,16 @@ py38:
     - tox -e py38
     - DONUTS_PYTHON_BACKEND=py4j tox -e py38
 
+py39:
+  extends: .test
+  image: python:3.9
+  script:
+    - tox -e py39
+    - DONUTS_PYTHON_BACKEND=py4j tox -e py39
+
 doc:
   extends: .test
-  image: python:3.8
+  image: python:latest
   script: tox -e doc
   artifacts:
     paths:
