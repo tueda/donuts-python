@@ -5,9 +5,8 @@ from .rat import RationalFunction
 from .var import Variable
 from .varset import VariableSet
 
-# NOTE: we do not add the "add" function intentionally because it shadows
+# NOTE: we do not add the "sum" function intentionally because it shadows
 #       the built-in function.
-
 __all__ = (
     "Polynomial",
     "RationalFunction",
