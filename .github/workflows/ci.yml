@@ -55,6 +55,10 @@ jobs:
         env:
           DONUTS_PYTHON_BACKEND: py4j
         run: tox
+      - name: Run tox (jpype)
+        env:
+          DONUTS_PYTHON_BACKEND: jpype
+        run: tox
   readme_dev:
     # Test the code in "Development" in README.rst.
     runs-on: ubuntu-latest

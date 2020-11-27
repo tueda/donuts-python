@@ -95,7 +95,7 @@ class Polynomial:
 
     def __getstate__(self) -> Any:
         """Get the object state."""
-        return self._raw.toString()
+        return str(self._raw.toString())
 
     def __setstate__(self, state: Any) -> None:
         """Set the object state."""
@@ -103,11 +103,11 @@ class Polynomial:
 
     def __str__(self) -> str:
         """Return the string representation."""
-        return self._raw.toString()  # type: ignore
+        return str(self._raw.toString())
 
     def __repr__(self) -> str:
         """Return the "official" string representation."""
-        return f"Polynomial('{self._raw.toString()}')"
+        return f"Polynomial('{str(self)}')"
 
     def __hash__(self) -> int:
         """Return the hash code."""

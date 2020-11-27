@@ -63,7 +63,7 @@ class Variable:
         """Construct a variable from a raw object."""
         obj = Variable(Variable.__NONE)
         obj._raw = raw
-        obj._name = raw.getName()
+        obj._name = str(raw.getName())
         return obj
 
     def __getstate__(self) -> Any:

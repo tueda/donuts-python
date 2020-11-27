@@ -84,7 +84,7 @@ class VariableSet:
 
     def __str__(self) -> str:
         """Return the string representation."""
-        return self._raw.toString()  # type: ignore
+        return str(self._raw.toString())
 
     def __repr__(self) -> str:
         """Return the "official" string representation."""

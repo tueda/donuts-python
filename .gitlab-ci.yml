@@ -58,6 +58,7 @@ py37:
   script:
     - tox -e py37
     - DONUTS_PYTHON_BACKEND=py4j tox -e py37
+    - DONUTS_PYTHON_BACKEND=jpype tox -e py37
 
 py38:
   extends: .test
@@ -65,6 +66,7 @@ py38:
   script:
     - tox -e py38
     - DONUTS_PYTHON_BACKEND=py4j tox -e py38
+    - DONUTS_PYTHON_BACKEND=jpype tox -e py38
 
 py39:
   extends: .test
@@ -72,6 +74,7 @@ py39:
   script:
     - tox -e py39
     - DONUTS_PYTHON_BACKEND=py4j tox -e py39
+    - DONUTS_PYTHON_BACKEND=jpype tox -e py39
 
 doc:
   extends: .test

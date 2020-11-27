@@ -11,7 +11,7 @@ _BACKEND = os.getenv("DONUTS_PYTHON_BACKEND", "pyjnius")
 
 
 class Py4JBackend:
-    """JVM with py4 backend."""
+    """JVM wrapper with py4 backend."""
 
     def __init__(self) -> None:
         """Create a JVM."""
@@ -71,7 +71,7 @@ class Py4JBackend:
 
 
 class JniusBackend:
-    """JVM with Pyjnius backend."""
+    """JVM wrapper with Pyjnius backend."""
 
     def __init__(self) -> None:
         """Create a JVM."""
@@ -128,7 +128,73 @@ class JniusBackend:
         return object_stream.readObject()
 
 
+class JPypeBackend:
+    """JVM wrapper with JPype backend."""
+
+    def __init__(self) -> None:
+        """Create a JVM."""
+        import jpype
+
+        # Check if the jar file exists.
+        with open(_JAR_FILE, "rb"):
+            pass
+
+        jpype.addClassPath(_JAR_FILE)
+        jpype.startJVM()
+
+        self._JClass = jpype.JClass
+        self._JArray = jpype.JArray
+        self._JInt = jpype.JInt
+        self._ByteArrayOutputStream = self.find_class("java.io.ByteArrayOutputStream")
+        self._ObjectOutputStream = self.find_class("java.io.ObjectOutputStream")
+        self._ByteArrayInputStream = self.find_class("java.io.ByteArrayInputStream")
+        self._PythonUtils = self.find_class(
+            "com.github.tueda.donuts.python.PythonUtils"
+        )
+
+    def find_class(self, class_name: str) -> Any:
+        """Return a Java class."""
+        return self._JClass(class_name)
+
+    def new_array(self, java_class: Any, size: int) -> Any:
+        """Create a Java array."""
+        return self._JArray(java_class)(size)
+
+    def new_int_array(self, size: int) -> Any:
+        """Create a Java int array."""
+        return self._JArray(self._JInt)(size)
+
+    @property
+    def java_error_class(self) -> Any:
+        """Return the error class indicating exceptions in Java client code."""
+        import jpype
+
+        return jpype.JException
+
+    @staticmethod
+    def get_error_message(error: Any) -> str:
+        """Return the error message from the given exception object."""
+        return str(error.getMessage())
+
+    def serialize(self, java_obj: Any) -> bytes:
+        """Serialize the given Java object."""
+        byte_stream = self._ByteArrayOutputStream()
+        object_stream = self._ObjectOutputStream(byte_stream)
+        object_stream.writeObject(java_obj)
+        return bytes(byte_stream.toByteArray())
+
+    def deserialize(self, data: bytes) -> Any:
+        """Deserialize a Java object."""
+        byte_stream = self._ByteArrayInputStream(data)
+        object_stream = self._PythonUtils.createObjectInputStream(byte_stream)
+        return object_stream.readObject()
+
+
 if _BACKEND == "py4j":
     jvm = Py4JBackend()
 elif _BACKEND == "pyjnius":
     jvm = JniusBackend()  # type: ignore
+elif _BACKEND == "jpype":
+    jvm = JPypeBackend()  # type: ignore
+else:
+    raise ValueError(f"unknown backend: DONUTS_PYTHON_BACKEND = '{_BACKEND}'")
