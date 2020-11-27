@@ -10,7 +10,32 @@ _JAR_FILE = pkg_resources.resource_filename("donuts", "java/donuts-all.jar")
 _BACKEND = os.getenv("DONUTS_PYTHON_BACKEND", "pyjnius")
 
 
-class Py4JBackend:
+class BackendMixin:
+    """Backend base.
+
+    This mix-in implements `serialize` and `deserialize` by assuming `self` has the
+    following attributes:
+    - `_ByteArrayOutputStream`
+    - `_ObjectOutputStream`
+    - `_ByteArrayInputStream`
+    - `_ObjectInputStream`
+    """
+
+    def serialize(self, java_obj: Any) -> bytes:
+        """Serialize the given Java object."""
+        byte_stream = self._ByteArrayOutputStream()  # type: ignore
+        object_stream = self._ObjectOutputStream(byte_stream)  # type: ignore
+        object_stream.writeObject(java_obj)
+        return bytes(byte_stream.toByteArray())
+
+    def deserialize(self, data: bytes) -> Any:
+        """Deserialize a Java object."""
+        byte_stream = self._ByteArrayInputStream(data)  # type: ignore
+        object_stream = self._ObjectInputStream(byte_stream)  # type: ignore
+        return object_stream.readObject()
+
+
+class Py4JBackend(BackendMixin):
     """JVM wrapper with py4 backend."""
 
     def __init__(self) -> None:
@@ -31,6 +56,11 @@ class Py4JBackend:
 
         self._gateway = gateway
         self._jvm = gateway.jvm
+
+        self._ByteArrayOutputStream = self.find_class("java.io.ByteArrayOutputStream")
+        self._ObjectOutputStream = self.find_class("java.io.ObjectOutputStream")
+        self._ByteArrayInputStream = self.find_class("java.io.ByteArrayInputStream")
+        self._ObjectInputStream = self.find_class("java.io.ObjectInputStream")
 
     def find_class(self, class_name: str) -> Any:
         """Return a Java class."""
@@ -56,21 +86,8 @@ class Py4JBackend:
         """Return the error message from the given exception object."""
         return error.java_exception.getMessage()  # type: ignore
 
-    def serialize(self, java_obj: Any) -> bytes:
-        """Serialize the given Java object."""
-        byte_stream = self._jvm.java.io.ByteArrayOutputStream()
-        object_stream = self._jvm.java.io.ObjectOutputStream(byte_stream)
-        object_stream.writeObject(java_obj)
-        return byte_stream.toByteArray()  # type: ignore
 
-    def deserialize(self, data: bytes) -> Any:
-        """Deserialize a Java object."""
-        byte_stream = self._jvm.java.io.ByteArrayInputStream(data)
-        object_stream = self._jvm.java.io.ObjectInputStream(byte_stream)
-        return object_stream.readObject()
-
-
-class JniusBackend:
+class JniusBackend(BackendMixin):
     """JVM wrapper with Pyjnius backend."""
 
     def __init__(self) -> None:
@@ -86,7 +103,17 @@ class JniusBackend:
         from jnius import autoclass
 
         self._autoclass = autoclass
-        self._java_array_new_instance = autoclass("java.lang.reflect.Array").newInstance
+
+        self._java_array_new_instance = self.find_class(
+            "java.lang.reflect.Array"
+        ).newInstance
+
+        self._ByteArrayOutputStream = self.find_class("java.io.ByteArrayOutputStream")
+        self._ObjectOutputStream = self.find_class("java.io.ObjectOutputStream")
+        self._ByteArrayInputStream = self.find_class("java.io.ByteArrayInputStream")
+        self._ObjectInputStream = self.find_class(
+            "com.github.tueda.donuts.python.PythonUtils"
+        ).createObjectInputStream
 
     def find_class(self, class_name: str) -> Any:
         """Return a Java class."""
@@ -112,23 +139,8 @@ class JniusBackend:
         """Return the error message from the given exception object."""
         return error.innermessage  # type: ignore
 
-    def serialize(self, java_obj: Any) -> bytes:
-        """Serialize the given Java object."""
-        byte_stream = self._autoclass("java.io.ByteArrayOutputStream")()
-        object_stream = self._autoclass("java.io.ObjectOutputStream")(byte_stream)
-        object_stream.writeObject(java_obj)
-        return byte_stream.toByteArray().tostring()  # type: ignore
 
-    def deserialize(self, data: bytes) -> Any:
-        """Deserialize a Java object."""
-        byte_stream = self._autoclass("java.io.ByteArrayInputStream")(data)
-        object_stream = self._autoclass(
-            "com.github.tueda.donuts.python.PythonUtils"
-        ).createObjectInputStream(byte_stream)
-        return object_stream.readObject()
-
-
-class JPypeBackend:
+class JPypeBackend(BackendMixin):
     """JVM wrapper with JPype backend."""
 
     def __init__(self) -> None:
@@ -145,12 +157,13 @@ class JPypeBackend:
         self._JClass = jpype.JClass
         self._JArray = jpype.JArray
         self._JInt = jpype.JInt
+
         self._ByteArrayOutputStream = self.find_class("java.io.ByteArrayOutputStream")
         self._ObjectOutputStream = self.find_class("java.io.ObjectOutputStream")
         self._ByteArrayInputStream = self.find_class("java.io.ByteArrayInputStream")
-        self._PythonUtils = self.find_class(
+        self._ObjectInputStream = self.find_class(
             "com.github.tueda.donuts.python.PythonUtils"
-        )
+        ).createObjectInputStream
 
     def find_class(self, class_name: str) -> Any:
         """Return a Java class."""
@@ -175,19 +188,6 @@ class JPypeBackend:
     def get_error_message(error: Any) -> str:
         """Return the error message from the given exception object."""
         return str(error.getMessage())
-
-    def serialize(self, java_obj: Any) -> bytes:
-        """Serialize the given Java object."""
-        byte_stream = self._ByteArrayOutputStream()
-        object_stream = self._ObjectOutputStream(byte_stream)
-        object_stream.writeObject(java_obj)
-        return bytes(byte_stream.toByteArray())
-
-    def deserialize(self, data: bytes) -> Any:
-        """Deserialize a Java object."""
-        byte_stream = self._ByteArrayInputStream(data)
-        object_stream = self._PythonUtils.createObjectInputStream(byte_stream)
-        return object_stream.readObject()
 
 
 if _BACKEND == "py4j":
