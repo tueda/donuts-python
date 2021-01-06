@@ -12,6 +12,9 @@ indent_style = space
 indent_size = 4
 indent_style = space
 
+[*.bat]
+end_of_line = crlf
+
 [{.github/workflows/*.yml,.gitlab-ci.yml,build.gradle}]
 indent_size = 2
 indent_style = space
