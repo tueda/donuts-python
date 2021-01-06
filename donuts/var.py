@@ -188,3 +188,7 @@ class Variable:
         if isinstance(other, Variable):
             return self._raw.compareTo(other._raw) < 0  # type: ignore
         return NotImplemented
+
+
+# For static typing.
+VariableLike = Union[Variable, str]

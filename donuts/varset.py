@@ -129,4 +129,4 @@ class VariableSet:
 
 
 # For static typing.
-VariableSetLike = Union[VariableSet, Iterable[Variable]]
+VariableSetLike = Union[VariableSet, Iterable[Union[Variable, str]]]

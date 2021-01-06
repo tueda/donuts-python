@@ -18,7 +18,7 @@ from typing import (
 
 from .array import _create_raw_int_array, _create_raw_poly_array, _create_raw_var_array
 from .jvm import jvm
-from .var import Variable
+from .var import Variable, VariableLike
 from .varset import VariableSet, VariableSetLike
 
 if TYPE_CHECKING:
@@ -288,7 +288,7 @@ class Polynomial:
         ...
 
     @overload
-    def degree(self, *variables: Union[Variable, str]) -> int:
+    def degree(self, *variables: VariableLike) -> int:
         """Return the degree with respect to the given variables."""
         ...
 
@@ -386,7 +386,7 @@ class Polynomial:
         return result
 
     @overload
-    def translate(self, *variables: Union[Variable, str]) -> Polynomial:
+    def translate(self, *variables: VariableLike) -> Polynomial:
         """Translate the polynomial in terms of the given set of variables."""
         ...
 
@@ -514,7 +514,7 @@ class Polynomial:
         raise TypeError("invalid variables")
 
     @overload
-    def evaluate_at_zero(self, *variables: Union[Variable, str]) -> Polynomial:
+    def evaluate_at_zero(self, *variables: VariableLike) -> Polynomial:
         """Return the result of setting all the given variables to zero."""
         ...
 
@@ -545,7 +545,7 @@ class Polynomial:
         return self.evaluate_at_zero(VariableSet(*variables))
 
     @overload
-    def evaluate_at_one(self, *variables: Union[Variable, str]) -> Polynomial:
+    def evaluate_at_one(self, *variables: VariableLike) -> Polynomial:
         """Return the result of setting all the given variables to unity."""
         ...
 

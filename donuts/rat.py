@@ -9,7 +9,7 @@ from typing import Any, Iterable, Sequence, Union, overload
 from .array import _create_raw_int_array, _create_raw_var_array
 from .jvm import jvm
 from .poly import Polynomial
-from .var import Variable
+from .var import Variable, VariableLike
 from .varset import VariableSet, VariableSetLike
 
 _RawRationalFunction = jvm.find_class("com.github.tueda.donuts.RationalFunction")
@@ -325,7 +325,7 @@ class RationalFunction:
         return VariableSet._new(self._raw.getMinimalVariables())
 
     @overload
-    def translate(self, *variables: Union[Variable, str]) -> RationalFunction:
+    def translate(self, *variables: VariableLike) -> RationalFunction:
         """Translate the rational function in terms of the given set of variables."""
         ...
 
@@ -432,7 +432,7 @@ class RationalFunction:
         raise TypeError("invalid variables")
 
     @overload
-    def evaluate_at_zero(self, *variables: Union[Variable, str]) -> RationalFunction:
+    def evaluate_at_zero(self, *variables: VariableLike) -> RationalFunction:
         """Return the result of setting all the given variables to zero."""
         ...
 
@@ -468,7 +468,7 @@ class RationalFunction:
         return self.evaluate_at_zero(VariableSet(*variables))
 
     @overload
-    def evaluate_at_one(self, *variables: Union[Variable, str]) -> RationalFunction:
+    def evaluate_at_one(self, *variables: VariableLike) -> RationalFunction:
         """Return the result of setting all the given variables to unity."""
         ...
 
