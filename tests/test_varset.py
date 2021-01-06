@@ -5,7 +5,7 @@ from pytest import raises
 from donuts import Variable, VariableSet
 
 
-def test_init():
+def test_init() -> None:
     a = VariableSet()
 
     assert str(a) == "{}"
@@ -35,17 +35,17 @@ def test_init():
     assert a == e
 
     with raises(TypeError):
-        VariableSet("x", "y", ["z"])  # neither Variable nor str
+        VariableSet("x", "y", ["z"])  # type: ignore  # neither Variable nor str
 
 
-def test_state():
+def test_state() -> None:
     a = VariableSet("a", "b", "c")
     s = dumps(a)
     b = loads(s)
     assert a == b
 
 
-def test_iter():
+def test_iter() -> None:
     x = Variable("x")
     y = Variable("y")
     z = Variable("z")
@@ -60,7 +60,7 @@ def test_iter():
     assert a == c
 
 
-def test_contains():
+def test_contains() -> None:
     x = Variable("x")
     y = Variable("y")
     z = Variable("z")
@@ -73,7 +73,7 @@ def test_contains():
     assert "x" not in a
 
 
-def test_union():
+def test_union() -> None:
     sa = ["x", "y"]
     sb = ["x", "z"]
     sc = sa + sb
@@ -99,4 +99,4 @@ def test_union():
     assert a.union(b) == c
 
     with raises(TypeError):
-        a.union([])  # not set of variables
+        a.union([])  # type: ignore  # not set of variables

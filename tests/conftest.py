@@ -1,7 +1,7 @@
 """Configuration for testing."""
 
 import random
-from typing import Dict, Sequence
+from typing import Any, Callable, Dict, Sequence
 
 from pytest import fixture
 
@@ -84,3 +84,7 @@ def bigints():  # type: ignore
             n = i + j
             test_int_set.add(n)
     return sorted(test_int_set)
+
+
+BigIntSeq = Sequence[int]
+Benchmark = Callable[..., Any]

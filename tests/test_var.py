@@ -5,7 +5,7 @@ from pytest import raises
 from donuts import Polynomial, RationalFunction, Variable
 
 
-def test_init():
+def test_init() -> None:
     x = Variable("x")
     assert str(x) == "x"
 
@@ -15,26 +15,26 @@ def test_init():
     assert x == y
 
     with raises(TypeError):
-        Variable(42)  # not string
+        Variable(42)  # type: ignore  # not string
 
     with raises(ValueError):
         Variable("$x")  # invalid name
 
 
-def test_state():
+def test_state() -> None:
     a = Variable("a")
     s = dumps(a)
     b = loads(s)
     assert a == b
 
 
-def test_repr():
+def test_repr() -> None:
     a = Variable("a")
     b = eval(repr(a))
     assert a == b
 
 
-def test_hash():
+def test_hash() -> None:
     a1 = Variable("a")
     a2 = Variable("a")
 
@@ -42,7 +42,7 @@ def test_hash():
     assert hash(a1) == hash(a2)
 
 
-def test_cmp():
+def test_cmp() -> None:
     variables = [Variable("a"), Variable("b"), Variable("c")]
 
     for i, x in enumerate(variables):
@@ -61,17 +61,17 @@ def test_cmp():
                 assert x >= y
 
 
-def test_pos():
+def test_pos() -> None:
     a = Variable("a")
     assert (+a) == Polynomial("a")
 
 
-def test_neg():
+def test_neg() -> None:
     a = Variable("a")
     assert (-a) == Polynomial("-a")
 
 
-def test_add():
+def test_add() -> None:
     a = Variable("a")
     b = Variable("b")
     assert a + a == Polynomial("2*a")
@@ -80,7 +80,7 @@ def test_add():
     assert 1 + a == Polynomial("1+a")
 
 
-def test_sub():
+def test_sub() -> None:
     a = Variable("a")
     b = Variable("b")
     assert a - a == Polynomial("0")
@@ -89,7 +89,7 @@ def test_sub():
     assert 1 - a == Polynomial("1-a")
 
 
-def test_mul():
+def test_mul() -> None:
     a = Variable("a")
     b = Variable("b")
     assert a * a == Polynomial("a^2")
@@ -98,7 +98,7 @@ def test_mul():
     assert 2 * a == Polynomial("2*a")
 
 
-def test_div():
+def test_div() -> None:
     a = Variable("a")
     b = Variable("b")
     assert a / b == RationalFunction("a/b")
@@ -106,7 +106,7 @@ def test_div():
     assert 1 / a == RationalFunction("1/a")
 
 
-def test_pow():
+def test_pow() -> None:
     a = Variable("a")
     assert a ** 0 == Polynomial("1")
     assert a ** 1 == Polynomial("a")

@@ -42,7 +42,6 @@ repos:
         -   --ignore-missing-imports
         -   --no-pretty
         -   --scripts-are-modules
-        exclude: ^tests/test_.*\.py$
 -   repo: https://github.com/jorisroovers/gitlint
     rev: v0.14.0
     hooks:

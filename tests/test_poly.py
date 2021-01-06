@@ -1,13 +1,18 @@
 from fractions import Fraction
 from pickle import dumps, loads
+from typing import List, Union
 
+from conftest import BigIntSeq
 from pytest import raises
 
 import donuts
 from donuts import Polynomial, RationalFunction, Variable, VariableSet
+from donuts.poly import PolynomialLike
+from donuts.rat import RationalFunctionLike
+from donuts.varset import VariableSetLike
 
 
-def test_init():
+def test_init() -> None:
     a = Polynomial()
     assert a == 0
     assert str(a) == "0"
@@ -26,7 +31,7 @@ def test_init():
     assert str(a) == "a"
 
     with raises(TypeError):
-        Polynomial([1])  # invalid type
+        Polynomial([1])  # type: ignore  # invalid type
 
     with raises(ValueError):
         Polynomial("(1+x)/(1-y)")  # not polynomial
@@ -35,14 +40,14 @@ def test_init():
         Polynomial("x?")  # invalid string
 
 
-def test_init_with_bigints(bigints):
+def test_init_with_bigints(bigints: BigIntSeq) -> None:
     for n in bigints:
         a = Polynomial(n)
         b = Polynomial(str(n))
         assert a == b
 
 
-def test_state():
+def test_state() -> None:
     a = Polynomial("(1+x+y)^3")
     s = dumps(a)
     b = loads(s)
@@ -50,13 +55,16 @@ def test_state():
     assert a + b == a * 2
 
 
-def test_repr():
+def test_repr() -> None:
     a = Polynomial("1+x")
     b = eval(repr(a))
     assert a == b
 
 
-def test_hash():
+def test_hash() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+
     a = Polynomial(42)
     b = 42
 
@@ -76,7 +84,7 @@ def test_hash():
     assert hash(a) == hash(b)
 
 
-def test_hash_as_key():
+def test_hash_as_key() -> None:
     d = {}
 
     a = Polynomial("1+x")
@@ -92,7 +100,7 @@ def test_hash_as_key():
     assert d[b] == "b"
 
 
-def test_len():
+def test_len() -> None:
     a = Polynomial("0")
     assert len(a) == 0
     assert not a
@@ -102,7 +110,7 @@ def test_len():
     assert a
 
 
-def test_iter():
+def test_iter() -> None:
     a = Polynomial("(1+x)^3")
     n = 0
     for t in a:
@@ -112,7 +120,7 @@ def test_iter():
     assert n == 4
 
 
-def test_pos():
+def test_pos() -> None:
     a = Polynomial("0")
     assert (+a) == a
 
@@ -120,7 +128,7 @@ def test_pos():
     assert (+a) == a
 
 
-def test_neg():
+def test_neg() -> None:
     a = Polynomial("0")
     assert (-a) == a
 
@@ -130,7 +138,11 @@ def test_neg():
     assert (-b) == a
 
 
-def test_add():
+def test_add() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+    c: PolynomialLike
+
     a = Polynomial("2+x")
     b = Polynomial("3+y")
     c = Polynomial("5+x+y")
@@ -147,7 +159,11 @@ def test_add():
     assert a + b == c
 
 
-def test_sub():
+def test_sub() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+    c: PolynomialLike
+
     a = Polynomial("2+x")
     b = Polynomial("3+y")
     c = Polynomial("-1+x-y")
@@ -164,7 +180,11 @@ def test_sub():
     assert a - b == c
 
 
-def test_mul():
+def test_mul() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+    c: PolynomialLike
+
     a = Polynomial("2+x")
     b = Polynomial("3+y")
     c = Polynomial("6+3*x+2*y+x*y")
@@ -181,7 +201,11 @@ def test_mul():
     assert a * b == c
 
 
-def test_div():
+def test_div() -> None:
+    a: RationalFunctionLike
+    b: RationalFunctionLike
+    c: RationalFunctionLike
+
     a = Polynomial("1+x")
     b = Polynomial("1-y")
     c = RationalFunction("(1+x)/(1-y)")
@@ -203,7 +227,11 @@ def test_div():
     assert a / b == c
 
 
-def test_pow():
+def test_pow() -> None:
+    a: Polynomial
+    b: int
+    c: PolynomialLike
+
     a = Polynomial("1+x")
     b = 3
     c = Polynomial("(1+x)^3")
@@ -229,7 +257,10 @@ def test_pow():
         a ** (-3)  # negative power
 
 
-def test_cmp():
+def test_cmp() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+
     a = Polynomial("1+x+y-y")
     b = Polynomial("2-1+x")
     assert a == b
@@ -255,15 +286,15 @@ def test_cmp():
     assert a != b
 
     a = Polynomial("x")
-    b = []
-    assert a != b
+    blist: List[int] = []
+    assert a != blist
 
-    a = []
+    alist: List[int] = []
     b = Polynomial("x")
-    assert a != b
+    assert alist != b
 
 
-def test_is():
+def test_is() -> None:
     a = Polynomial("0")
     assert a.is_zero
     assert not a.is_one
@@ -328,7 +359,7 @@ def test_is():
     assert not a.is_variable
 
 
-def test_as():
+def test_as() -> None:
     a = Polynomial("42")
     assert a.as_integer == 42
 
@@ -344,13 +375,13 @@ def test_as():
         a.as_variable  # not variable
 
 
-def test_as_with_bigints(bigints):
+def test_as_with_bigints(bigints: BigIntSeq) -> None:
     for n in bigints:
         a = Polynomial(n)
         assert a.as_integer == n
 
 
-def test_signum():
+def test_signum() -> None:
     a = Polynomial("1-x")
     b = -a
 
@@ -358,13 +389,13 @@ def test_signum():
     assert a * a.signum == b * b.signum
 
 
-def test_variables():
+def test_variables() -> None:
     a = Polynomial("1+x+y+z-y")
     assert a.variables == VariableSet("x", "y", "z")
     assert a.min_variables == VariableSet("x", "z")
 
 
-def test_degree():
+def test_degree() -> None:
     a = Polynomial("1+x*y+x*y*z^2")
     assert a.degree() == 4  # total degree
     assert a.degree(Variable("x")) == 1
@@ -375,10 +406,10 @@ def test_degree():
     assert a.degree([]) == 0  # none of variables
 
     with raises(TypeError):
-        a.degree(1, 2, 3)  # not variable
+        a.degree(1, 2, 3)  # type: ignore  # not variable
 
 
-def test_coeff():
+def test_coeff() -> None:
     a = Polynomial("(1+x+y)^3")
 
     assert a.coeff(Variable("x"), 0) == Polynomial("(1+y)^3")
@@ -393,29 +424,29 @@ def test_coeff():
     assert a.coeff(["x", "y"], [2, 2]) == 0
 
     with raises(TypeError):
-        a.coeff(1, 1)  # x must be a variable
+        a.coeff(1, 1)  # type: ignore  # x must be a variable
 
     with raises(TypeError):
-        a.coeff("x", "1")  # n must be an integer
+        a.coeff("x", "1")  # type: ignore  # n must be an integer
 
     with raises(TypeError):
-        a.coeff(["x", "y"], 1)  # exponents must be a collection
+        a.coeff(["x", "y"], 1)  # type: ignore  # exponents must be a collection
 
     with raises(ValueError):
         a.coeff(["x", "y"], [1, 2, 3])  # different sizes
 
 
-def test_coeff_dict():
+def test_coeff_dict() -> None:
     p = Polynomial("(1+x-y)^2")
 
-    res = {
+    res1 = {
         (0,): Polynomial("(1-y)^2"),
         (1,): Polynomial("2*(1-y)"),
         (2,): Polynomial("1"),
     }
-    assert p.coeff_dict("x") == res
+    assert p.coeff_dict("x") == res1
 
-    res = {
+    res2 = {
         (0, 0): Polynomial("1"),
         (0, 1): Polynomial("-2"),
         (0, 2): Polynomial("1"),
@@ -423,12 +454,14 @@ def test_coeff_dict():
         (1, 1): Polynomial("-2"),
         (2, 0): Polynomial("1"),
     }
-    assert p.coeff_dict("x", "y") == res
-    assert p.coeff_dict([Variable("x"), "y"]) == res
-    assert p.coeff_dict(x for x in ["x", "y"]) == res
+    assert p.coeff_dict("x", "y") == res2
+    assert p.coeff_dict([Variable("x"), "y"]) == res2
+    assert p.coeff_dict(x for x in ["x", "y"]) == res2
 
 
-def test_translate():
+def test_translate() -> None:
+    s: VariableSetLike
+
     a = Polynomial("(1+x+y)-(1+x+z)")
 
     s = ["a", "x", "y", "z"]
@@ -462,13 +495,17 @@ def test_translate():
     assert b.variables == v
 
     with raises(TypeError):
-        a.translate(1, 2)  # not variable
+        a.translate(1, 2)  # type: ignore  # not variable
 
     with raises(ValueError):
         a.translate("w", "x", "y")  # doesn't fit
 
 
-def test_divide_exact():
+def test_divide_exact() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+    c: PolynomialLike
+
     a = Polynomial("(1+x)*(1-y)")
     b = Polynomial("1+x")
     c = Polynomial("1-y")
@@ -480,7 +517,7 @@ def test_divide_exact():
     assert a.divide_exact(b) == c
 
     with raises(TypeError):
-        a.divide_exact("1")  # not polynomial
+        a.divide_exact("1")  # type: ignore  # not polynomial
 
     with raises(ZeroDivisionError):
         a.divide_exact(0)
@@ -489,7 +526,7 @@ def test_divide_exact():
         a.divide_exact(100)  # not divisible
 
 
-def test_gcd():
+def test_gcd() -> None:
     zero = Polynomial("0")
 
     a = Polynomial("1+x-y")
@@ -511,10 +548,10 @@ def test_gcd():
     assert a.gcd(18) == 6
 
     with raises(TypeError):
-        a.gcd("1")  # not polynomial
+        a.gcd("1")  # type: ignore  # not polynomial
 
 
-def test_lcm():
+def test_lcm() -> None:
     zero = Polynomial("0")
     one = Polynomial("1")
 
@@ -537,10 +574,10 @@ def test_lcm():
     assert a.lcm(18) == Polynomial("72*(1+x)")
 
     with raises(TypeError):
-        a.lcm("1")  # not polynomial
+        a.lcm("1")  # type: ignore  # not polynomial
 
 
-def test_factors():
+def test_factors() -> None:
     a = Polynomial("-2*x^4*y^3 + 2*x^3*y^4 + 2*x^2*y^5 - 2*x*y^6").factors()
     b = [
         Polynomial("-2"),
@@ -555,7 +592,12 @@ def test_factors():
     assert a == b
 
 
-def test_subs():
+def test_subs() -> None:
+    a: PolynomialLike
+    lhs: Union[PolynomialLike, str]
+    rhs: Union[PolynomialLike, str]
+    b: PolynomialLike
+
     a = Polynomial("(1+x)^3")
     lhs = Polynomial("x")
     rhs = Polynomial("y")
@@ -573,10 +615,10 @@ def test_subs():
     assert a == b
 
     with raises(TypeError):
-        a.subs(1, "x")  # lhs is not a polynomial
+        a.subs(1, "x")  # type: ignore  # lhs is not a polynomial
 
     with raises(TypeError):
-        a.subs("x", [])  # rhs is not a polynomial
+        a.subs("x", [])  # type: ignore  # rhs is not a polynomial
 
     with raises(ValueError):
         a.subs("2*x", 1)  # invalid lhs
@@ -585,7 +627,7 @@ def test_subs():
         a.subs("1+x", 1)  # invalid lhs
 
 
-def test_evaluate():
+def test_evaluate() -> None:
     a = Polynomial("(1+x+y)^3").evaluate("x", 3)
     b = Polynomial("(4+y)^3")
     assert a == b
@@ -595,25 +637,28 @@ def test_evaluate():
     assert a == b
 
     with raises(TypeError):
-        a.evaluate(["x"], 1)  # values must be also a collection
+        a.evaluate(["x"], 1)  # type: ignore  # values must be also a collection
 
     with raises(ValueError):
         a.evaluate(["x"], [1, 2])  # different sizes
 
     with raises(TypeError):
-        a.evaluate("x", "y")  # value must be an integer
+        a.evaluate("x", "y")  # type: ignore  # value must be an integer
 
     with raises(TypeError):
-        a.evaluate(1, 1)  # invalid variables
+        a.evaluate(1, 1)  # type: ignore  # invalid variables
 
     with raises(TypeError):
-        a.evaluate(["x"], ["y"])  # values are not integers
+        a.evaluate(["x"], ["y"])  # type: ignore  # values are not integers
 
     with raises(TypeError):
-        a.evaluate([1], [1])  # not variables
+        a.evaluate([1], [1])  # type: ignore  # not variables
 
 
-def test_evaluate_at_zero():
+def test_evaluate_at_zero() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+
     a = Polynomial("(1+x)^3").evaluate_at_zero(Variable("x"))
     b = 1
     assert a == b
@@ -631,10 +676,13 @@ def test_evaluate_at_zero():
     assert a == b
 
     with raises(TypeError):
-        a.evaluate_at_zero(1)  # not variable
+        a.evaluate_at_zero(1)  # type: ignore  # not variable
 
 
-def test_evaluate_at_one():
+def test_evaluate_at_one() -> None:
+    a: PolynomialLike
+    b: PolynomialLike
+
     a = Polynomial("(1+x)^3").evaluate_at_one(Variable("x"))
     b = 8
     assert a == b
@@ -652,10 +700,10 @@ def test_evaluate_at_one():
     assert a == b
 
     with raises(TypeError):
-        a.evaluate_at_one(1)  # not variable
+        a.evaluate_at_one(1)  # type: ignore  # not variable
 
 
-def test_shift():
+def test_shift() -> None:
     a = Polynomial("(1+x+2*y)^3").shift("x", 3)
     b = Polynomial("(4+x+2*y)^3")
     assert a == b
@@ -665,25 +713,25 @@ def test_shift():
     assert a == b
 
     with raises(TypeError):
-        a.shift(["x"], 1)  # values must be also a collection
+        a.shift(["x"], 1)  # type: ignore  # values must be also a collection
 
     with raises(ValueError):
         a.shift(["x"], [1, 2])  # different sizes
 
     with raises(TypeError):
-        a.shift("x", "y")  # value must be an integer
+        a.shift("x", "y")  # type: ignore  # value must be an integer
 
     with raises(TypeError):
-        a.shift(1, 1)  # invalid variables
+        a.shift(1, 1)  # type: ignore  # invalid variables
 
     with raises(TypeError):
-        a.shift(["x"], ["y"])  # values are not integers
+        a.shift(["x"], ["y"])  # type: ignore  # values are not integers
 
     with raises(TypeError):
-        a.shift([1], [1])  # not variables
+        a.shift([1], [1])  # type: ignore  # not variables
 
 
-def test_diff():
+def test_diff() -> None:
     a = Polynomial("(1+x+y)^3")
     x = Variable("x")
     assert a.diff(x) == Polynomial("3*(1+x+y)^2")
@@ -697,16 +745,16 @@ def test_diff():
     assert a.diff("x", 2) == Polynomial("72*(1+x)^7")
 
     with raises(TypeError):
-        a.diff(1)  # x must be a Variable
+        a.diff(1)  # type: ignore  # x must be a Variable
 
     with raises(TypeError):
-        a.diff(x, "x")  # n must be an int
+        a.diff(x, "x")  # type: ignore  # n must be an int
 
     with raises(ValueError):
         a.diff(x, -1)  # n must be non-negative
 
 
-def test_sum_of():
+def test_sum_of() -> None:
     p1 = Polynomial("1+x")
     p2 = Polynomial("1+y")
     p3 = Polynomial("1+z")
@@ -717,7 +765,7 @@ def test_sum_of():
     assert donuts.poly.sum(p1, p2, p3) == p1 + p2 + p3
 
 
-def test_product_of():
+def test_product_of() -> None:
     p1 = Polynomial("1+x")
     p2 = Polynomial("1+y")
     p3 = Polynomial("1+z")
@@ -728,12 +776,16 @@ def test_product_of():
     assert donuts.poly.product(p1, p2, p3) == p1 * p2 * p3
 
 
-def test_gcd_of():
+def test_gcd_of() -> None:
     p1 = Polynomial("1+x")
     p2 = Polynomial("1+y")
     p3 = Polynomial("1+z")
     q = p1 * p2 * p3
-    a = [p1 ** 2 * p2 ** 3 * p3 ** 2, p1 ** 3 * p2 ** 2 * p3, p1 * p2 * p3 ** 3]
+    a: List[PolynomialLike] = [
+        p1 ** 2 * p2 ** 3 * p3 ** 2,
+        p1 ** 3 * p2 ** 2 * p3,
+        p1 * p2 * p3 ** 3,
+    ]
 
     assert donuts.poly.gcd(a) == q
     assert donuts.poly.gcd(*a) == q
@@ -757,15 +809,19 @@ def test_gcd_of():
     assert donuts.poly.gcd(p1, p1) == p1
 
     with raises(TypeError):
-        donuts.poly.gcd("x")  # not Polynomial
+        donuts.poly.gcd("x")  # type: ignore  # not Polynomial
 
 
-def test_lcm_of():
+def test_lcm_of() -> None:
     p1 = Polynomial("1+x")
     p2 = Polynomial("1+y")
     p3 = Polynomial("1+z")
     q = p1 ** 3 * p2 ** 3 * p3 ** 3
-    a = [p1 ** 2 * p2 ** 3 * p3 ** 2, p1 ** 3 * p2 ** 2 * p3, p1 * p2 * p3 ** 3]
+    a: List[PolynomialLike] = [
+        p1 ** 2 * p2 ** 3 * p3 ** 2,
+        p1 ** 3 * p2 ** 2 * p3,
+        p1 * p2 * p3 ** 3,
+    ]
 
     assert donuts.poly.lcm(a) == q
     assert donuts.poly.lcm(*a) == q
@@ -790,4 +846,4 @@ def test_lcm_of():
         assert donuts.poly.lcm()  # no arguments
 
     with raises(TypeError):
-        donuts.poly.lcm("x")  # not Polynomial
+        donuts.poly.lcm("x")  # type: ignore  # not Polynomial

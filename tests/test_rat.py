@@ -1,12 +1,20 @@
 from fractions import Fraction
 from pickle import dumps, loads
+from typing import Union
 
-from pytest import fixture, raises  # noqa: F401
+from conftest import BigIntSeq
+from pytest import raises
 
 from donuts import Polynomial, RationalFunction, Variable, VariableSet
+from donuts.poly import PolynomialLike
+from donuts.rat import RationalFunctionLike
+from donuts.varset import VariableSetLike
 
 
-def test_init():
+def test_init() -> None:
+    a: RationalFunctionLike
+    b: RationalFunctionLike
+
     a = RationalFunction()
     assert a == 0
     assert str(a) == "0"
@@ -33,7 +41,7 @@ def test_init():
     assert a == b
 
     with raises(TypeError):
-        RationalFunction([1])  # invalid type
+        RationalFunction([1])  # type: ignore  # invalid type
 
     with raises(TypeError):
         RationalFunction("1", 2)  # invalid type combinations
@@ -42,7 +50,7 @@ def test_init():
         RationalFunction(Fraction(1, 2), 2)  # invalid type combinations
 
     with raises(TypeError):
-        RationalFunction([1], [2])  # invalid types
+        RationalFunction([1], [2])  # type: ignore  # invalid types
 
     with raises(ValueError):
         RationalFunction("(1+x?)/(1-y)")  # invalid string
@@ -56,7 +64,7 @@ def test_init():
         RationalFunction(a, b)  # division by zero
 
 
-def test_init_with_bigints(bigints):
+def test_init_with_bigints(bigints: BigIntSeq) -> None:
     for n in bigints:
         a = RationalFunction(n)
         b = RationalFunction(str(n))
@@ -72,7 +80,7 @@ def test_init_with_bigints(bigints):
                 assert a == c
 
 
-def test_state():
+def test_state() -> None:
     a = RationalFunction("(1+x+y)^3/(1-z-w)/2")
     s = dumps(a)
     b = loads(s)
@@ -80,13 +88,16 @@ def test_state():
     assert a + b == a * 2
 
 
-def test_repr():
+def test_repr() -> None:
     a = RationalFunction("(1+x)/(1+y)")
     b = eval(repr(a))
     assert a == b
 
 
-def test_hash():
+def test_hash() -> None:
+    a: RationalFunctionLike
+    b: RationalFunctionLike
+
     a = 42
     b = RationalFunction(a)
     assert a == b
@@ -113,7 +124,7 @@ def test_hash():
     assert hash(a) == hash(b)
 
 
-def test_bool():
+def test_bool() -> None:
     a = RationalFunction("0")
     assert not a
 
@@ -121,7 +132,7 @@ def test_bool():
     assert a
 
 
-def test_pos():
+def test_pos() -> None:
     a = RationalFunction("0")
     assert (+a) == a
 
@@ -129,7 +140,7 @@ def test_pos():
     assert (+a) == a
 
 
-def test_neg():
+def test_neg() -> None:
     a = RationalFunction("0")
     assert (-a) == a
 
@@ -139,7 +150,11 @@ def test_neg():
     assert (-b) == a
 
 
-def test_add():
+def test_add() -> None:
+    a: RationalFunctionLike
+    b: RationalFunctionLike
+    c: RationalFunctionLike
+
     a = RationalFunction("(1+x)/(1-z)")
     b = RationalFunction("(-1+y)/(1-z)")
     c = RationalFunction("(x+y)/(1-z)")
@@ -156,7 +171,11 @@ def test_add():
     assert a + b == c
 
 
-def test_sub():
+def test_sub() -> None:
+    a: RationalFunctionLike
+    b: RationalFunctionLike
+    c: RationalFunctionLike
+
     a = RationalFunction("(1+x)/(1-z)")
     b = RationalFunction("(-1+y)/(1-z)")
     c = RationalFunction("-(2+x-y)/(-1+z)")
@@ -173,7 +192,11 @@ def test_sub():
     assert a - b == c
 
 
-def test_mul():
+def test_mul() -> None:
+    a: RationalFunctionLike
+    b: RationalFunctionLike
+    c: RationalFunctionLike
+
     a = RationalFunction("(1+x)/(1-z)")
     b = RationalFunction("(-1+y)/(1-z)")
     c = RationalFunction("(1+x)*(-1+y)/(-1+z)^2")
@@ -190,7 +213,11 @@ def test_mul():
     assert a * b == c
 
 
-def test_div():
+def test_div() -> None:
+    a: RationalFunctionLike
+    b: RationalFunctionLike
+    c: RationalFunctionLike
+
     a = RationalFunction("(1+x)/(1-z)")
     b = RationalFunction("(-1+y)/(1-z)")
     c = RationalFunction("(1+x)/(-1+y)")
@@ -212,7 +239,11 @@ def test_div():
         a / b  # division by zero
 
 
-def test_pow():
+def test_pow() -> None:
+    a: RationalFunctionLike
+    b: int
+    c: RationalFunctionLike
+
     a = RationalFunction("(1-x)/(1+x)")
     b = 3
     c = RationalFunction("(1-3*x+3*x^2-x^3)/(1+3*x+3*x^2+x^3)")
@@ -238,7 +269,7 @@ def test_pow():
         a ** (-3)  # division by zero
 
 
-def test_is():
+def test_is() -> None:
     a = RationalFunction("0")
     assert a.is_zero
     assert not a.is_one
@@ -312,24 +343,28 @@ def test_is():
     assert not a.is_polynomial
 
 
-def test_as_integer():
+def test_as_integer() -> None:
+    a: Union[int, str]
+
     a = 42
     b = RationalFunction(a)
     assert a == b.as_integer
 
     a = "x"
-    b = RationalFunction(a)
+    b = RationalFunction("x")
     with raises(ValueError):
         b.as_integer  # not integer
 
 
-def test_as_integer_with_bigints(bigints):
+def test_as_integer_with_bigints(bigints: BigIntSeq) -> None:
     for n in bigints:
         a = RationalFunction(n)
         assert a.as_integer == n
 
 
-def test_as_fraction():
+def test_as_fraction() -> None:
+    a: Union[Fraction, int, str]
+
     a = 42
     b = RationalFunction(a)
     assert a == b.as_fraction
@@ -344,7 +379,9 @@ def test_as_fraction():
         b.as_fraction  # not fraction
 
 
-def test_as_polynomial():
+def test_as_polynomial() -> None:
+    a: Union[PolynomialLike, str]
+
     a = 42
     b = RationalFunction(a)
     assert a == b.as_polynomial
@@ -359,7 +396,9 @@ def test_as_polynomial():
         b.as_polynomial  # not polynomial
 
 
-def test_as_variable():
+def test_as_variable() -> None:
+    a: RationalFunctionLike
+
     a = Variable("x")
     b = RationalFunction(str(a))
     assert a == b.as_variable
@@ -369,7 +408,7 @@ def test_as_variable():
         a.as_variable  # not variable
 
 
-def test_variables():
+def test_variables() -> None:
     p = Polynomial("(1+x)*(1+y)")
     q = Polynomial("(1-z)*(1+y)")
     a = RationalFunction(p, q)
@@ -377,7 +416,9 @@ def test_variables():
     assert a.min_variables == VariableSet("x", "z")
 
 
-def test_translate():
+def test_translate() -> None:
+    s: VariableSetLike
+
     a = RationalFunction("(1-x)/(1+y)+x/(1+y)-1/(1+z)")
 
     s = ["a", "x", "y", "z"]
@@ -411,13 +452,18 @@ def test_translate():
     assert b.variables == v
 
     with raises(TypeError):
-        a.translate(1, 2)  # not variable
+        a.translate(1, 2)  # type: ignore  # not variable
 
     with raises(ValueError):
         a.translate("w", "x", "y")  # doesn't fit
 
 
-def test_subs():
+def test_subs() -> None:
+    a: RationalFunctionLike
+    lhs: Union[Polynomial, str]
+    rhs: Union[RationalFunctionLike, str]
+    b: RationalFunctionLike
+
     a = RationalFunction("(1+x-y)^2/(1+x+y)^2")
     lhs = Polynomial("x")
     rhs = RationalFunction("1/y")
@@ -431,10 +477,10 @@ def test_subs():
     assert a.subs(lhs, rhs) == b
 
     with raises(TypeError):
-        a.subs(1, "x")  # lhs is not a polynomial
+        a.subs(1, "x")  # type: ignore  # lhs is not a polynomial
 
     with raises(TypeError):
-        a.subs("x", [])  # rhs is not a polynomial
+        a.subs("x", [])  # type: ignore  # rhs is not a polynomial
 
     with raises(ValueError):
         a.subs("2*x", 1)  # invalid lhs
@@ -446,7 +492,7 @@ def test_subs():
         a.subs("x", "-1-y")  # denominator becomes zero
 
 
-def test_evaluate():
+def test_evaluate() -> None:
     a = RationalFunction("(1+x+y)^3/(1-x)/(1-z)").evaluate("x", 3)
     b = RationalFunction("-(4+y)^3/2/(1-z)")
     assert a == b
@@ -458,22 +504,22 @@ def test_evaluate():
     assert a == b
 
     with raises(TypeError):
-        a.evaluate(["x"], 1)  # values must be also a collection
+        a.evaluate(["x"], 1)  # type: ignore  # values must be also a collection
 
     with raises(ValueError):
         a.evaluate(["x"], [1, 2])  # different sizes
 
     with raises(TypeError):
-        a.evaluate("x", "y")  # value must be an integer
+        a.evaluate("x", "y")  # type: ignore  # value must be an integer
 
     with raises(TypeError):
-        a.evaluate(1, 1)  # invalid variables
+        a.evaluate(1, 1)  # type: ignore  # invalid variables
 
     with raises(TypeError):
-        a.evaluate(["x"], ["y"])  # values are not integers
+        a.evaluate(["x"], ["y"])  # type: ignore  # values are not integers
 
     with raises(TypeError):
-        a.evaluate([1], [1])  # not variables
+        a.evaluate([1], [1])  # type: ignore  # not variables
 
     with raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(2-x)").evaluate("x", 2)
@@ -482,7 +528,7 @@ def test_evaluate():
         RationalFunction("(1+x+y)/(5-x-y)").evaluate(["x", "y"], [2, 3])
 
 
-def test_evaluate_at_zero():
+def test_evaluate_at_zero() -> None:
     a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_zero(Variable("x"))
     b = RationalFunction("1/(3-y)")
     assert a == b
@@ -500,7 +546,7 @@ def test_evaluate_at_zero():
     assert a == b
 
     with raises(TypeError):
-        a.evaluate_at_zero(1)  # not variable
+        a.evaluate_at_zero(1)  # type: ignore  # not variable
 
     with raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/x").evaluate_at_zero("x")
@@ -509,7 +555,7 @@ def test_evaluate_at_zero():
         RationalFunction("(1+x+y)/(x-y)").evaluate_at_zero(["x", "y"])
 
 
-def test_evaluate_at_one():
+def test_evaluate_at_one() -> None:
     a = RationalFunction("(1+x)^3/(3-x-y)").evaluate_at_one(Variable("x"))
     b = RationalFunction("8/(2-y)")
     assert a == b
@@ -527,7 +573,7 @@ def test_evaluate_at_one():
     assert a == b
 
     with raises(TypeError):
-        a.evaluate_at_one(1)  # not variable
+        a.evaluate_at_one(1)  # type: ignore  # not variable
 
     with raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(1-x)").evaluate_at_one("x")
@@ -536,7 +582,7 @@ def test_evaluate_at_one():
         RationalFunction("(1+x+y)/(x-y)").evaluate_at_one(["x", "y"])
 
 
-def test_shift():
+def test_shift() -> None:
     a = RationalFunction("(1+x+2*y)^3/(3-x)").shift("x", 3)
     b = RationalFunction("-(4+x+2*y)^3/x")
     assert a == b
@@ -546,25 +592,25 @@ def test_shift():
     assert a == b
 
     with raises(TypeError):
-        a.shift(["x"], 1)  # values must be also a collection
+        a.shift(["x"], 1)  # type: ignore  # values must be also a collection
 
     with raises(ValueError):
         a.shift(["x"], [1, 2])  # different sizes
 
     with raises(TypeError):
-        a.shift("x", "y")  # value must be an integer
+        a.shift("x", "y")  # type: ignore  # value must be an integer
 
     with raises(TypeError):
-        a.shift(1, 1)  # invalid variables
+        a.shift(1, 1)  # type: ignore  # invalid variables
 
     with raises(TypeError):
-        a.shift(["x"], ["y"])  # values are not integers
+        a.shift(["x"], ["y"])  # type: ignore  # values are not integers
 
     with raises(TypeError):
-        a.shift([1], [1])  # not variables
+        a.shift([1], [1])  # type: ignore  # not variables
 
 
-def test_diff():
+def test_diff() -> None:
     a = RationalFunction("(1+x+y)^2/(1/2+x-y*x^5)")
     x = Variable("x")
     assert a.diff(x) == RationalFunction(
@@ -580,10 +626,10 @@ def test_diff():
     assert a.diff("x", 2) == RationalFunction("4/(1-x)^3")
 
     with raises(TypeError):
-        a.diff(1)  # x must be a Variable
+        a.diff(1)  # type: ignore  # x must be a Variable
 
     with raises(TypeError):
-        a.diff(x, "x")  # n must be an int
+        a.diff(x, "x")  # type: ignore  # n must be an int
 
     with raises(ValueError):
         a.diff(x, -1)  # n must be non-negative
