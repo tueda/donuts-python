@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import functools
-from typing import Any, FrozenSet, Iterable, Iterator, Union, overload
+from typing import Any, Collection, FrozenSet, Iterable, Iterator, Union, overload
 
 from .array import _create_raw_var_array
 from .jvm import jvm
@@ -85,6 +85,13 @@ class VariableSet:
     def _frozenset_from_raw(raw: Any) -> FrozenSet[Variable]:
         """Construct a frozen set of variables from a raw `VariableSet` object."""
         return frozenset(x for x in VariableSet._new(raw))
+
+    @staticmethod
+    def _get_raw(variables: Iterable[Union[Variable, str]]) -> Any:
+        if isinstance(variables, Collection) and len(variables) == 0:
+            VariableSet.__RAW_EMPTY
+
+        return _raw_variable_set_from_frozenset(frozenset(variables))
 
     def __getstate__(self) -> Any:
         """Get the object state."""

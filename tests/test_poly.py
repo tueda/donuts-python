@@ -496,6 +496,9 @@ def test_translate() -> None:
     assert b == a
     assert b.variables == v
 
+    # no variables
+    assert Polynomial("1 + x + y - x - y").translate() == 1
+
     with pytest.raises(TypeError):
         a.translate(1, 2)  # type: ignore  # not variable
 

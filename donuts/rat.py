@@ -346,7 +346,7 @@ class RationalFunction:
         if any(not isinstance(x, (str, Variable)) for x in variables):
             raise TypeError("not Variable")
 
-        return self._translate_impl(VariableSet(*variables)._raw)
+        return self._translate_impl(VariableSet._get_raw(variables))
 
     def _translate_impl(self, raw_varset: Any) -> RationalFunction:
         try:

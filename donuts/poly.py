@@ -319,7 +319,7 @@ class Polynomial:
         if any(not isinstance(x, (Variable, str)) for x in variables):
             raise TypeError("not Variable")
 
-        return self._raw.degree(VariableSet(*variables)._raw)  # type: ignore
+        return self._raw.degree(VariableSet._get_raw(variables))  # type: ignore
 
     @overload
     def coeff(self, x: Union[Variable, str], n: int) -> Polynomial:
@@ -408,7 +408,7 @@ class Polynomial:
         if any(not isinstance(x, (Variable, str)) for x in variables):
             raise TypeError("not Variable")
 
-        return self._translate_impl(VariableSet(*variables)._raw)
+        return self._translate_impl(VariableSet._get_raw(variables))
 
     def _translate_impl(self, raw_varset: Any) -> Polynomial:
         try:
