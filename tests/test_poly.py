@@ -2,8 +2,8 @@ from fractions import Fraction
 from pickle import dumps, loads
 from typing import List, Union
 
+import pytest
 from conftest import BigIntSeq
-from pytest import raises
 
 import donuts
 from donuts import Polynomial, RationalFunction, Variable, VariableSet
@@ -30,14 +30,14 @@ def test_init() -> None:
     a = Polynomial(a)
     assert str(a) == "a"
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         Polynomial([1])  # type: ignore  # invalid type
 
-    with raises(ValueError):
-        Polynomial("(1+x)/(1-y)")  # not polynomial
+    with pytest.raises(ValueError, match="invalid string for polynomial"):
+        Polynomial("(1+x)/(1-y)")
 
-    with raises(ValueError):
-        Polynomial("x?")  # invalid string
+    with pytest.raises(ValueError, match="invalid string for polynomial"):
+        Polynomial("x?")
 
 
 def test_init_with_bigints(bigints: BigIntSeq) -> None:
@@ -253,7 +253,7 @@ def test_pow() -> None:
     assert a ** b == c  # NOTE: 0^0 = 1 in Python
 
     a = Polynomial("1+x")
-    with raises(ValueError):
+    with pytest.raises(ValueError, match="negative power given for polynomial"):
         a ** (-3)  # negative power
 
 
@@ -364,15 +364,15 @@ def test_as() -> None:
     assert a.as_integer == 42
 
     a = Polynomial("x")
-    with raises(ValueError):
-        a.as_integer  # not integer
+    with pytest.raises(ValueError, match="not an integer"):
+        a.as_integer
 
     a = Polynomial("x")
     assert a.as_variable == Variable("x")
 
     a = Polynomial("1+x")
-    with raises(ValueError):
-        a.as_variable  # not variable
+    with pytest.raises(ValueError, match="not a variable"):
+        a.as_variable
 
 
 def test_as_with_bigints(bigints: BigIntSeq) -> None:
@@ -405,7 +405,7 @@ def test_degree() -> None:
     assert a.degree(["x", "z", "z"]) == 3
     assert a.degree([]) == 0  # none of variables
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.degree(1, 2, 3)  # type: ignore  # not variable
 
 
@@ -423,17 +423,19 @@ def test_coeff() -> None:
     assert a.coeff(["x", "y"], [1, 2]) == 3
     assert a.coeff(["x", "y"], [2, 2]) == 0
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.coeff(1, 1)  # type: ignore  # x must be a variable
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.coeff("x", "1")  # type: ignore  # n must be an integer
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.coeff(["x", "y"], 1)  # type: ignore  # exponents must be a collection
 
-    with raises(ValueError):
-        a.coeff(["x", "y"], [1, 2, 3])  # different sizes
+    with pytest.raises(
+        ValueError, match="variables and exponents have different sizes"
+    ):
+        a.coeff(["x", "y"], [1, 2, 3])
 
 
 def test_coeff_dict() -> None:
@@ -494,11 +496,11 @@ def test_translate() -> None:
     assert b == a
     assert b.variables == v
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.translate(1, 2)  # type: ignore  # not variable
 
-    with raises(ValueError):
-        a.translate("w", "x", "y")  # doesn't fit
+    with pytest.raises(ValueError, match="invalid set of variables"):
+        a.translate("w", "x", "y")
 
 
 def test_divide_exact() -> None:
@@ -516,14 +518,14 @@ def test_divide_exact() -> None:
     c = Polynomial("2*(1+x)")
     assert a.divide_exact(b) == c
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.divide_exact("1")  # type: ignore  # not polynomial
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         a.divide_exact(0)
 
-    with raises(ValueError):
-        a.divide_exact(100)  # not divisible
+    with pytest.raises(ValueError, match="not divisible"):
+        a.divide_exact(100)
 
 
 def test_gcd() -> None:
@@ -547,7 +549,7 @@ def test_gcd() -> None:
     a = Polynomial("24*(1+x)")
     assert a.gcd(18) == 6
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.gcd("1")  # type: ignore  # not polynomial
 
 
@@ -573,7 +575,7 @@ def test_lcm() -> None:
     a = Polynomial("24*(1+x)")
     assert a.lcm(18) == Polynomial("72*(1+x)")
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.lcm("1")  # type: ignore  # not polynomial
 
 
@@ -614,17 +616,17 @@ def test_subs() -> None:
     b = 58609171
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.subs(1, "x")  # type: ignore  # lhs is not a polynomial
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.subs("x", [])  # type: ignore  # rhs is not a polynomial
 
-    with raises(ValueError):
-        a.subs("2*x", 1)  # invalid lhs
+    with pytest.raises(ValueError, match="invalid lhs for substitution"):
+        a.subs("2*x", 1)
 
-    with raises(ValueError):
-        a.subs("1+x", 1)  # invalid lhs
+    with pytest.raises(ValueError, match="invalid lhs for substitution"):
+        a.subs("1+x", 1)
 
 
 def test_evaluate() -> None:
@@ -636,22 +638,22 @@ def test_evaluate() -> None:
     b = Polynomial("8")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate(["x"], 1)  # type: ignore  # values must be also a collection
 
-    with raises(ValueError):
-        a.evaluate(["x"], [1, 2])  # different sizes
+    with pytest.raises(ValueError, match="variables and values have different sizes"):
+        a.evaluate(["x"], [1, 2])
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate("x", "y")  # type: ignore  # value must be an integer
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate(1, 1)  # type: ignore  # invalid variables
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate(["x"], ["y"])  # type: ignore  # values are not integers
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate([1], [1])  # type: ignore  # not variables
 
 
@@ -675,7 +677,7 @@ def test_evaluate_at_zero() -> None:
     b = Polynomial("(1+x)^3")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate_at_zero(1)  # type: ignore  # not variable
 
 
@@ -699,7 +701,7 @@ def test_evaluate_at_one() -> None:
     b = Polynomial("(1+x)^3")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate_at_one(1)  # type: ignore  # not variable
 
 
@@ -712,22 +714,22 @@ def test_shift() -> None:
     b = Polynomial("(x+2*y)^3")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift(["x"], 1)  # type: ignore  # values must be also a collection
 
-    with raises(ValueError):
-        a.shift(["x"], [1, 2])  # different sizes
+    with pytest.raises(ValueError, match="variables and values have different sizes"):
+        a.shift(["x"], [1, 2])
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift("x", "y")  # type: ignore  # value must be an integer
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift(1, 1)  # type: ignore  # invalid variables
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift(["x"], ["y"])  # type: ignore  # values are not integers
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift([1], [1])  # type: ignore  # not variables
 
 
@@ -744,14 +746,14 @@ def test_diff() -> None:
     assert a.diff("x", 1) == Polynomial("9*(1+x)^8")
     assert a.diff("x", 2) == Polynomial("72*(1+x)^7")
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.diff(1)  # type: ignore  # x must be a Variable
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.diff(x, "x")  # type: ignore  # n must be an int
 
-    with raises(ValueError):
-        a.diff(x, -1)  # n must be non-negative
+    with pytest.raises(ValueError, match="n must be non-negative"):
+        a.diff(x, -1)
 
 
 def test_sum_of() -> None:
@@ -808,7 +810,7 @@ def test_gcd_of() -> None:
     assert donuts.poly.gcd(p1, 1) == 1
     assert donuts.poly.gcd(p1, p1) == p1
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         donuts.poly.gcd("x")  # type: ignore  # not Polynomial
 
 
@@ -842,8 +844,8 @@ def test_lcm_of() -> None:
     assert donuts.poly.lcm(p1, 1) == p1
     assert donuts.poly.lcm(p1, p1) == p1
 
-    with raises(ValueError):
-        assert donuts.poly.lcm()  # no arguments
+    with pytest.raises(ValueError, match="lcm with no arguments"):
+        assert donuts.poly.lcm()
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         donuts.poly.lcm("x")  # type: ignore  # not Polynomial

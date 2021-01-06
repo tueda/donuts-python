@@ -1,6 +1,6 @@
 from pickle import dumps, loads
 
-from pytest import raises
+import pytest
 
 from donuts import Variable, VariableSet
 
@@ -34,7 +34,7 @@ def test_init() -> None:
     assert a == d
     assert a == e
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         VariableSet("x", "y", ["z"])  # type: ignore  # neither Variable nor str
 
 
@@ -98,5 +98,5 @@ def test_union() -> None:
     c = VariableSet(*sc)
     assert a.union(b) == c
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.union([])  # type: ignore  # not set of variables

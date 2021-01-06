@@ -2,8 +2,8 @@ from fractions import Fraction
 from pickle import dumps, loads
 from typing import Union
 
+import pytest
 from conftest import BigIntSeq
-from pytest import raises
 
 from donuts import Polynomial, RationalFunction, Variable, VariableSet
 from donuts.poly import PolynomialLike
@@ -40,27 +40,27 @@ def test_init() -> None:
     b = RationalFunction(a)
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         RationalFunction([1])  # type: ignore  # invalid type
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         RationalFunction("1", 2)  # invalid type combinations
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         RationalFunction(Fraction(1, 2), 2)  # invalid type combinations
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         RationalFunction([1], [2])  # type: ignore  # invalid types
 
-    with raises(ValueError):
-        RationalFunction("(1+x?)/(1-y)")  # invalid string
+    with pytest.raises(ValueError, match="invalid string for rational function"):
+        RationalFunction("(1+x?)/(1-y)")
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         RationalFunction(1, 0)  # division by zero
 
-    with raises(ZeroDivisionError):
-        a = Polynomial("1")
-        b = Polynomial("0")
+    a = Polynomial("1")
+    b = Polynomial("0")
+    with pytest.raises(ZeroDivisionError):
         RationalFunction(a, b)  # division by zero
 
 
@@ -235,7 +235,7 @@ def test_div() -> None:
 
     a = RationalFunction("(1+x)/(1-z)")
     b = RationalFunction("(1+x)*(1-y)/(1+x)-(1-y)")
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         a / b  # division by zero
 
 
@@ -265,7 +265,7 @@ def test_pow() -> None:
     assert a ** b == c  # NOTE: 0^0 = 1 in Python
 
     a = RationalFunction("0")
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         a ** (-3)  # division by zero
 
 
@@ -352,8 +352,8 @@ def test_as_integer() -> None:
 
     a = "x"
     b = RationalFunction("x")
-    with raises(ValueError):
-        b.as_integer  # not integer
+    with pytest.raises(ValueError, match="not an integer"):
+        b.as_integer
 
 
 def test_as_integer_with_bigints(bigints: BigIntSeq) -> None:
@@ -375,8 +375,8 @@ def test_as_fraction() -> None:
 
     a = "1+x"
     b = RationalFunction(a)
-    with raises(ValueError):
-        b.as_fraction  # not fraction
+    with pytest.raises(ValueError, match="not a rational number"):
+        b.as_fraction
 
 
 def test_as_polynomial() -> None:
@@ -392,8 +392,8 @@ def test_as_polynomial() -> None:
 
     a = "x/2"
     b = RationalFunction(a)
-    with raises(ValueError):
-        b.as_polynomial  # not polynomial
+    with pytest.raises(ValueError, match="not a polynomial"):
+        b.as_polynomial
 
 
 def test_as_variable() -> None:
@@ -404,8 +404,8 @@ def test_as_variable() -> None:
     assert a == b.as_variable
 
     a = RationalFunction("x/2")
-    with raises(ValueError):
-        a.as_variable  # not variable
+    with pytest.raises(ValueError, match="not a variable"):
+        a.as_variable
 
 
 def test_variables() -> None:
@@ -451,11 +451,11 @@ def test_translate() -> None:
     assert b == a
     assert b.variables == v
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.translate(1, 2)  # type: ignore  # not variable
 
-    with raises(ValueError):
-        a.translate("w", "x", "y")  # doesn't fit
+    with pytest.raises(ValueError, match="invalid set of variables"):
+        a.translate("w", "x", "y")
 
 
 def test_subs() -> None:
@@ -476,19 +476,19 @@ def test_subs() -> None:
     b = RationalFunction("(1+y-y^2)^2/(1+y+y^2)^2")
     assert a.subs(lhs, rhs) == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.subs(1, "x")  # type: ignore  # lhs is not a polynomial
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.subs("x", [])  # type: ignore  # rhs is not a polynomial
 
-    with raises(ValueError):
-        a.subs("2*x", 1)  # invalid lhs
+    with pytest.raises(ValueError, match="invalid lhs for substitution"):
+        a.subs("2*x", 1)
 
-    with raises(ValueError):
-        a.subs("1+x", 1)  # invalid lhs
+    with pytest.raises(ValueError, match="invalid lhs for substitution"):
+        a.subs("1+x", 1)
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         a.subs("x", "-1-y")  # denominator becomes zero
 
 
@@ -503,28 +503,28 @@ def test_evaluate() -> None:
     b = RationalFunction("-4/(1-z)")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate(["x"], 1)  # type: ignore  # values must be also a collection
 
-    with raises(ValueError):
-        a.evaluate(["x"], [1, 2])  # different sizes
+    with pytest.raises(ValueError, match="variables and values have different sizes"):
+        a.evaluate(["x"], [1, 2])
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate("x", "y")  # type: ignore  # value must be an integer
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate(1, 1)  # type: ignore  # invalid variables
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate(["x"], ["y"])  # type: ignore  # values are not integers
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate([1], [1])  # type: ignore  # not variables
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(2-x)").evaluate("x", 2)
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(5-x-y)").evaluate(["x", "y"], [2, 3])
 
 
@@ -545,13 +545,13 @@ def test_evaluate_at_zero() -> None:
     b = RationalFunction("(1+x)^3/(3-x-y)")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate_at_zero(1)  # type: ignore  # not variable
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/x").evaluate_at_zero("x")
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(x-y)").evaluate_at_zero(["x", "y"])
 
 
@@ -572,13 +572,13 @@ def test_evaluate_at_one() -> None:
     b = RationalFunction("(1+x)^3/(3-x-y)")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.evaluate_at_one(1)  # type: ignore  # not variable
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(1-x)").evaluate_at_one("x")
 
-    with raises(ZeroDivisionError):
+    with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(x-y)").evaluate_at_one(["x", "y"])
 
 
@@ -591,22 +591,22 @@ def test_shift() -> None:
     b = RationalFunction("-(x+2*y)^3/x/(y-2)")
     assert a == b
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift(["x"], 1)  # type: ignore  # values must be also a collection
 
-    with raises(ValueError):
-        a.shift(["x"], [1, 2])  # different sizes
+    with pytest.raises(ValueError, match="variables and values have different sizes"):
+        a.shift(["x"], [1, 2])
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift("x", "y")  # type: ignore  # value must be an integer
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift(1, 1)  # type: ignore  # invalid variables
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift(["x"], ["y"])  # type: ignore  # values are not integers
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.shift([1], [1])  # type: ignore  # not variables
 
 
@@ -625,11 +625,11 @@ def test_diff() -> None:
     assert a.diff("x", 1) == RationalFunction("2/(1-x)^2")
     assert a.diff("x", 2) == RationalFunction("4/(1-x)^3")
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.diff(1)  # type: ignore  # x must be a Variable
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         a.diff(x, "x")  # type: ignore  # n must be an int
 
-    with raises(ValueError):
-        a.diff(x, -1)  # n must be non-negative
+    with pytest.raises(ValueError, match="n must be non-negative"):
+        a.diff(x, -1)

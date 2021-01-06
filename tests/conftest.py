@@ -3,7 +3,7 @@
 import random
 from typing import Any, Callable, Dict, Sequence
 
-from pytest import fixture
+import pytest
 
 from donuts import Polynomial, RationalFunction
 
@@ -75,7 +75,7 @@ def random_rat(
             return r1 / r2
 
 
-@fixture
+@pytest.fixture()
 def bigints():  # type: ignore
     """Give a list of integers containing big values."""
     test_int_set = set()

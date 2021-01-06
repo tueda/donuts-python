@@ -1,6 +1,6 @@
 from pickle import dumps, loads
 
-from pytest import raises
+import pytest
 
 from donuts import Polynomial, RationalFunction, Variable
 
@@ -14,11 +14,11 @@ def test_init() -> None:
 
     assert x == y
 
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         Variable(42)  # type: ignore  # not string
 
-    with raises(ValueError):
-        Variable("$x")  # invalid name
+    with pytest.raises(ValueError, match="invalid string for variable"):
+        Variable("$x")
 
 
 def test_state() -> None:
