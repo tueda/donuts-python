@@ -370,7 +370,7 @@ class RationalFunction:
                         raise ZeroDivisionError("division by zero") from e
                     else:
                         raise ValueError("invalid lhs for substitution") from e
-                assert not r.denominator.is_zero
+                assert not r.denominator.is_zero  # noqa: S101  # just in case
                 return r
             elif isinstance(rhs, (Polynomial, Variable, Fraction, int, str)):
                 return self.subs(lhs, RationalFunction(rhs))

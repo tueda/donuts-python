@@ -18,7 +18,7 @@ def build_jar() -> None:
             gradlew_cmd = "./gradlew"
         elif os.name == "nt":
             gradlew_cmd = "gradlew.bat"
-        subprocess.run(
+        subprocess.run(  # noqa: S603
             [gradlew_cmd, "-Dorg.gradle.project.version=", "donuts-python:shadowJar"],
             cwd=java_dir,
             check=True,
