@@ -704,3 +704,7 @@ def lcm(*polynomials) -> Polynomial:  # type: ignore
     if len(polynomials) == 0:
         raise ValueError("lcm with no arguments")
     return Polynomial._new(_RawPythonUtils.lcmOf(array))
+
+
+# For static typing.
+PolynomialLike = Union[Polynomial, Variable, int]

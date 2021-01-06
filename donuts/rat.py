@@ -556,3 +556,7 @@ class RationalFunction:
             raise ValueError("n must be non-negative")
 
         return RationalFunction._new(self._raw.derivative(x._raw, n))
+
+
+# For static typing.
+RationalFunctionLike = Union[RationalFunction, Polynomial, Variable, Fraction, int]
