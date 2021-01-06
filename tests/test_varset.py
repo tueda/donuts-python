@@ -16,6 +16,10 @@ def test_init() -> None:
     y = Variable("y")
     z = Variable("z")
 
+    assert VariableSet("x") == VariableSet(x, x)
+    assert VariableSet("x", "y") == VariableSet(x, y)
+    assert VariableSet("xyz") == VariableSet(Variable("xyz"))
+
     a = VariableSet(x, y, z)
     b = VariableSet(z, y, x, y)
     c = VariableSet("x", "y", y, z)

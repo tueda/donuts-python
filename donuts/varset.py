@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterable, Iterator, Union, overload
+import functools
+from typing import Any, FrozenSet, Iterable, Iterator, Union, overload
 
 from .array import _create_raw_var_array
 from .jvm import jvm
 from .var import Variable as Variable  # explicitly re-export for mypy
+from .var import VariableLike
 
 _RawVariableSet = jvm.find_class("com.github.tueda.donuts.VariableSet")
 _RawPythonUtils = jvm.find_class("com.github.tueda.donuts.python.PythonUtils")
+
+
+@functools.lru_cache(maxsize=1024)
+def _raw_variable_set_from_frozenset(variables: FrozenSet[VariableLike]) -> Any:
+    return _RawPythonUtils.variableSet(_create_raw_var_array(tuple(variables)))
 
 
 class VariableSet:
@@ -65,7 +72,7 @@ class VariableSet:
             if isinstance(v, Iterable) and not isinstance(v, str):
                 variables = v  # type: ignore
 
-        self._raw = _RawPythonUtils.variableSet(_create_raw_var_array(variables))
+        self._raw = _raw_variable_set_from_frozenset(frozenset(variables))
 
     @staticmethod
     def _new(raw: Any) -> VariableSet:

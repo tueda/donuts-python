@@ -40,6 +40,7 @@ def test_hash() -> None:
 
     assert a1 == a2
     assert hash(a1) == hash(a2)
+    assert hash(a1) == hash("a")
 
 
 def test_cmp() -> None:
