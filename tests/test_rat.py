@@ -5,10 +5,10 @@ from typing import Union
 import pytest
 from conftest import BigIntSeq
 
-from donuts import Polynomial, RationalFunction, Variable, VariableSet
+from donuts import Polynomial, RationalFunction, Variable
 from donuts.poly import PolynomialLike
 from donuts.rat import RationalFunctionLike
-from donuts.varset import VariableSetLike
+from donuts.varset import VariableSet, VariableSetLike
 
 
 def test_init() -> None:

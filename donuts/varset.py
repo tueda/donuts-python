@@ -76,10 +76,15 @@ class VariableSet:
 
     @staticmethod
     def _new(raw: Any) -> VariableSet:
-        """Construct a set of variables from a raw object."""
+        """Construct a set of variables from a raw `VariableSet` object."""
         obj = VariableSet(VariableSet.__NONE)
         obj._raw = raw
         return obj
+
+    @staticmethod
+    def _frozenset_from_raw(raw: Any) -> FrozenSet[Variable]:
+        """Construct a frozen set of variables from a raw `VariableSet` object."""
+        return frozenset(x for x in VariableSet._new(raw))
 
     def __getstate__(self) -> Any:
         """Get the object state."""
@@ -126,6 +131,10 @@ class VariableSet:
         """Return ``self == other``."""
         if isinstance(other, VariableSet):
             return self._raw.equals(other._raw)  # type: ignore
+        if isinstance(other, (set, frozenset)) and all(
+            isinstance(x, Variable) for x in other
+        ):
+            return self == VariableSet(other)
         return NotImplemented
 
     def union(self, other: VariableSet) -> VariableSet:

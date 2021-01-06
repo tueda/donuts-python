@@ -8,6 +8,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    FrozenSet,
     Iterable,
     Iterator,
     List,
@@ -273,14 +274,14 @@ class Polynomial:
         return self._raw.signum()  # type: ignore
 
     @property
-    def variables(self) -> VariableSet:
+    def variables(self) -> FrozenSet[Variable]:
         """Return the set of variables."""
-        return VariableSet._new(self._raw.getVariables())
+        return VariableSet._frozenset_from_raw(self._raw.getVariables())
 
     @property
-    def min_variables(self) -> VariableSet:
+    def min_variables(self) -> FrozenSet[Variable]:
         """Return the set of actually used variables in this polynomial."""
-        return VariableSet._new(self._raw.getMinimalVariables())
+        return VariableSet._frozenset_from_raw(self._raw.getMinimalVariables())
 
     @overload
     def degree(self) -> int:

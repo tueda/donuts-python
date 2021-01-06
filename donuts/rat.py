@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import functools
 from fractions import Fraction
-from typing import Any, Iterable, Sequence, Union, overload
+from typing import Any, FrozenSet, Iterable, Sequence, Union, overload
 
 from .array import _create_raw_int_array, _create_raw_var_array
 from .jvm import jvm
@@ -315,14 +315,14 @@ class RationalFunction:
         raise ValueError("not a variable")
 
     @property
-    def variables(self) -> VariableSet:
+    def variables(self) -> FrozenSet[Variable]:
         """Return the set of variables."""
-        return VariableSet._new(self._raw.getVariables())
+        return VariableSet._frozenset_from_raw(self._raw.getVariables())
 
     @property
-    def min_variables(self) -> VariableSet:
+    def min_variables(self) -> FrozenSet[Variable]:
         """Return the set of actually used variables in this polynomial."""
-        return VariableSet._new(self._raw.getMinimalVariables())
+        return VariableSet._frozenset_from_raw(self._raw.getMinimalVariables())
 
     @overload
     def translate(self, *variables: VariableLike) -> RationalFunction:

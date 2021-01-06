@@ -2,7 +2,8 @@ from pickle import dumps, loads
 
 import pytest
 
-from donuts import Variable, VariableSet
+from donuts import Variable
+from donuts.varset import VariableSet
 
 
 def test_init() -> None:

@@ -62,6 +62,5 @@ html_theme = "alabaster"
 # 'JavaMember' object has no attribute 'rpartition'".
 import donuts  # noqa: E402
 
-donuts.VariableSet._VariableSet__RAW_EMPTY = None  # type: ignore
 donuts.Polynomial._Polynomial__RAW_ZERO = None  # type: ignore
 donuts.RationalFunction._RationalFunction__RAW_ZERO = None  # type: ignore

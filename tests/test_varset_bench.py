@@ -2,7 +2,7 @@ import pickle
 
 from conftest import Benchmark
 
-from donuts import VariableSet
+from donuts.varset import VariableSet
 
 
 def example_varset(n: int = 10) -> VariableSet:
