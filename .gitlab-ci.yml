@@ -107,5 +107,7 @@ readme_dev:
     - poetry run invoke test
 #   - poetry run invoke bench
     - poetry run invoke doc
+    - DONUTS_PYTHON_BACKEND=pyjnius poetry run invoke test
+    - DONUTS_PYTHON_BACKEND=py4j poetry run invoke test
     - poetry run pip install wheel
     - poetry run invoke build --sdist --wheel
