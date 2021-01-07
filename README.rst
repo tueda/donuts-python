@@ -36,8 +36,8 @@ Example
     Polynomial('2+z+2*y+x')
     >>> ag / bg  # same as RationalFunction(ag, bg)
     RationalFunction('(1+y+x)/(1+z+y)')
-    >>> Polynomial('2*x^2 - 2*x^3 + 2*x^2*y - 2*x^3*y').factors()
-    [Polynomial('-2'), Polynomial('x'), Polynomial('x'), Polynomial('-1+x'), Polynomial('1+y')]
+    >>> Polynomial('2*x^2 - 2*x^3 + 2*x^2*y - 2*x^3*y').factors
+    (Polynomial('-2'), Polynomial('x'), Polynomial('x'), Polynomial('-1+x'), Polynomial('1+y'))
 
 
 Development

@@ -583,8 +583,8 @@ def test_lcm() -> None:
 
 
 def test_factors() -> None:
-    a = Polynomial("-2*x^4*y^3 + 2*x^3*y^4 + 2*x^2*y^5 - 2*x*y^6").factors()
-    b = [
+    a = Polynomial("-2*x^4*y^3 + 2*x^3*y^4 + 2*x^2*y^5 - 2*x*y^6").factors
+    b = (
         Polynomial("-2"),
         Polynomial("y"),
         Polynomial("y"),
@@ -593,7 +593,7 @@ def test_factors() -> None:
         Polynomial("x-y"),
         Polynomial("x-y"),
         Polynomial("x+y"),
-    ]
+    )
     assert a == b
 
 

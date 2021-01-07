@@ -11,7 +11,7 @@ from typing import (
     FrozenSet,
     Iterable,
     Iterator,
-    List,
+    Optional,
     Sequence,
     Union,
     overload,
@@ -57,12 +57,14 @@ def _raw_polynomial_from_str(value: str) -> Any:
 class Polynomial:
     """Polynomial."""
 
-    __slots__ = ("_raw",)
+    __slots__ = ("_raw", "_cache_factors")
 
     def __init__(
         self, value: Union[Polynomial, Variable, int, str, None] = None
     ) -> None:
         """Construct a polynomial."""
+        self._cache_factors: Optional[Sequence[Polynomial]] = None
+
         if value is None:
             self._raw = _RAW_ZERO
         elif isinstance(value, int):
@@ -79,6 +81,7 @@ class Polynomial:
             self._raw = _raw_polynomial_from_str(value._name)
         elif isinstance(value, Polynomial):
             self._raw = value._raw
+            self._cache_factors = value._cache_factors
         else:
             raise TypeError(f"invalid value for polynomial: `{value}`")
 
@@ -87,6 +90,7 @@ class Polynomial:
         """Construct a polynomial from a raw object."""
         obj = Polynomial()
         obj._raw = raw
+        obj._cache_factors = None
         return obj
 
     @staticmethod
@@ -101,6 +105,7 @@ class Polynomial:
     def __setstate__(self, state: Any) -> None:
         """Set the object state."""
         self._raw = _RawPolynomial(state)
+        self._cache_factors = None
 
     def __str__(self) -> str:
         """Return the string representation."""
@@ -283,6 +288,13 @@ class Polynomial:
         """Return the set of actually used variables in this polynomial."""
         return VariableSet._frozenset_from_raw(self._raw.getMinimalVariables())
 
+    @property
+    def factors(self) -> Sequence[Polynomial]:
+        """Return the factorization of this polynomial."""
+        if self._cache_factors is None:
+            self._cache_factors = tuple(Polynomial._new(x) for x in self._raw.factors())
+        return self._cache_factors
+
     @overload
     def degree(self) -> int:
         """Return the total degree."""
@@ -448,10 +460,6 @@ class Polynomial:
         if not isinstance(other, Polynomial):
             raise TypeError("other must be a Polynomial")
         return Polynomial._new(self._raw.lcm(other._raw))
-
-    def factors(self) -> List[Polynomial]:
-        """Return the factorization of this polynomial."""
-        return [Polynomial._new(x) for x in self._raw.factors()]
 
     def subs(
         self,
