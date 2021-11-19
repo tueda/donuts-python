@@ -1,3 +1,3 @@
 [submodule "donuts-java"]
 	path = donuts/java/donuts-java
-	url = ../../tueda/donuts.git
+	url = https://github.com/tueda/donuts.git

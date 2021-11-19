@@ -10,13 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Checkout submodules
-        uses: actions/checkout@v2
         with:
-          # See: https://github.com/actions/checkout/issues/116#issuecomment-569367620
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-          repository: tueda/donuts
-          path: donuts/java/donuts-java
+          submodules: recursive
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
@@ -33,13 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Checkout submodules
-        uses: actions/checkout@v2
         with:
-          # See: https://github.com/actions/checkout/issues/116#issuecomment-569367620
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-          repository: tueda/donuts
-          path: donuts/java/donuts-java
+          submodules: recursive
       - name: Update submodules
         run: git submodule update
       - uses: actions/setup-python@v2
@@ -64,13 +54,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Checkout submodules
-        uses: actions/checkout@v2
         with:
-          # See: https://github.com/actions/checkout/issues/116#issuecomment-569367620
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-          repository: tueda/donuts
-          path: donuts/java/donuts-java
+          submodules: recursive
       - uses: actions/setup-python@v2
         with:
           python-version: 3.9
