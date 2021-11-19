@@ -18,7 +18,7 @@ class BuildCommand(build):  # type: ignore
     sub_commands = [("build_jar", None)] + build.sub_commands
 
 
-class BuildJarCommand(Command):  # type: ignore
+class BuildJarCommand(Command):
     """Command to build the JAR file."""
 
     description = "build JAR archives"
@@ -36,7 +36,7 @@ class BuildJarCommand(Command):  # type: ignore
         """Run the command."""
         from build import build_jar
 
-        if not self.dry_run:
+        if not self.dry_run:  # type: ignore[attr-defined]
             build_jar()
 
 
