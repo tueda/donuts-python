@@ -52,6 +52,10 @@ lint39:
   extends: .lint
   image: python:3.9
 
+lint310:
+  extends: .lint
+  image: python:3.10
+
 py37:
   extends: .test
   image: python:3.7
@@ -75,6 +79,14 @@ py39:
     - tox -e py39
     - DONUTS_PYTHON_BACKEND=py4j tox -e py39
     - DONUTS_PYTHON_BACKEND=jpype tox -e py39
+
+py310:
+  extends: .test
+  image: python:3.10
+  script:
+    - tox -e py310
+    - DONUTS_PYTHON_BACKEND=py4j tox -e py310
+    - DONUTS_PYTHON_BACKEND=jpype tox -e py310
 
 doc:
   extends: .test
