@@ -8,28 +8,40 @@ from invoke import task
 @task
 def fmt(c):  # type: ignore
     """Run formatters."""
+    from build import run_gradle
+
     c.run("black .", pty=True)
     c.run("isort .", pty=True)
+
+    run_gradle("donuts-python:spotlessApply")
 
 
 @task
 def lint(c):  # type: ignore
     """Run linters."""
+    from build import run_gradle
+
     c.run("black --check --diff .", pty=True)
     c.run("isort --check-only --diff .", pty=True)
     c.run("flake8", pty=True)
     c.run("mypy .", pty=True)
 
+    run_gradle("donuts-python:spotlessCheck")
+
 
 @task
 def test(c, keyword=None, verbose=False):  # type: ignore
     """Run tests."""
+    from build import run_gradle
+
     args = ""
     if keyword:
         args += f" -k '{keyword}'"
     if verbose:
         args += " -vv"
     c.run("pytest --benchmark-skip --cov=donuts" + args, pty=True)
+
+    run_gradle("donuts-python:test")
 
 
 @task
