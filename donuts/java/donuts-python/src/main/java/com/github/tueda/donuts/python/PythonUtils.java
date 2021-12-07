@@ -39,10 +39,11 @@ public class PythonUtils {
     return new ObjectInputStream2(in);
   }
 
-  // The following methods are defined in order to avoid some hacky situations in overloading.
-  // The main difficulty comes from the fact that Py4j does not support varargs so a Java array
-  // should be passed explicitly while PyJNIus does support varargs but does not work when a Java
-  // array is explicitly passed; tough to keep the both working.
+  // The following methods are defined in order to avoid some hacky situations in
+  // overloading. The main difficulty comes from the fact that Py4j does not
+  // support varargs so a Java array should be passed explicitly while PyJNIus
+  // does support varargs but does not work when a Java array is explicitly
+  // passed; tough to keep the both working.
 
   /**
    * Construct a variable set from the given variables.
