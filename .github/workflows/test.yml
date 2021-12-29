@@ -1,0 +1,108 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 0 1 * * # monthly
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ 3.7, 3.8, 3.9, "3.10" ]
+        java-version: [ 8, 11 ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache for pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java-version }}
+
+      - name: Cache for Gradle
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ matrix.java-version }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-${{ matrix.java-version }}-
+            ${{ runner.os }}-gradle-
+
+      - name: Install dependencies
+        run: pip install tox tox-gh-actions
+
+      - name: Run tox
+        run: tox
+
+      - name: Run tox (py4j)
+        env:
+          DONUTS_PYTHON_BACKEND: py4j
+        run: tox
+
+      - name: Run tox (jpype)
+        env:
+          DONUTS_PYTHON_BACKEND: jpype
+        run: tox
+
+  readme_dev:
+    # Test the code in "Development" in README.rst.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Install dependencies
+        run: pip install poetry
+
+      - name: Test the development section
+        run: |
+          poetry install
+          poetry run pre-commit install
+          poetry run pre-commit install --hook-type commit-msg
+          git submodule update --init
+          poetry run invoke build
+          poetry run invoke fmt
+          poetry run invoke lint
+          poetry run invoke test
+          # poetry run invoke bench  # too slow
+          poetry run invoke doc
+          DONUTS_PYTHON_BACKEND=pyjnius poetry run invoke test
+          DONUTS_PYTHON_BACKEND=py4j poetry run invoke test
+          poetry run pip install wheel
+          poetry run invoke build --sdist --wheel

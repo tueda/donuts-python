@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+
+      - name: Cache for pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-default-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-default-
+            ${{ runner.os }}-pip-
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Build sdist
+        run: |
+          rm -rf dist  # just in case
+          poetry run invoke build --sdist
+
+      - name: Publish to PyPI
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          poetry publish --no-interaction
