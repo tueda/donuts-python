@@ -1,6 +1,6 @@
 """The setup script."""
 
-from distutils.command.build import build  # type: ignore
+from distutils.command.build import build
 from typing import List, Tuple
 
 from setuptools import Command, find_packages, setup
@@ -12,7 +12,7 @@ def readme() -> str:
         return f.read()
 
 
-class BuildCommand(build):  # type: ignore
+class BuildCommand(build):
     """Command to build everything."""
 
     sub_commands = [("build_jar", None)] + build.sub_commands
@@ -64,5 +64,8 @@ setup(
     install_requires=["pyjnius"],
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "pytest-benchmark", "pytest-cov"],
-    cmdclass={"build": BuildCommand, "build_jar": BuildJarCommand},
+    cmdclass={
+        "build": BuildCommand,  # type: ignore [dict-item]
+        "build_jar": BuildJarCommand,
+    },
 )
