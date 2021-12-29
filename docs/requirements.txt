@@ -1,0 +1,3 @@
+invoke
+pyjnius
+sphinx-autodoc-typehints
