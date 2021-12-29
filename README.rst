@@ -1,7 +1,23 @@
 Donuts-Python
 =============
 
-Python binding to the `Donuts`_ wrapper for `Rings`_.
+.. image:: https://badge.fury.io/py/donuts-python.svg
+    :target: https://pypi.org/project/donuts-python/
+    :alt: PyPI version
+
+.. image:: https://github.com/tueda/donuts-python/workflows/Test/badge.svg?branch=master
+    :target: https://github.com/tueda/donuts-python/actions?query=branch:master
+    :alt: Test
+
+.. image:: https://readthedocs.org/projects/donuts-python/badge/?version=latest
+    :target: https://donuts-python.readthedocs.io/en/latest/
+    :alt: Documentation Status
+
+.. image:: https://img.shields.io/lgtm/grade/python/g/tueda/donuts-python.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/tueda/donuts-python/context:python
+    :alt: Language grade: Python
+
+Python binding to the `Donuts`_ wrapper for the `Rings`_ library by Stanislav Poslavsky.
 
 
 Requirements
@@ -16,7 +32,7 @@ Installation
 
 .. code:: shell
 
-    pip install git+https://github.com/tueda/donuts-python
+    pip install donuts-python
 
 
 Example
