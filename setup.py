@@ -42,7 +42,7 @@ class BuildJarCommand(Command):
 
 setup(
     name="donuts-python",
-    version="0.0.1-alpha.1",
+    version="0.0.1rc2",
     description="Python binding to Donuts",
     long_description=readme(),
     author="Takahiro Ueda",
