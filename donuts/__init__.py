@@ -1,6 +1,6 @@
 """Python binding to the Donuts wrapper for the Rings library."""
 
-__version__ = "0.0.1rc2"
+__version__ = "0.0.1-alpha.2"
 
 from .poly import Polynomial, gcd, lcm, product
 from .rat import RationalFunction
