@@ -81,14 +81,14 @@ jobs:
         with:
           python-version: "3.10"
 
+      - name: Set up Poetry
+        uses: Gr1N/setup-poetry@v7
+
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
           distribution: temurin
           java-version: 11
-
-      - name: Install dependencies
-        run: pip install poetry
 
       - name: Test the development section
         run: |
