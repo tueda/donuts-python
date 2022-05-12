@@ -235,22 +235,22 @@ def test_pow() -> None:
     a = Polynomial("1+x")
     b = 3
     c = Polynomial("(1+x)^3")
-    assert a ** b == c
+    assert a**b == c
 
     a = Polynomial("1+x")
     b = 1
     c = a
-    assert a ** b == c
+    assert a**b == c
 
     a = Polynomial("1+x")
     b = 0
     c = 1
-    assert a ** b == c
+    assert a**b == c
 
     a = Polynomial("0")
     b = 0
     c = 1
-    assert a ** b == c  # NOTE: 0^0 = 1 in Python
+    assert a**b == c  # NOTE: 0^0 = 1 in Python
 
     a = Polynomial("1+x")
     with pytest.raises(ValueError, match="negative power given for polynomial"):
@@ -787,9 +787,9 @@ def test_gcd_of() -> None:
     p3 = Polynomial("1+z")
     q = p1 * p2 * p3
     a: List[PolynomialLike] = [
-        p1 ** 2 * p2 ** 3 * p3 ** 2,
-        p1 ** 3 * p2 ** 2 * p3,
-        p1 * p2 * p3 ** 3,
+        p1**2 * p2**3 * p3**2,
+        p1**3 * p2**2 * p3,
+        p1 * p2 * p3**3,
     ]
 
     assert donuts.poly.gcd(a) == q
@@ -821,11 +821,11 @@ def test_lcm_of() -> None:
     p1 = Polynomial("1+x")
     p2 = Polynomial("1+y")
     p3 = Polynomial("1+z")
-    q = p1 ** 3 * p2 ** 3 * p3 ** 3
+    q = p1**3 * p2**3 * p3**3
     a: List[PolynomialLike] = [
-        p1 ** 2 * p2 ** 3 * p3 ** 2,
-        p1 ** 3 * p2 ** 2 * p3,
-        p1 * p2 * p3 ** 3,
+        p1**2 * p2**3 * p3**2,
+        p1**3 * p2**2 * p3,
+        p1 * p2 * p3**3,
     ]
 
     assert donuts.poly.lcm(a) == q

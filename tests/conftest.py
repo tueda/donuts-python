@@ -21,7 +21,7 @@ def random_poly(
     variables = ["x" + str(i) for i in range(1, nvars + 1)]
 
     def random_coeff() -> int:
-        m = 2 ** ncoeffbits - 1
+        m = 2**ncoeffbits - 1
         if m < 1:
             m = 1
         while True:
@@ -79,7 +79,7 @@ def random_rat(
 def bigints():  # type: ignore
     """Give a list of integers containing big values."""
     test_int_set = set()
-    for i in (-(2 ** 63), 0, 2 ** 63):
+    for i in (-(2**63), 0, 2**63):
         for j in range(-2, 3):
             n = i + j
             test_int_set.add(n)

@@ -247,22 +247,22 @@ def test_pow() -> None:
     a = RationalFunction("(1-x)/(1+x)")
     b = 3
     c = RationalFunction("(1-3*x+3*x^2-x^3)/(1+3*x+3*x^2+x^3)")
-    assert a ** b == c
+    assert a**b == c
 
     a = RationalFunction("(1-x)/(1+x)")
     b = 0
     c = 1
-    assert a ** b == c
+    assert a**b == c
 
     a = RationalFunction("(1-x)/(1+x)")
     b = -3
     c = RationalFunction("(1+3*x+3*x^2+x^3)/(1-3*x+3*x^2-x^3)")
-    assert a ** b == c
+    assert a**b == c
 
     a = RationalFunction("0")
     b = 0
     c = 1
-    assert a ** b == c  # NOTE: 0^0 = 1 in Python
+    assert a**b == c  # NOTE: 0^0 = 1 in Python
 
     a = RationalFunction("0")
     with pytest.raises(ZeroDivisionError):

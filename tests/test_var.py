@@ -109,6 +109,6 @@ def test_div() -> None:
 
 def test_pow() -> None:
     a = Variable("a")
-    assert a ** 0 == Polynomial("1")
-    assert a ** 1 == Polynomial("a")
-    assert a ** 2 == Polynomial("a^2")
+    assert a**0 == Polynomial("1")
+    assert a**1 == Polynomial("a")
+    assert a**2 == Polynomial("a^2")

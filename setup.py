@@ -65,7 +65,7 @@ setup(
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "pytest-benchmark", "pytest-cov"],
     cmdclass={
-        "build": BuildCommand,  # type: ignore [dict-item]
+        "build": BuildCommand,
         "build_jar": BuildJarCommand,
     },
 )
