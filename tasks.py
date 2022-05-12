@@ -10,8 +10,8 @@ def fmt(c):  # type: ignore
     """Run formatters."""
     from build import run_gradle
 
-    c.run("black .", pty=True)
-    c.run("isort .", pty=True)
+    c.run("pre-commit run black --all-files", pty=True)
+    c.run("pre-commit run isort --all-files", pty=True)
 
     run_gradle("donuts-python:spotlessApply")
 
@@ -21,10 +21,10 @@ def lint(c):  # type: ignore
     """Run linters."""
     from build import run_gradle
 
-    c.run("black --check --diff .", pty=True)
-    c.run("isort --check-only --diff .", pty=True)
-    c.run("flake8", pty=True)
-    c.run("mypy .", pty=True)
+    c.run("pre-commit run black --all-files", pty=True)
+    c.run("pre-commit run isort --all-files", pty=True)
+    c.run("pre-commit run flake8 --all-files", pty=True)
+    c.run("pre-commit run mypy --all-files", pty=True)
 
     run_gradle("donuts-python:spotlessCheck")
 
