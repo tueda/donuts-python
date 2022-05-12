@@ -32,7 +32,7 @@ except ImportError:
 # -- Project information -----------------------------------------------------
 
 project = "donuts-python"
-copyright = "2021, Takahiro Ueda"  # noqa: A001
+copyright = "2021-2022, Takahiro Ueda"  # noqa: A001
 author = "Takahiro Ueda"
 
 
