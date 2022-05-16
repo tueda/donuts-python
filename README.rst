@@ -83,6 +83,12 @@ Development
     poetry run invoke build --sdist --wheel
 
 
+Acknowledgements
+----------------
+
+This software was developed as part of the project supported by JSPS KAKENHI Grant Number 19K03831.
+
+
 License
 -------
 
