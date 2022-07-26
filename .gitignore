@@ -139,4 +139,6 @@ dmypy.json
 ### Additional rules
 
 .benchmarks
+donuts/java/.gradle/
+donuts/java/donuts-all.jar
 poetry.lock
