@@ -5,8 +5,8 @@ Donuts-Python
     :target: https://pypi.org/project/donuts-python/
     :alt: PyPI version
 
-.. image:: https://github.com/tueda/donuts-python/workflows/Test/badge.svg?branch=master
-    :target: https://github.com/tueda/donuts-python/actions?query=branch:master
+.. image:: https://github.com/tueda/donuts-python/workflows/Test/badge.svg?branch=main
+    :target: https://github.com/tueda/donuts-python/actions?query=branch:main
     :alt: Test
 
 .. image:: https://readthedocs.org/projects/donuts-python/badge/?version=latest
