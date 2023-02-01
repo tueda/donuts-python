@@ -13,10 +13,6 @@ Donuts-Python
     :target: https://donuts-python.readthedocs.io/en/latest/
     :alt: Documentation Status
 
-.. image:: https://img.shields.io/lgtm/grade/python/g/tueda/donuts-python.svg?logo=lgtm&logoWidth=18
-    :target: https://lgtm.com/projects/g/tueda/donuts-python/context:python
-    :alt: Language grade: Python
-
 Python binding to the `Donuts`_ wrapper for the `Rings`_ library by Stanislav Poslavsky.
 
 
