@@ -109,10 +109,9 @@ readme_dev:
     - poetry --version
     - poetry config virtualenvs.in-project true
   script:
-    - poetry install
-    - poetry run pre-commit install
-    - poetry run pre-commit install --hook-type commit-msg
     - git submodule update --init
+    - poetry install
+    - poetry run invoke prepare
     - poetry run invoke build
     - poetry run invoke fmt
     - poetry run invoke lint
@@ -121,5 +120,4 @@ readme_dev:
     - poetry run invoke doc
     - DONUTS_PYTHON_BACKEND=pyjnius poetry run invoke test
     - DONUTS_PYTHON_BACKEND=py4j poetry run invoke test
-    - poetry run pip install wheel
     - poetry run invoke build --sdist --wheel

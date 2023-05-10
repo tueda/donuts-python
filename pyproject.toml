@@ -21,17 +21,17 @@ pyjnius = "^1.3"
 
 [tool.poetry.dev-dependencies]
 py4j = "^0.10.9.7" # alternative to pyjnius
-jpype1 = "^1.4.0"
+jpype1 = "^1.4.1"
 
-invoke = "^2.0.1"
-pre-commit = "^2.20.0"
-pytest = "^7.1.3"
+invoke = "^2.1.1"
+pre-commit = "^2.21.0"
+pytest = "^7.3.1"
 pytest-benchmark = "^4.0.0"
-pytest-cov = "^3.0.0"
-sphinx = "^5.1.1"
-sphinx_rtd_theme = "^1.0.0"
-sphinx-autodoc-typehints = "^1.19.2"
-wheel = "^0.37.1"
+pytest-cov = "^4.0.0"
+sphinx = "^5.3.0"  # frozen for Python 3.7
+sphinx_rtd_theme = "^1.2.0"
+sphinx-autodoc-typehints = "^1.23.0"
+wheel = "^0.40.0"
 
 [tool.coverage.report]
 exclude_lines = [
@@ -42,6 +42,50 @@ exclude_lines = [
     "return NotImplemented",
 ]
 
+[tool.flake8]
+max-line-length = 88
+extend-ignore = [
+    "E203", # for black
+]
+per-file-ignores = [
+    "build.py:S404,S603,S607",
+    "docs/conf.py:S404",
+    "tasks.py:D403",
+    "tests/*.py:D100,D103,S101,S301,S307,S311,S403",
+]
+
 [tool.isort]
 profile = "black"
 skip_glob = [".*", "donuts/java"]
+
+[tool.mypy]
+pretty = true
+show_error_codes = true
+strict = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = [
+    "invoke",
+    "jnius_config",
+    "jnius",
+    "jpype",
+    "py4j.*",
+    "sphinx_rtd_theme",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = [
+    "--benchmark-warmup=on",
+    "--cov-report=html",
+    "--cov-report=term",
+    "--doctest-glob='*.rst'",
+    "--doctest-modules",
+    "--durations=10",
+    "-p no:faulthandler",
+]
+testpaths = [
+    "tests",
+    "README.rst",
+]

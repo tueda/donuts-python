@@ -75,7 +75,7 @@ def test_contains() -> None:
     assert x in a
     assert y in a
     assert z not in a
-    assert "x" not in a  # type: ignore
+    assert "x" not in a
 
 
 def test_union() -> None:

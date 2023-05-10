@@ -6,6 +6,12 @@ from invoke import task
 
 
 @task
+def prepare(c):  # type: ignore
+    """prepare the repository for development."""
+    c.run("pre-commit install", pty=True)
+
+
+@task
 def fmt(c):  # type: ignore
     """Run formatters."""
     from build import run_gradle

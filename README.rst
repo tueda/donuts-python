@@ -59,11 +59,10 @@ Development
 
 .. code:: shell
 
-    poetry install
-    poetry run pre-commit install
-    poetry run pre-commit install --hook-type commit-msg
-
     git submodule update --init
+    poetry install
+    poetry run invoke prepare
+
     poetry run invoke build
 
     poetry run invoke fmt
@@ -75,7 +74,6 @@ Development
     DONUTS_PYTHON_BACKEND=pyjnius poetry run invoke test
     DONUTS_PYTHON_BACKEND=py4j    poetry run invoke test
 
-    poetry run pip install wheel
     poetry run invoke build --sdist --wheel
 
 
