@@ -1,46 +1,58 @@
 name: Release
 
 on:
+  pull_request:
   push:
-    tags:
-      - '[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
 
+      - name: Install Poetry
+        run: pipx install poetry
+
       - name: Set up Python
-        uses: actions/setup-python@v2
-
-      - name: Set up Poetry
-        uses: Gr1N/setup-poetry@v7
-
-      - name: Cache for pip
-        uses: actions/cache@v2
+        uses: actions/setup-python@v4
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-default-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-default-
-            ${{ runner.os }}-pip-
+          python-version: '3.10'
+          cache: poetry
+          cache-dependency-path: pyproject.toml
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
 
       - name: Install dependencies
-        run: |
-          poetry install
-          poetry run pip install wheel
+        run: poetry install
 
+      # The wheel is not built because of unclear licensing issues
+      # when distributing a fat-jar file containing LGPL software.
       - name: Build sdist
         run: |
           rm -rf dist  # just in case
           poetry run invoke build --sdist
 
+      - name: Check Tag  # SemVer + PEP 440, e.g., 1.0.0rc1.post1
+        id: check-tag
+        run: |
+          if [[ ${{ github.ref }} =~ ^refs\/tags\/[0-9]+\.[0-9]+\.[0-9]+(a[0-9]+|b[0-9]+|rc[0-9]+)?(\.post[0-9]+)?(\.dev[0-9]+)?$ ]]; then
+            echo 'match=true' >>$GITHUB_OUTPUT
+          fi
+
       - name: Publish to PyPI
+        if: steps.check-tag.outputs.match == 'true'
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          poetry publish --no-interaction
+        run: poetry publish --no-interaction
+
+      - name: Publish to PyPI (dry-run)
+        if: steps.check-tag.outputs.match != 'true'
+        run: poetry publish --no-interaction --dry-run
