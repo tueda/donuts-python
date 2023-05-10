@@ -67,13 +67,22 @@ def doc(c):  # type: ignore
 @task
 def build(c, sdist=False, wheel=False):  # type: ignore
     """Build the JAR file/distribution."""
+    import shutil
+    from pathlib import Path
+
     from build import build_jar
 
-    if not wheel:
+    if wheel:
         build_jar()
 
     if sdist:
         c.run("python setup.py sdist", pty=True)
+        # Poetry 1.2.2 normalizes the sdist name.
+        # https://github.com/python-poetry/poetry/issues/6915
+        for f in Path("dist").glob("donuts-python-*.tar.gz"):
+            src = str(f)
+            dst = f.parent / f.name.replace("donuts-python-", "donuts_python-")
+            shutil.move(src, dst)
 
     if wheel:
         c.run("python setup.py bdist_wheel", pty=True)
