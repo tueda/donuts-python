@@ -46,7 +46,7 @@ setup(
     description="Python binding to Donuts",
     long_description=readme(),
     author="Takahiro Ueda",
-    author_email="tueda@st.seikei.ac.jp",
+    author_email="t.ueda.od@juntendo.ac.jp",
     url="https://github.com/tueda/donuts-python",
     license="MIT",
     keywords="computer algebra, multivariate polynomial arithmetic",
