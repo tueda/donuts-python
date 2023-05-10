@@ -37,7 +37,7 @@ class Variable:
         """Construct a variable."""
         ...
 
-    def __init__(self, variable: Union[Variable, str]) -> None:  # type: ignore
+    def __init__(self, variable: Union[Variable, str]) -> None:  # type: ignore[misc]
         """Construct a variable."""
         if variable == Variable.__NONE:
             # Called from `_new`.
@@ -105,7 +105,7 @@ class Variable:
 
         if isinstance(other, (Variable, int)):
             return Polynomial(self) + Polynomial(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __radd__(self, other: int) -> Polynomial:
         """Return ``other + self."""
@@ -113,7 +113,7 @@ class Variable:
 
         if isinstance(other, int):
             return Polynomial(other) + Polynomial(self)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __sub__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``self - other``."""
@@ -121,7 +121,7 @@ class Variable:
 
         if isinstance(other, (Variable, int)):
             return Polynomial(self) - Polynomial(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rsub__(self, other: int) -> Polynomial:
         """Return ``other - self."""
@@ -129,7 +129,7 @@ class Variable:
 
         if isinstance(other, int):
             return Polynomial(other) - Polynomial(self)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __mul__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``self * other``."""
@@ -137,7 +137,7 @@ class Variable:
 
         if isinstance(other, (Variable, int)):
             return Polynomial(self) * Polynomial(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rmul__(self, other: int) -> Polynomial:
         """Return ``other * self."""
@@ -145,7 +145,7 @@ class Variable:
 
         if isinstance(other, int):
             return Polynomial(other) * Polynomial(self)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __truediv__(self, other: Union[Variable, int]) -> RationalFunction:
         """Return ``self / other``."""
@@ -153,7 +153,7 @@ class Variable:
 
         if isinstance(other, (Variable, int)):
             return RationalFunction(self, other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rtruediv__(self, other: int) -> RationalFunction:
         """Return ``other / self``."""
@@ -161,7 +161,7 @@ class Variable:
 
         if isinstance(other, int):
             return RationalFunction(other, self)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __pow__(self, other: int) -> Polynomial:
         """Return ``self ** other``."""
@@ -169,7 +169,7 @@ class Variable:
 
         if isinstance(other, int):
             return Polynomial(self) ** other
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __eq__(self, other: object) -> bool:
         """Return ``self == other``."""
@@ -180,13 +180,13 @@ class Variable:
     def __le__(self, other: object) -> bool:
         """Return `self <= other`."""
         if isinstance(other, Variable):
-            return self._raw.compareTo(other._raw) <= 0  # type: ignore
+            return self._raw.compareTo(other._raw) <= 0  # type: ignore[no-any-return]
         return NotImplemented
 
     def __lt__(self, other: object) -> bool:
         """Return `self < other`."""
         if isinstance(other, Variable):
-            return self._raw.compareTo(other._raw) < 0  # type: ignore
+            return self._raw.compareTo(other._raw) < 0  # type: ignore[no-any-return]
         return NotImplemented
 
 

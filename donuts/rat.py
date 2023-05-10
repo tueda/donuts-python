@@ -137,7 +137,7 @@ class RationalFunction:
             return hash(self.as_fraction)
         if self.is_polynomial:
             return hash(self.as_polynomial)
-        return self._raw.hashCode()  # type: ignore
+        return self._raw.hashCode()  # type: ignore[no-any-return]
 
     def __bool__(self) -> bool:
         """Return `True` for non-zero rational functions."""
@@ -159,7 +159,7 @@ class RationalFunction:
             return RationalFunction._new(self._raw.add(other._raw))
         elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self + RationalFunction(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __radd__(
         self, other: Union[Polynomial, Variable, Fraction, int]
@@ -167,7 +167,7 @@ class RationalFunction:
         """Return ``other + self``."""
         if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) + self
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __sub__(
         self, other: Union[RationalFunction, Polynomial, Variable, Fraction, int]
@@ -177,7 +177,7 @@ class RationalFunction:
             return RationalFunction._new(self._raw.subtract(other._raw))
         elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self - RationalFunction(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rsub__(
         self, other: Union[Polynomial, Variable, Fraction, int]
@@ -185,7 +185,7 @@ class RationalFunction:
         """Return ``other - self``."""
         if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) - self
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __mul__(
         self, other: Union[RationalFunction, Polynomial, Variable, Fraction, int]
@@ -195,7 +195,7 @@ class RationalFunction:
             return RationalFunction._new(self._raw.multiply(other._raw))
         elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self * RationalFunction(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rmul__(
         self, other: Union[Polynomial, Variable, Fraction, int]
@@ -203,7 +203,7 @@ class RationalFunction:
         """Return ``other * self``."""
         if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) * self
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __truediv__(
         self, other: Union[RationalFunction, Polynomial, Variable, Fraction, int]
@@ -215,7 +215,7 @@ class RationalFunction:
             return RationalFunction._new(self._raw.divide(other._raw))
         elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self / RationalFunction(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rtruediv__(
         self, other: Union[Polynomial, Variable, Fraction, int]
@@ -223,7 +223,7 @@ class RationalFunction:
         """Return ``other / self``."""
         if isinstance(other, (Polynomial, Variable, Fraction, int)):
             return RationalFunction(other) / self
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __pow__(self, other: int) -> RationalFunction:
         """Return ``self ** other``."""
@@ -231,12 +231,12 @@ class RationalFunction:
             if other <= -1 and self.is_zero:
                 raise ZeroDivisionError("division by zero")
             return RationalFunction._new(self._raw.pow(other))
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __eq__(self, other: object) -> bool:
         """Return ``self == other``."""
         if isinstance(other, RationalFunction):
-            return self._raw.equals(other._raw)  # type: ignore
+            return self._raw.equals(other._raw)  # type: ignore[no-any-return]
         elif isinstance(other, (Polynomial, Variable, Fraction, int)):
             return self == RationalFunction(other)
         return NotImplemented
@@ -254,32 +254,32 @@ class RationalFunction:
     @property
     def is_zero(self) -> bool:
         """Return `True` if the rational function is zero."""
-        return self._raw.isZero()  # type: ignore
+        return self._raw.isZero()  # type: ignore[no-any-return]
 
     @property
     def is_one(self) -> bool:
         """Return `True` if the rational function is one."""
-        return self._raw.isOne()  # type: ignore
+        return self._raw.isOne()  # type: ignore[no-any-return]
 
     @property
     def is_minus_one(self) -> bool:
         """Return `True` if the rational function is minus one."""
-        return self._raw.isMinusOne()  # type: ignore
+        return self._raw.isMinusOne()  # type: ignore[no-any-return]
 
     @property
     def is_integer(self) -> bool:
         """Return `True` if the rational function is an integer."""
-        return self._raw.isInteger()  # type: ignore
+        return self._raw.isInteger()  # type: ignore[no-any-return]
 
     @property
     def is_fraction(self) -> bool:
         """Return `True` if the rational function is a rational number."""
-        return self._raw.isConstant()  # type: ignore
+        return self._raw.isConstant()  # type: ignore[no-any-return]
 
     @property
     def is_polynomial(self) -> bool:
         """Return `True` if the rational function is a polynomial."""
-        return self._raw.isPolynomial()  # type: ignore
+        return self._raw.isPolynomial()  # type: ignore[no-any-return]
 
     @property
     def is_variable(self) -> bool:
@@ -334,7 +334,9 @@ class RationalFunction:
         """Translate the rational function in terms of the given set of variables."""
         ...
 
-    def translate(self, *variables) -> RationalFunction:  # type: ignore
+    def translate(  # type: ignore[misc,no-untyped-def]
+        self, *variables
+    ) -> RationalFunction:
         """Translate the rational function in terms of the given set of variables."""
         if len(variables) == 1:
             xx = variables[0]
@@ -393,7 +395,9 @@ class RationalFunction:
         """Return the result of setting the given variables to the specified values."""
         ...
 
-    def evaluate(self, variables, values) -> RationalFunction:  # type: ignore
+    def evaluate(  # type: ignore[misc,no-untyped-def]
+        self, variables, values
+    ) -> RationalFunction:
         """Return the result of setting the given variables to the specified values."""
         # TODO: integer overflow occurs >= 2^31.
 
@@ -441,7 +445,9 @@ class RationalFunction:
         """Return the result of setting all the given variables to zero."""
         ...
 
-    def evaluate_at_zero(self, *variables) -> RationalFunction:  # type: ignore
+    def evaluate_at_zero(  # type: ignore[misc,no-untyped-def]
+        self, *variables
+    ) -> RationalFunction:
         """Return the result of setting all the given variables to zero."""
         if len(variables) == 1:
             x = variables[0]
@@ -477,7 +483,9 @@ class RationalFunction:
         """Return the result of setting all the given variables to unity."""
         ...
 
-    def evaluate_at_one(self, *variables) -> RationalFunction:  # type: ignore
+    def evaluate_at_one(  # type: ignore[misc,no-untyped-def]
+        self, *variables
+    ) -> RationalFunction:
         """Return the result of setting all the given variables to unity."""
         if len(variables) == 1:
             x = variables[0]
@@ -515,7 +523,9 @@ class RationalFunction:
         """Return the result of the given variable shifts."""
         ...
 
-    def shift(self, variables, values) -> RationalFunction:  # type: ignore
+    def shift(  # type: ignore[misc,no-untyped-def]
+        self, variables, values
+    ) -> RationalFunction:
         """Return the result of the given variable shifts."""
         # TODO: integer overflow occurs >= 2^31.
 

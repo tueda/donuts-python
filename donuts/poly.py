@@ -121,11 +121,11 @@ class Polynomial:
             return hash(self.as_integer)
         if self.is_variable:
             return hash(self.as_variable)
-        return self._raw.hashCode()  # type: ignore
+        return self._raw.hashCode()  # type: ignore[no-any-return]
 
     def __len__(self) -> int:
         """Return the number of terms in this polynomial."""
-        return self._raw.size()  # type: ignore
+        return self._raw.size()  # type: ignore[no-any-return]
 
     def __iter__(self) -> Iterator[Polynomial]:
         """Return an iterator to iterate terms in this polynomial."""
@@ -147,13 +147,13 @@ class Polynomial:
             return Polynomial._new(self._raw.add(other._raw))
         elif isinstance(other, (Variable, int)):
             return self + Polynomial(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __radd__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``other + self``."""
         if isinstance(other, (Variable, int)):
             return Polynomial(other) + self
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __sub__(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``self - other``."""
@@ -161,13 +161,13 @@ class Polynomial:
             return Polynomial._new(self._raw.subtract(other._raw))
         elif isinstance(other, (Variable, int)):
             return self - Polynomial(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rsub__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``other - self``."""
         if isinstance(other, (Variable, int)):
             return Polynomial(other) - self
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __mul__(self, other: Union[Polynomial, Variable, int]) -> Polynomial:
         """Return ``self * other``."""
@@ -175,13 +175,13 @@ class Polynomial:
             return Polynomial._new(self._raw.multiply(other._raw))
         elif isinstance(other, (Variable, int)):
             return self * Polynomial(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rmul__(self, other: Union[Variable, int]) -> Polynomial:
         """Return ``other * self``."""
         if isinstance(other, (Variable, int)):
             return Polynomial(other) * self
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __truediv__(
         self, other: Union[Polynomial, Variable, Fraction, int]
@@ -193,7 +193,7 @@ class Polynomial:
             return RationalFunction(self, other)
         elif isinstance(other, Fraction):
             return RationalFunction(self) / RationalFunction(other)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __rtruediv__(self, other: Union[Variable, Fraction, int]) -> RationalFunction:
         """Return ``other / self``."""
@@ -203,7 +203,7 @@ class Polynomial:
             return RationalFunction(other, self)
         elif isinstance(other, Fraction):
             return RationalFunction(other) / RationalFunction(self)
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __pow__(self, other: int) -> Polynomial:
         """Return ``self ** other``."""
@@ -211,12 +211,12 @@ class Polynomial:
             if other <= -1:
                 raise ValueError("negative power given for polynomial")
             return Polynomial._new(self._raw.pow(other))
-        return NotImplemented  # type: ignore
+        return NotImplemented  # type: ignore[unreachable]
 
     def __eq__(self, other: object) -> bool:
         """Return ``self == other``."""
         if isinstance(other, Polynomial):
-            return self._raw.equals(other._raw)  # type: ignore
+            return self._raw.equals(other._raw)  # type: ignore[no-any-return]
         elif isinstance(other, (Variable, int)):
             return self == Polynomial(other)
         return NotImplemented
@@ -224,44 +224,44 @@ class Polynomial:
     @property
     def is_zero(self) -> bool:
         """Return `True` if the polynomial is zero."""
-        return self._raw.isZero()  # type: ignore
+        return self._raw.isZero()  # type: ignore[no-any-return]
 
     @property
     def is_one(self) -> bool:
         """Return `True` if the polynomial is one."""
-        return self._raw.isOne()  # type: ignore
+        return self._raw.isOne()  # type: ignore[no-any-return]
 
     @property
     def is_minus_one(self) -> bool:
         """Return `True` if the polynomial is minus one."""
-        return self._raw.isMinusOne()  # type: ignore
+        return self._raw.isMinusOne()  # type: ignore[no-any-return]
 
     @property
     def is_integer(self) -> bool:
         """Return `True` if the polynomial is an integer."""
-        return self._raw.isConstant()  # type: ignore
+        return self._raw.isConstant()  # type: ignore[no-any-return]
 
     @property
     def is_monomial(self) -> bool:
         """Return `True` if the polynomial is monomial."""
-        return self._raw.isMonomial()  # type: ignore
+        return self._raw.isMonomial()  # type: ignore[no-any-return]
 
     @property
     def is_monic(self) -> bool:
         """Return `True` if the polynomial is monic."""
-        return self._raw.isMonic()  # type: ignore
+        return self._raw.isMonic()  # type: ignore[no-any-return]
 
     @property
     def is_variable(self) -> bool:
         """Return `True` if the polynomial is a variable."""
-        return self._raw.isVariable()  # type: ignore
+        return self._raw.isVariable()  # type: ignore[no-any-return]
 
     @property
     def as_integer(self) -> int:
         """Cast the polynomial to an integer."""
         if self.is_integer:
             if self._raw.isLongValue():
-                return self._raw.asLongValue()  # type: ignore
+                return self._raw.asLongValue()  # type: ignore[no-any-return]
             else:
                 return int(str(self))
         raise ValueError("not an integer")
@@ -276,7 +276,7 @@ class Polynomial:
     @property
     def signum(self) -> int:
         """Return the signum of the leading coefficient."""
-        return self._raw.signum()  # type: ignore
+        return self._raw.signum()  # type: ignore[no-any-return]
 
     @property
     def variables(self) -> FrozenSet[Variable]:
@@ -310,18 +310,18 @@ class Polynomial:
         """Return the degree with respect to the given variables."""
         ...
 
-    def degree(self, *variables) -> int:  # type: ignore
+    def degree(self, *variables) -> int:  # type: ignore[misc,no-untyped-def]
         """Return the degree with respect to the specified variables."""
         if len(variables) == 0:
             # Return the total degree.
-            return self._raw.degree()  # type: ignore
+            return self._raw.degree()  # type: ignore[no-any-return]
 
         if len(variables) == 1:
             x = variables[0]
             if isinstance(x, Variable):
-                return self._raw.degree(x._raw)  # type: ignore
+                return self._raw.degree(x._raw)  # type: ignore[no-any-return]
             if isinstance(x, VariableSet):
-                return self._raw.degree(x._raw)  # type: ignore
+                return self._raw.degree(x._raw)  # type: ignore[no-any-return]
             if isinstance(x, Iterable) and not isinstance(x, str):
                 if not x:
                     # None of the variables are specified.
@@ -331,7 +331,9 @@ class Polynomial:
         if any(not isinstance(x, (Variable, str)) for x in variables):
             raise TypeError("not Variable")
 
-        return self._raw.degree(VariableSet._get_raw(variables))  # type: ignore
+        return self._raw.degree(  # type: ignore[no-any-return]
+            VariableSet._get_raw(variables)
+        )
 
     @overload
     def coeff(self, x: Union[Variable, str], n: int) -> Polynomial:
@@ -345,7 +347,9 @@ class Polynomial:
         """Return the coefficient specified by `variables` and `exponents`."""
         ...
 
-    def coeff(self, variables, exponents) -> Polynomial:  # type: ignore
+    def coeff(  # type: ignore[misc,no-untyped-def]
+        self, variables, exponents
+    ) -> Polynomial:
         """Return the coefficient specified by `variables` and `exponents`."""
         # TODO: integer overflow occurs >= 2^31.
 
@@ -386,7 +390,9 @@ class Polynomial:
         """Cast this polynomial to a map from exponents to coefficients."""
         ...
 
-    def coeff_dict(self, *variables) -> Dict[Sequence[int], Polynomial]:  # type: ignore
+    def coeff_dict(  # type: ignore[misc,no-untyped-def]
+        self, *variables
+    ) -> Dict[Sequence[int], Polynomial]:
         """Cast this polynomial to a map from exponents to coefficients."""
         array = _create_raw_var_array(variables)
         it = _RawPythonUtils.getCoefficientMap(self._raw, array).entrySet().iterator()
@@ -408,7 +414,7 @@ class Polynomial:
         """Translate the polynomial in terms of the given set of variables."""
         ...
 
-    def translate(self, *variables) -> Polynomial:  # type: ignore
+    def translate(self, *variables) -> Polynomial:  # type: ignore[misc,no-untyped-def]
         """Translate the polynomial in terms of the given set of variables."""
         if len(variables) == 1:
             xx = variables[0]
@@ -494,7 +500,9 @@ class Polynomial:
         """Return the result of setting the given variables to the specified values."""
         ...
 
-    def evaluate(self, variables, values) -> Polynomial:  # type: ignore
+    def evaluate(  # type: ignore[misc,no-untyped-def]
+        self, variables, values
+    ) -> Polynomial:
         """Return the result of setting the given variables to the specified values."""
         # TODO: integer overflow occurs >= 2^31.
 
@@ -532,7 +540,9 @@ class Polynomial:
         """Return the result of setting all the given variables to zero."""
         ...
 
-    def evaluate_at_zero(self, *variables) -> Polynomial:  # type: ignore
+    def evaluate_at_zero(  # type: ignore[misc,no-untyped-def]
+        self, *variables
+    ) -> Polynomial:
         """Return the result of setting all the given variables to zero."""
         if len(variables) == 1:
             x = variables[0]
@@ -563,7 +573,9 @@ class Polynomial:
         """Return the result of setting all the given variables to unity."""
         ...
 
-    def evaluate_at_one(self, *variables) -> Polynomial:  # type: ignore
+    def evaluate_at_one(  # type: ignore[misc,no-untyped-def]
+        self, *variables
+    ) -> Polynomial:
         """Return the result of setting all the given variables to unity."""
         if len(variables) == 1:
             x = variables[0]
@@ -596,7 +608,9 @@ class Polynomial:
         """Return the result of the given variable shifts."""
         ...
 
-    def shift(self, variables, values) -> Polynomial:  # type: ignore
+    def shift(  # type: ignore[misc,no-untyped-def]
+        self, variables, values
+    ) -> Polynomial:
         """Return the result of the given variable shifts."""
         # TODO: integer overflow occurs >= 2^31.
 
@@ -653,7 +667,7 @@ def sum(  # noqa: A001
     ...
 
 
-def sum(*polynomials) -> Polynomial:  # type: ignore  # noqa: A001
+def sum(*polynomials) -> Polynomial:  # type: ignore[misc,no-untyped-def]  # noqa: A001
     """Return the sum of the given polynomials."""
     array = _create_raw_poly_array(polynomials)
     return Polynomial._new(_RawPythonUtils.sumOf(array))
@@ -671,7 +685,7 @@ def product(polynomials: Iterable[Union[Polynomial, Variable, int]]) -> Polynomi
     ...
 
 
-def product(*polynomials) -> Polynomial:  # type: ignore
+def product(*polynomials) -> Polynomial:  # type: ignore[misc,no-untyped-def]
     """Return the product of the given polynomials."""
     array = _create_raw_poly_array(polynomials)
     return Polynomial._new(_RawPythonUtils.productOf(array))
@@ -689,7 +703,7 @@ def gcd(polynomials: Iterable[Union[Polynomial, Variable, int]]) -> Polynomial:
     ...
 
 
-def gcd(*polynomials) -> Polynomial:  # type: ignore
+def gcd(*polynomials) -> Polynomial:  # type: ignore[misc,no-untyped-def]
     """Return the GCD of the given polynomials."""
     array = _create_raw_poly_array(polynomials)
     return Polynomial._new(_RawPythonUtils.gcdOf(array))
@@ -707,7 +721,7 @@ def lcm(polynomials: Iterable[Union[Polynomial, Variable, int]]) -> Polynomial:
     ...
 
 
-def lcm(*polynomials) -> Polynomial:  # type: ignore
+def lcm(*polynomials) -> Polynomial:  # type: ignore[misc,no-untyped-def]
     """Return the LCM of the given polynomials."""
     array = _create_raw_poly_array(polynomials)
     if len(polynomials) == 0:

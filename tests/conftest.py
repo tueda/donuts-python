@@ -1,7 +1,7 @@
 """Configuration for testing."""
 
 import random
-from typing import Any, Callable, Dict, Sequence
+from typing import Any, Callable, Dict, List, Sequence
 
 import pytest
 
@@ -76,7 +76,7 @@ def random_rat(
 
 
 @pytest.fixture()
-def bigints():  # type: ignore
+def bigints() -> List[int]:
     """Give a list of integers containing big values."""
     test_int_set = set()
     for i in (-(2**63), 0, 2**63):

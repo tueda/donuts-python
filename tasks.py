@@ -1,18 +1,19 @@
 """Developers' daily tasks."""
 
 import os
+from typing import Optional
 
-from invoke import task
+from invoke import Context, task
 
 
-@task
-def prepare(c):  # type: ignore
+@task  # type: ignore[misc]
+def prepare(c: Context) -> None:
     """prepare the repository for development."""
     c.run("pre-commit install", pty=True)
 
 
-@task
-def fmt(c):  # type: ignore
+@task  # type: ignore[misc]
+def fmt(c: Context) -> None:
     """Run formatters."""
     from build import run_gradle
 
@@ -22,8 +23,8 @@ def fmt(c):  # type: ignore
     run_gradle("donuts-python:spotlessApply")
 
 
-@task
-def lint(c):  # type: ignore
+@task  # type: ignore[misc]
+def lint(c: Context) -> None:
     """Run linters."""
     from build import run_gradle
 
@@ -35,8 +36,8 @@ def lint(c):  # type: ignore
     run_gradle("donuts-python:spotlessCheck")
 
 
-@task
-def test(c, keyword=None, verbose=False):  # type: ignore
+@task  # type: ignore[misc]
+def test(c: Context, keyword: Optional[str] = None, verbose: bool = False) -> None:
     """Run tests."""
     from build import run_gradle
 
@@ -50,8 +51,13 @@ def test(c, keyword=None, verbose=False):  # type: ignore
     run_gradle("donuts-python:test")
 
 
-@task
-def bench(c, save=False, compare=None, keyword=None):  # type: ignore
+@task  # type: ignore[misc]
+def bench(
+    c: Context,
+    save: bool = False,
+    compare: Optional[str] = None,
+    keyword: Optional[str] = None,
+) -> None:
     """Run benchmark tests."""
     args = ""
     if save:
@@ -63,15 +69,15 @@ def bench(c, save=False, compare=None, keyword=None):  # type: ignore
     c.run("pytest --benchmark-only" + args, pty=True)
 
 
-@task
-def doc(c):  # type: ignore
+@task  # type: ignore[misc]
+def doc(c: Context) -> None:
     """Generate documents."""
     with c.cd("docs"):
         c.run("make html" if os.name != "nt" else "make.bat html", pty=True)
 
 
-@task
-def build(c, sdist=False, wheel=False):  # type: ignore
+@task  # type: ignore[misc]
+def build(c: Context, sdist: bool = False, wheel: bool = False) -> None:
     """Build the JAR file/distribution."""
     import shutil
     from pathlib import Path

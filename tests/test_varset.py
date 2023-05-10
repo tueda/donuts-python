@@ -40,7 +40,9 @@ def test_init() -> None:
     assert a == e
 
     with pytest.raises(TypeError):
-        VariableSet("x", "y", ["z"])  # type: ignore  # neither Variable nor str
+        VariableSet(
+            "x", "y", ["z"]
+        )  # type: ignore[call-overload]  # neither Variable nor str
 
 
 def test_state() -> None:
@@ -104,4 +106,4 @@ def test_union() -> None:
     assert a.union(b) == c
 
     with pytest.raises(TypeError):
-        a.union([])  # type: ignore  # not set of variables
+        a.union([])  # type: ignore[arg-type]  # not set of variables

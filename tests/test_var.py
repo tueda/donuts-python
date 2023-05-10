@@ -15,7 +15,7 @@ def test_init() -> None:
     assert x == y
 
     with pytest.raises(TypeError):
-        Variable(42)  # type: ignore  # not string
+        Variable(42)  # type: ignore[call-overload]  # not string
 
     with pytest.raises(ValueError, match="invalid string for variable"):
         Variable("$x")

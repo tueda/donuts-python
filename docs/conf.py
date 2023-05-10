@@ -82,5 +82,5 @@ if read_the_docs_build:
 # 'JavaMember' object has no attribute 'rpartition'".
 import donuts  # noqa: E402
 
-donuts.Polynomial._Polynomial__RAW_ZERO = None  # type: ignore
-donuts.RationalFunction._RationalFunction__RAW_ZERO = None  # type: ignore
+donuts.Polynomial._Polynomial__RAW_ZERO = None  # type: ignore[attr-defined]
+donuts.RationalFunction._RationalFunction__RAW_ZERO = None  # type: ignore[attr-defined]

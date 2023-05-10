@@ -41,7 +41,7 @@ def test_init() -> None:
     assert a == b
 
     with pytest.raises(TypeError):
-        RationalFunction([1])  # type: ignore  # invalid type
+        RationalFunction([1])  # type: ignore[arg-type]  # invalid type
 
     with pytest.raises(TypeError):
         RationalFunction("1", 2)  # invalid type combinations
@@ -50,7 +50,7 @@ def test_init() -> None:
         RationalFunction(Fraction(1, 2), 2)  # invalid type combinations
 
     with pytest.raises(TypeError):
-        RationalFunction([1], [2])  # type: ignore  # invalid types
+        RationalFunction([1], [2])  # type: ignore[arg-type]  # invalid types
 
     with pytest.raises(ValueError, match="invalid string for rational function"):
         RationalFunction("(1+x?)/(1-y)")
@@ -452,7 +452,7 @@ def test_translate() -> None:
     assert b.variables == v
 
     with pytest.raises(TypeError):
-        a.translate(1, 2)  # type: ignore  # not variable
+        a.translate(1, 2)  # type: ignore[call-overload]  # not variable
 
     with pytest.raises(ValueError, match="invalid set of variables"):
         a.translate("w", "x", "y")
@@ -477,10 +477,10 @@ def test_subs() -> None:
     assert a.subs(lhs, rhs) == b
 
     with pytest.raises(TypeError):
-        a.subs(1, "x")  # type: ignore  # lhs is not a polynomial
+        a.subs(1, "x")  # type: ignore[arg-type]  # lhs is not a polynomial
 
     with pytest.raises(TypeError):
-        a.subs("x", [])  # type: ignore  # rhs is not a polynomial
+        a.subs("x", [])  # type: ignore[arg-type]  # rhs is not a polynomial
 
     with pytest.raises(ValueError, match="invalid lhs for substitution"):
         a.subs("2*x", 1)
@@ -504,22 +504,24 @@ def test_evaluate() -> None:
     assert a == b
 
     with pytest.raises(TypeError):
-        a.evaluate(["x"], 1)  # type: ignore  # values must be also a collection
+        a.evaluate(
+            ["x"], 1
+        )  # type: ignore[call-overload]  # values must be also a collection
 
     with pytest.raises(ValueError, match="variables and values have different sizes"):
         a.evaluate(["x"], [1, 2])
 
     with pytest.raises(TypeError):
-        a.evaluate("x", "y")  # type: ignore  # value must be an integer
+        a.evaluate("x", "y")  # type: ignore[arg-type]  # value must be an integer
 
     with pytest.raises(TypeError):
-        a.evaluate(1, 1)  # type: ignore  # invalid variables
+        a.evaluate(1, 1)  # type: ignore[call-overload]  # invalid variables
 
     with pytest.raises(TypeError):
-        a.evaluate(["x"], ["y"])  # type: ignore  # values are not integers
+        a.evaluate(["x"], ["y"])  # type: ignore[list-item]  # values are not integers
 
     with pytest.raises(TypeError):
-        a.evaluate([1], [1])  # type: ignore  # not variables
+        a.evaluate([1], [1])  # type: ignore[list-item]  # not variables
 
     with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(2-x)").evaluate("x", 2)
@@ -546,7 +548,7 @@ def test_evaluate_at_zero() -> None:
     assert a == b
 
     with pytest.raises(TypeError):
-        a.evaluate_at_zero(1)  # type: ignore  # not variable
+        a.evaluate_at_zero(1)  # type: ignore[call-overload]  # not variable
 
     with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/x").evaluate_at_zero("x")
@@ -573,7 +575,7 @@ def test_evaluate_at_one() -> None:
     assert a == b
 
     with pytest.raises(TypeError):
-        a.evaluate_at_one(1)  # type: ignore  # not variable
+        a.evaluate_at_one(1)  # type: ignore[call-overload]  # not variable
 
     with pytest.raises(ZeroDivisionError):
         RationalFunction("(1+x+y)/(1-x)").evaluate_at_one("x")
@@ -592,22 +594,24 @@ def test_shift() -> None:
     assert a == b
 
     with pytest.raises(TypeError):
-        a.shift(["x"], 1)  # type: ignore  # values must be also a collection
+        a.shift(
+            ["x"], 1
+        )  # type: ignore[call-overload]  # values must be also a collection
 
     with pytest.raises(ValueError, match="variables and values have different sizes"):
         a.shift(["x"], [1, 2])
 
     with pytest.raises(TypeError):
-        a.shift("x", "y")  # type: ignore  # value must be an integer
+        a.shift("x", "y")  # type: ignore[arg-type]  # value must be an integer
 
     with pytest.raises(TypeError):
-        a.shift(1, 1)  # type: ignore  # invalid variables
+        a.shift(1, 1)  # type: ignore[call-overload]  # invalid variables
 
     with pytest.raises(TypeError):
-        a.shift(["x"], ["y"])  # type: ignore  # values are not integers
+        a.shift(["x"], ["y"])  # type: ignore[list-item]  # values are not integers
 
     with pytest.raises(TypeError):
-        a.shift([1], [1])  # type: ignore  # not variables
+        a.shift([1], [1])  # type: ignore[list-item]  # not variables
 
 
 def test_diff() -> None:
@@ -626,10 +630,10 @@ def test_diff() -> None:
     assert a.diff("x", 2) == RationalFunction("4/(1-x)^3")
 
     with pytest.raises(TypeError):
-        a.diff(1)  # type: ignore  # x must be a Variable
+        a.diff(1)  # type: ignore[arg-type]  # x must be a Variable
 
     with pytest.raises(TypeError):
-        a.diff(x, "x")  # type: ignore  # n must be an int
+        a.diff(x, "x")  # type: ignore[arg-type]  # n must be an int
 
     with pytest.raises(ValueError, match="n must be non-negative"):
         a.diff(x, -1)

@@ -61,7 +61,7 @@ class VariableSet(AbstractSet[Variable]):
         """Construct a set of variables from the given variables."""
         ...
 
-    def __init__(self, *variables) -> None:  # type: ignore
+    def __init__(self, *variables) -> None:  # type: ignore[misc,no-untyped-def]
         """Construct a set of variables."""
         if len(variables) == 0:
             self._raw = VariableSet.__RAW_EMPTY
@@ -78,7 +78,7 @@ class VariableSet(AbstractSet[Variable]):
                 return
 
             if isinstance(v, Iterable) and not isinstance(v, str):
-                variables = v  # type: ignore
+                variables = v  # type: ignore[assignment]
 
         self._raw = _raw_variable_set_from_frozenset(frozenset(variables))
 
@@ -124,11 +124,11 @@ class VariableSet(AbstractSet[Variable]):
 
     def __hash__(self) -> int:
         """Return the hash code."""
-        return self._raw.hashCode()  # type: ignore
+        return self._raw.hashCode()  # type: ignore[no-any-return]
 
     def __len__(self) -> int:
         """Return the number of variables in this set."""
-        return self._raw.size()  # type: ignore
+        return self._raw.size()  # type: ignore[no-any-return]
 
     def __iter__(self) -> Iterator[Variable]:
         """Return an iterator to iterate variables in this set."""
@@ -139,13 +139,13 @@ class VariableSet(AbstractSet[Variable]):
     def __contains__(self, item: object) -> bool:
         """Return `True` if the set contains the given variable."""
         if isinstance(item, Variable):
-            return self._raw.contains(item._raw)  # type: ignore
+            return self._raw.contains(item._raw)  # type: ignore[no-any-return]
         return False
 
     def __eq__(self, other: object) -> bool:
         """Return ``self == other``."""
         if isinstance(other, VariableSet):
-            return self._raw.equals(other._raw)  # type: ignore
+            return self._raw.equals(other._raw)  # type: ignore[no-any-return]
         if isinstance(other, (set, frozenset)) and all(
             isinstance(x, Variable) for x in other
         ):

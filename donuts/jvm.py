@@ -23,15 +23,19 @@ class BackendMixin:
 
     def serialize(self, java_obj: Any) -> bytes:
         """Serialize the given Java object."""
-        byte_stream = self._ByteArrayOutputStream()  # type: ignore
-        object_stream = self._ObjectOutputStream(byte_stream)  # type: ignore
+        byte_stream = self._ByteArrayOutputStream()  # type: ignore[attr-defined]
+        object_stream = self._ObjectOutputStream(  # type: ignore[attr-defined]
+            byte_stream
+        )
         object_stream.writeObject(java_obj)
         return bytes(byte_stream.toByteArray())
 
     def deserialize(self, data: bytes) -> Any:
         """Deserialize a Java object."""
-        byte_stream = self._ByteArrayInputStream(data)  # type: ignore
-        object_stream = self._ObjectInputStream(byte_stream)  # type: ignore
+        byte_stream = self._ByteArrayInputStream(data)  # type: ignore[attr-defined]
+        object_stream = self._ObjectInputStream(  # type: ignore[attr-defined]
+            byte_stream
+        )
         return object_stream.readObject()
 
 
@@ -84,7 +88,7 @@ class Py4JBackend(BackendMixin):
     @staticmethod
     def get_error_message(error: Any) -> str:
         """Return the error message from the given exception object."""
-        return error.java_exception.getMessage()  # type: ignore
+        return error.java_exception.getMessage()  # type: ignore[no-any-return]
 
 
 class JniusBackend(BackendMixin):
@@ -137,7 +141,7 @@ class JniusBackend(BackendMixin):
     @staticmethod
     def get_error_message(error: Any) -> str:
         """Return the error message from the given exception object."""
-        return error.innermessage  # type: ignore
+        return error.innermessage  # type: ignore[no-any-return]
 
 
 class JPypeBackend(BackendMixin):
@@ -193,8 +197,8 @@ class JPypeBackend(BackendMixin):
 if _BACKEND == "py4j":
     jvm = Py4JBackend()
 elif _BACKEND == "pyjnius":
-    jvm = JniusBackend()  # type: ignore
+    jvm = JniusBackend()  # type: ignore[assignment]
 elif _BACKEND == "jpype":
-    jvm = JPypeBackend()  # type: ignore
+    jvm = JPypeBackend()  # type: ignore[assignment]
 else:
     raise ValueError(f"unknown backend: DONUTS_PYTHON_BACKEND = '{_BACKEND}'")
