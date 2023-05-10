@@ -72,7 +72,8 @@ def build(c, sdist=False, wheel=False):  # type: ignore
 
     from build import build_jar
 
-    if wheel:
+    if not wheel:
+        # Ensure that the jar file is built.
         build_jar()
 
     if sdist:
