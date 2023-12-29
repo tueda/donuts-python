@@ -35,19 +35,19 @@ repos:
     -   id: editorconfig-checker
 
 -   repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
     -   id: flake8
         entry: pflake8
         additional_dependencies:
         -   flake8-bandit==4.1.1
-        -   flake8-bugbear==23.5.9
-        -   flake8-builtins==2.1.0
-        -   flake8-comprehensions==3.12.0
+        -   flake8-bugbear==23.12.2
+        -   flake8-builtins==2.2.0
+        -   flake8-comprehensions==3.14.0
         -   flake8-docstrings==1.7.0
         -   flake8-pytest-style==1.7.2
         -   pep8-naming==0.13.3
-        -   pyproject-flake8==6.0.0  # frozen for flake8 6.0.0
+        -   pyproject-flake8==6.1.0  # frozen for flake8 6.1.0
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.2.0
@@ -55,12 +55,12 @@ repos:
     -   id: mypy
         args: []
         additional_dependencies:
-        -   invoke==2.1.1
-        -   jpype1==1.4.1
+        -   invoke==2.2.0
+        -   jpype1==1.5.0
         -   py4j==0.10.9.7
-        -   pyjnius==1.4.2
-        -   pytest==7.3.1
-        -   types-setuptools==67.7.0.1
+        -   pyjnius==1.6.1
+        -   pytest==7.4.3
+        -   types-setuptools==69.0.0.0
 
 -   repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.2
@@ -69,6 +69,6 @@ repos:
         args: [-x]
 
 -   repo: https://github.com/jorisroovers/gitlint
-    rev: v0.19.1
+    rev: v0.18.0  # https://github.com/jorisroovers/gitlint/issues/535
     hooks:
     -   id: gitlint

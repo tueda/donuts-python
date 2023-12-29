@@ -3,16 +3,16 @@
 import os
 from typing import Optional
 
-from invoke import Context, task
+from invoke import Context, task  # type: ignore[attr-defined]
 
 
-@task  # type: ignore[misc]
+@task
 def prepare(c: Context) -> None:
     """prepare the repository for development."""
     c.run("pre-commit install", pty=True)
 
 
-@task  # type: ignore[misc]
+@task
 def fmt(c: Context) -> None:
     """Run formatters."""
     from build import run_gradle
@@ -23,7 +23,7 @@ def fmt(c: Context) -> None:
     run_gradle("donuts-python:spotlessApply")
 
 
-@task  # type: ignore[misc]
+@task
 def lint(c: Context) -> None:
     """Run linters."""
     from build import run_gradle
@@ -36,7 +36,7 @@ def lint(c: Context) -> None:
     run_gradle("donuts-python:spotlessCheck")
 
 
-@task  # type: ignore[misc]
+@task
 def test(c: Context, keyword: Optional[str] = None, verbose: bool = False) -> None:
     """Run tests."""
     from build import run_gradle
@@ -51,7 +51,7 @@ def test(c: Context, keyword: Optional[str] = None, verbose: bool = False) -> No
     run_gradle("donuts-python:test")
 
 
-@task  # type: ignore[misc]
+@task
 def bench(
     c: Context,
     save: bool = False,
@@ -69,14 +69,14 @@ def bench(
     c.run("pytest --benchmark-only" + args, pty=True)
 
 
-@task  # type: ignore[misc]
+@task
 def doc(c: Context) -> None:
     """Generate documents."""
     with c.cd("docs"):
         c.run("make html" if os.name != "nt" else "make.bat html", pty=True)
 
 
-@task  # type: ignore[misc]
+@task
 def build(c: Context, sdist: bool = False, wheel: bool = False) -> None:
     """Build the JAR file/distribution."""
     import shutil

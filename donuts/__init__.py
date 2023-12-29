@@ -23,7 +23,7 @@ __all__ = (
 # isort: off
 
 from .poly import PolynomialLike as PolynomialLike  # noqa: F401
-from .poly import sum as sum  # noqa: A001,F401
+from .poly import sum as sum  # noqa: A004,F401
 from .rat import RationalFunctionLike as RationalFunctionLike  # noqa: F401
 from .var import VariableLike as VariableLike  # noqa: F401
 from .varset import VariableSet as VariableSet  # noqa: F401

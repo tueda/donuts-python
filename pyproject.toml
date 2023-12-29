@@ -8,7 +8,7 @@ readme = "README.rst"
 repository = "https://github.com/tueda/donuts-python"
 keywords = ["computer algebra", "multivariate polynomial arithmetic"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
@@ -20,18 +20,18 @@ python = "^3.7"
 pyjnius = "^1.3"
 
 [tool.poetry.dev-dependencies]
-py4j = "^0.10.9.7" # alternative to pyjnius
-jpype1 = "^1.4.1"
+py4j = "^0.10.9.7"  # alternative to pyjnius
+jpype1 = "^1.5.0"  # alternative to pyjnius
 
-invoke = "^2.1.1"
-pre-commit = "^2.21.0"
-pytest = "^7.3.1"
+invoke = "^2.2.0"
+pre-commit = "^2.21.0"  # frozen for Python 3.7
+pytest = "^7.4.3"
 pytest-benchmark = "^4.0.0"
-pytest-cov = "^4.0.0"
+pytest-cov = "^4.1.0"
 sphinx = "^5.3.0"  # frozen for Python 3.7
-sphinx_rtd_theme = "^1.2.0"
-sphinx-autodoc-typehints = "^1.23.0"
-wheel = "^0.40.0"
+sphinx_rtd_theme = "^2.0.0"
+sphinx-autodoc-typehints = "^1.23.0"  # frozen for Python 3.7
+wheel = "^0.42.0"
 
 [tool.coverage.report]
 exclude_lines = [
@@ -66,7 +66,6 @@ warn_unreachable = true
 
 [[tool.mypy.overrides]]
 module = [
-    "invoke",
     "jnius_config",
     "jnius",
     "jpype",
