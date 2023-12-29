@@ -56,6 +56,10 @@ lint310:
   extends: .lint
   image: python:3.10
 
+lint311:
+  extends: .lint
+  image: python:3.11
+
 py37:
   extends: .test
   image: python:3.7
@@ -87,6 +91,14 @@ py310:
     - tox -e py310
     - DONUTS_PYTHON_BACKEND=py4j tox -e py310
     - DONUTS_PYTHON_BACKEND=jpype tox -e py310
+
+py311:
+  extends: .test
+  image: python:3.11
+  script:
+    - tox -e py311
+    - DONUTS_PYTHON_BACKEND=py4j tox -e py311
+    - DONUTS_PYTHON_BACKEND=jpype tox -e py311
 
 doc:
   extends: .test
@@ -120,4 +132,5 @@ readme_dev:
     - poetry run invoke doc
     - DONUTS_PYTHON_BACKEND=pyjnius poetry run invoke test
     - DONUTS_PYTHON_BACKEND=py4j poetry run invoke test
+    - DONUTS_PYTHON_BACKEND=jpype poetry run invoke test
     - poetry run invoke build --sdist --wheel

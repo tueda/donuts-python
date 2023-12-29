@@ -20,7 +20,7 @@ Requirements
 ------------
 
 * Python 3.7 or later
-* JDK 8 or later
+* Java 8 or later
 
 
 Installation
@@ -55,7 +55,7 @@ Example
 Development
 -----------
 
-.. The code is tested by "readme_dev" in .gitlab-ci.yml and .github/workflows/ci.yml.
+.. The code is tested by "readme_dev" in .github/workflows/test.yml and .gitlab-ci.yml.
 
 .. code:: shell
 
@@ -73,6 +73,7 @@ Development
 
     DONUTS_PYTHON_BACKEND=pyjnius poetry run invoke test
     DONUTS_PYTHON_BACKEND=py4j    poetry run invoke test
+    DONUTS_PYTHON_BACKEND=jpype   poetry run invoke test
 
     poetry run invoke build --sdist --wheel
 
