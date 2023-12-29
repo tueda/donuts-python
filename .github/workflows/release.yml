@@ -33,12 +33,10 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      # The wheel is not built because of unclear licensing issues
-      # when distributing a fat-jar file containing LGPL software.
       - name: Build sdist
         run: |
           rm -rf dist  # just in case
-          poetry run invoke build --sdist
+          poetry run invoke build --sdist --wheel
 
       - name: Check Tag  # SemVer + PEP 440, e.g., 1.0.0rc1.post1
         id: check-tag
