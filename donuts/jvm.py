@@ -10,7 +10,7 @@ try:
 
     _res_files = importlib.resources.files
 except AttributeError:
-    import importlib_resources  # type: ignore[import]
+    import importlib_resources  # type: ignore[import-not-found]
 
     _res_files = importlib_resources.files
 

@@ -1,9 +1,9 @@
 """The setup script."""
 
-from distutils.command.build import build
 from typing import List, Tuple
 
 from setuptools import Command, find_packages, setup
+from setuptools.command.build import build
 
 
 def readme() -> str:
@@ -15,7 +15,9 @@ def readme() -> str:
 class BuildCommand(build):
     """Command to build everything."""
 
-    sub_commands = [("build_jar", None)] + build.sub_commands
+    sub_commands = [
+        ("build_jar", None)
+    ] + build.sub_commands  # type: ignore[assignment,operator]
 
 
 class BuildJarCommand(Command):
@@ -69,7 +71,7 @@ setup(
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "pytest-benchmark", "pytest-cov"],
     cmdclass={
-        "build": BuildCommand,  # type: ignore[dict-item]
+        "build": BuildCommand,
         "build_jar": BuildJarCommand,
     },
 )
