@@ -60,6 +60,10 @@ lint311:
   extends: .lint
   image: python:3.11
 
+lint312:
+  extends: .lint
+  image: python:3.12
+
 py37:
   extends: .test
   image: python:3.7
@@ -99,6 +103,14 @@ py311:
     - tox -e py311
     - DONUTS_PYTHON_BACKEND=py4j tox -e py311
     - DONUTS_PYTHON_BACKEND=jpype tox -e py311
+
+py312:
+  extends: .test
+  image: python:3.12
+  script:
+    - tox -e py311
+    - DONUTS_PYTHON_BACKEND=py4j tox -e py312
+    - DONUTS_PYTHON_BACKEND=jpype tox -e py312
 
 doc:
   extends: .test
