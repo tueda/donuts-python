@@ -64,7 +64,7 @@ setup(
     packages=find_packages(),
     package_data={"donuts": ["py.typed", "java/donuts-all.jar"]},
     python_requires=">=3.7",
-    install_requires=["pyjnius"],
+    install_requires=['importlib-resources>=1.3; python_version < "3.9"', "pyjnius"],
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "pytest-benchmark", "pytest-cov"],
     cmdclass={

@@ -3,9 +3,19 @@
 import os
 from typing import Any
 
-import pkg_resources
+# NOTE: using import aliases hits an isort bug,
+#       see https://github.com/PyCQA/isort/issues/1839.
+try:
+    import importlib.resources
 
-_JAR_FILE = pkg_resources.resource_filename("donuts", "java/donuts-all.jar")
+    _res_files = importlib.resources.files
+except AttributeError:
+    import importlib_resources  # type: ignore[import]
+
+    _res_files = importlib_resources.files
+
+# XXX: we assume that the Traversable object is indeed a Path.
+_JAR_FILE = str(_res_files("donuts").joinpath("java").joinpath("donuts-all.jar"))
 
 _BACKEND = os.getenv("DONUTS_PYTHON_BACKEND", "pyjnius")
 
