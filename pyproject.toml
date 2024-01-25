@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "donuts-python"
-version = "0.0.4a0"
+version = "0.0.4"
 description = "Python binding to Donuts"
 license = "MIT"
 authors = ["Takahiro Ueda <t.ueda.od@juntendo.ac.jp>"]
