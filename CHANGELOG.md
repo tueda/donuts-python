@@ -1,5 +1,11 @@
 # Changelog
 
+<a name="0.0.5"></a>
+## [0.0.5] (2024-02-10)
+### Changed
+- Upgrade `donuts` to 0.0.6. This adds support for Java 21 and fix a bug in factorization.
+  ([1565f95](https://github.com/tueda/donuts-python/commit/1565f95bf5ad92866a091f20bf744a938b290a91))
+
 <a name="0.0.4"></a>
 ## [0.0.4] (2024-01-25)
 ### Added
@@ -24,6 +30,7 @@
 ## 0.0.1 (2021-12-29)
 - First public version.
 
+[0.0.5]: https://github.com/tueda/donuts-python/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/tueda/donuts-python/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/tueda/donuts-python/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/tueda/donuts-python/compare/0.0.1...0.0.2
