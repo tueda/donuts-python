@@ -3,7 +3,9 @@
 <a name="0.0.5"></a>
 ## [0.0.5] (2024-02-10)
 ### Changed
-- Upgrade `donuts` to 0.0.6. This adds support for Java 21 and fix a bug in factorization.
+- Upgrade `donuts` to [v0.0.6](https://github.com/tueda/donuts/tree/v0.0.6).
+  This adds support for Java 21 and
+  fixes [a bug](https://github.com/PoslavskySV/rings/issues/76) in factorization.
   ([1565f95](https://github.com/tueda/donuts-python/commit/1565f95bf5ad92866a091f20bf744a938b290a91))
 
 <a name="0.0.4"></a>
