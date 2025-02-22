@@ -29,6 +29,7 @@ pre-commit = "^2.21.0"  # frozen for Python 3.7
 pytest = "^7.4.4"  # frozen for Python 3.7
 pytest-benchmark = "^4.0.0"
 pytest-cov = "^4.1.0"
+setuptools = "^68.0.0"  # frozen for Python 3.7
 sphinx = "^5.3.0"  # frozen for Python 3.7
 sphinx_rtd_theme = "^2.0.0"
 sphinx-autodoc-typehints = "^1.23.0"  # frozen for Python 3.7
